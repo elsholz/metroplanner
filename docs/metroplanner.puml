@@ -1,6 +1,6 @@
 @startuml MetroPlanner
 
-title Metro Planner Entity Relationship Diagram
+title Metro Planner Class Diagram
 
 class MetroPlan {
     + _id
@@ -42,8 +42,7 @@ class MarkerClass {
     + borderColor: String
 }
 
-MarkerClass -left Marker
-MarkerClass -up-* MetroPlan
+MarkerClass -- Marker
 
 class Label {
     + labelClass: LabelClass
@@ -60,24 +59,22 @@ class LabelClass {
     + top: String
     + left: String
 }
-'note bottom of LabelClass: Predefined Label Classes
-'note bottom of MarkerClass: Predefined Label Classes
+note top of LabelClass: Predefined Label Classes
+note right of MarkerClass: Predefined Marker Classes
+note bottom of ColorTheme: Predefined Color Themes
 
-LabelClass  -left Label
-LabelClass  -up-* MetroPlan
-
-'MarkerClass -o MetroPlan
-'LabelClass -o MetroPlan
+LabelClass - Label
 
 Marker -- NamedNode
-Label - NamedNode
+Label -up- NamedNode
+Label -* MetroPlan
 
 class Line {
     + symbol: String
     + name: String
     + color: String
     + width: Number
-    + connections: [ConnectedNodes]
+    + connections:\n[ConnectedNodes]
 }
 
 ConnectedNodes -o Line
