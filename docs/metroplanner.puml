@@ -1,0 +1,107 @@
+@startuml MetroPlanner
+
+title Metro Planner Entity Relationship Diagram
+
+class MetroPlan {
+    + _id
+    + planName: String
+    + colorTheme: String
+    + nodes: [NamedNode]
+    + lines: [Line]
+    + markerClasses: [MarkerClass]
+    + labelClasses: [MarkerClass]
+    + labels: [Label]
+}
+
+class NamedNode {
+    + id: String 
+    + location: Point
+    + label: Label
+    + marker: Marker
+}
+
+class Point {
+    + x: Number
+    + y: Number
+}
+
+class Marker {
+    + class: MarkerClass
+    + width: Number
+    + height: Number
+    + sizeFactor: Number
+}
+
+class MarkerClass {
+    + name: String
+    + backgroundColor: String
+    + color: String
+    + borderWidth: String
+    + boxShadow: String
+    + borderStyle: String
+    + borderColor: String
+}
+
+MarkerClass -left Marker
+MarkerClass -up-* MetroPlan
+
+class Label {
+    + labelClass: LabelClass
+    + text: String
+    + anchor: String
+}
+
+class LabelClass {
+    + name: String
+    + fontSize: Number
+    + height: Number 
+    + lineHeight: Number
+    + fontWeight: String
+    + top: String
+    + left: String
+}
+'note bottom of LabelClass: Predefined Label Classes
+'note bottom of MarkerClass: Predefined Label Classes
+
+LabelClass  -left Label
+LabelClass  -up-* MetroPlan
+
+'MarkerClass -o MetroPlan
+'LabelClass -o MetroPlan
+
+Marker -- NamedNode
+Label - NamedNode
+
+class Line {
+    + symbol: String
+    + name: String
+    + color: String
+    + width: Number
+    + connections: [ConnectedNodes]
+}
+
+ConnectedNodes -o Line
+
+class ConnectedNodes {
+    + nodes: [Point | NamedNode]
+}
+
+ConnectedNodes o-- NamedNode
+Point --o ConnectedNodes
+
+class ColorTheme {
+    + _id: ObjectID
+    + name: String
+    + background: String
+    + foreground: String
+    + lineColors: [String]
+    + deepWater: String
+    + shallowWater: String
+    + border: String
+}
+
+MetroPlan - ColorTheme
+NamedNode -* MetroPlan
+Line --* MetroPlan
+
+@enduml
