@@ -1,0 +1,198 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document describing a mountain peak",
+        "properties": {
+            "planName": {
+                "type": "string"
+            },
+            "colorTheme": {
+                "type": "string"
+            },
+            "nodes": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "location": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                        },
+                        "marker": {
+                            "type": "object",
+                            "properties": {
+                                "class": {
+                                    "type": "string"
+                                },
+                                "width": {
+                                    "type": "number"
+                                },
+                                "height": {
+                                    "type": "number"
+                                },
+                                "sizeFactor": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": [
+                                "class"
+                            ]
+                        },
+                        "label": {
+                            "type": "object",
+                            "properties": {
+                                "class": {
+                                    "type": "string"
+                                },
+                                "text": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "class",
+                                "text"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "location"
+                    ]
+                }
+            },
+            "lines": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "symbol": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "color": {
+                            "type": "string"
+                        },
+                        "width": {
+                            "type": "number"
+                        },
+                        "connections": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "nodes": {
+                                        "type": "array",
+                                        "items": {
+                                            "oneOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "number"
+                                                    },
+                                                    "minItems": 2,
+                                                    "maxItems": 2
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "symbol",
+                        "name",
+                        "color",
+                        "connections"
+                    ]
+                }
+            },
+            "markerClasses": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string"
+                        },
+                        "location": {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "font-size": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "text",
+                        "location",
+                        "font-size"
+                    ]
+                }
+            },
+            "labelClasses": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string"
+                        },
+                        "location": {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "fontSize": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "text",
+                        "location",
+                        "fontSize"
+                    ]
+                }
+            },
+            "labels": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {}
+                }
+            }
+        },
+        "required": [
+            "planName",
+            "colorTheme",
+            "nodes",
+            "markerClasses",
+            "labelClasses"
+        ]
+    }
+}
