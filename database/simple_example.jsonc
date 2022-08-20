@@ -1,0 +1,1206 @@
+{
+    "planName": "Liniennetzplan Wesel",
+    "colorTheme": "dark",
+    "nodes": [
+        {
+            "id": "test_width_4",
+            "location": [
+                23,
+                1
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "height": 4
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_3_height_2_rot",
+            "location": [
+                0,
+                15
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 3,
+                "height": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_3_height_2",
+            "location": [
+                -10,
+                15
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 3,
+                "height": 2
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_2_1",
+            "location": [
+                10,
+                -4
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right_ascending.1",
+                "text": "A"
+            }
+        },
+        {
+            "id": "test_2_2",
+            "location": [
+                7.17157287525381,
+                -2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "left_descending.1",
+                "text": "2"
+            }
+        },
+        {
+            "id": "test_2_3",
+            "location": [
+                6,
+                0
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "left.1",
+                "text": "3"
+            }
+        },
+        {
+            "id": "test_2_4",
+            "location": [
+                7.17157287525381,
+                2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "left_ascending.1",
+                "text": "4"
+            }
+        },
+        {
+            "id": "test_2_5",
+            "location": [
+                10,
+                4
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "left_ascending.1",
+                "text": "5"
+            }
+        },
+        {
+            "id": "test_2_6",
+            "location": [
+                12.82842712474619,
+                2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right_descending.1",
+                "text": "6"
+            }
+        },
+        {
+            "id": "test_2_7",
+            "location": [
+                14,
+                0
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right.1",
+                "text": "7"
+            }
+        },
+        {
+            "id": "test_2_8",
+            "location": [
+                12.82842712474619,
+                -2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right_ascending.1",
+                "text": "8"
+            }
+        },
+        {
+            "id": "test_1",
+            "location": [
+                -3,
+                -4
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": "1"
+            }
+        },
+        {
+            "id": "test_2",
+            "location": [
+                -5.82842712474619,
+                -2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "left_descending",
+                "text": "2"
+            }
+        },
+        {
+            "id": "test_3",
+            "location": [
+                -7,
+                0
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "left",
+                "text": "3"
+            }
+        },
+        {
+            "id": "test_4",
+            "location": [
+                -5.82842712474619,
+                2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "left_ascending",
+                "text": "4"
+            }
+        },
+        {
+            "id": "test_5",
+            "location": [
+                -3,
+                4
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "left_ascending",
+                "text": "5"
+            }
+        },
+        {
+            "id": "test_6",
+            "location": [
+                -0.1715728752538097,
+                2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "right_descending",
+                "text": "6"
+            }
+        },
+        {
+            "id": "test_7",
+            "location": [
+                1,
+                0
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "right",
+                "text": "7"
+            }
+        },
+        {
+            "id": "test_8",
+            "location": [
+                -0.1715728752538097,
+                -2.8284271247461903
+            ],
+            "marker": {
+                "class": "regularStop"
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": "8"
+            }
+        },
+        {
+            "id": "test_large_node_center",
+            "location": [
+                13,
+                14
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 6,
+                "height": 4
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_0",
+            "location": [
+                30,
+                4
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_0",
+            "location": [
+                20,
+                15
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 2,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_0",
+            "location": [
+                17,
+                0
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_45",
+            "location": [
+                30,
+                -3
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_45",
+            "location": [
+                19,
+                12
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_45",
+            "location": [
+                17,
+                -6
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_90",
+            "location": [
+                28,
+                3
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_90",
+            "location": [
+                14,
+                12
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 4,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_90",
+            "location": [
+                4,
+                -6
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_135",
+            "location": [
+                30,
+                3
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_135",
+            "location": [
+                11,
+                13
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_135",
+            "location": [
+                -9,
+                -6
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_180",
+            "location": [
+                29,
+                4
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_180",
+            "location": [
+                11,
+                16
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 2,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_180",
+            "location": [
+                -9,
+                0
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_225",
+            "location": [
+                29,
+                -2
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_225",
+            "location": [
+                12,
+                19
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_225",
+            "location": [
+                -9,
+                6
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_270",
+            "location": [
+                29,
+                -4
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_270",
+            "location": [
+                17,
+                19
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 4,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_270",
+            "location": [
+                4,
+                6
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_rotation_315",
+            "location": [
+                30,
+                -2
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_large_node_rot_315",
+            "location": [
+                20,
+                18
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 2,
+                "height": 2,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        },
+        {
+            "id": "test_width_multiplicator_315",
+            "location": [
+                17,
+                6
+            ],
+            "marker": {
+                "class": "regularStop",
+                "width": 4,
+                "sizeFacor": 1.4142135623730951
+            },
+            "label": {
+                "class": "right_ascending",
+                "text": ""
+            }
+        }
+    ],
+    "lines": [
+        {
+            "symbol": "test_large_station",
+            "name": "test_large_station",
+            "color": "#C724B1",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        [
+                            -13,
+                            15
+                        ],
+                        "test_width_3_height_2,0,0"
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            -13,
+                            16
+                        ],
+                        "test_width_3_height_2,0,1"
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            -10,
+                            12
+                        ],
+                        "test_width_3_height_2,0"
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            -9,
+                            12
+                        ],
+                        "test_width_3_height_2,1"
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            -8,
+                            12
+                        ],
+                        "test_width_3_height_2,2"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_width_3_height_2,0,0",
+                        "test_width_3_height_2_rot,0,0"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_width_3_height_2,2,1",
+                        "test_width_3_height_2_rot,0,1"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_line_2",
+            "name": "test_line_2",
+            "color": "#D22730",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_2_1",
+                        "test_2_2",
+                        "test_2_3",
+                        "test_2_4",
+                        "test_2_5",
+                        "test_2_6",
+                        "test_2_7",
+                        "test_2_8",
+                        "test_2_1"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_2_1,1",
+                        "test_2_2,1",
+                        "test_2_3,1",
+                        "test_2_4,1",
+                        "test_2_5,1",
+                        "test_2_6,1",
+                        "test_2_7,1",
+                        "test_2_8,1",
+                        "test_2_1,1"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_line_1",
+            "name": "test_line_1",
+            "color": "#4D4DFF",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_1",
+                        "test_2",
+                        "test_3",
+                        "test_4",
+                        "test_5",
+                        "test_6",
+                        "test_7",
+                        "test_8",
+                        "test_1"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_1",
+                        "test_5"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_2",
+                        "test_6"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_3",
+                        "test_7"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_4",
+                        "test_8"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "rhein",
+            "name": "rhein",
+            "color": "#064070",
+            "width": 5,
+            "connections": [
+                {
+                    "nodes": [
+                        [
+                            24,
+                            -9
+                        ],
+                        [
+                            36,
+                            -9
+                        ],
+                        [
+                            36,
+                            7
+                        ],
+                        [
+                            34,
+                            9
+                        ],
+                        [
+                            25,
+                            9
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "grid",
+            "name": "grid",
+            "color": "#777",
+            "width": 1,
+            "connections": [
+                {
+                    "nodes": [
+                        [
+                            22,
+                            5
+                        ],
+                        [
+                            22,
+                            -5
+                        ]
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            27,
+                            5
+                        ],
+                        [
+                            27,
+                            -5
+                        ]
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            32,
+                            5
+                        ],
+                        [
+                            32,
+                            -5
+                        ]
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            32,
+                            -5
+                        ],
+                        [
+                            22,
+                            -5
+                        ]
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            32,
+                            0
+                        ],
+                        [
+                            22,
+                            0
+                        ]
+                    ]
+                },
+                {
+                    "nodes": [
+                        [
+                            32,
+                            5
+                        ],
+                        [
+                            22,
+                            5
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "border",
+            "name": "border",
+            "color": "#777",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        [
+                            -15,
+                            -13
+                        ],
+                        [
+                            -15,
+                            23
+                        ],
+                        [
+                            40,
+                            23
+                        ],
+                        [
+                            40,
+                            -13
+                        ],
+                        [
+                            -15,
+                            -13
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_factor",
+            "name": "test_factor",
+            "color": "#44D62C",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_width_multiplicator_315",
+                        "test_width_multiplicator_0",
+                        "test_width_multiplicator_45",
+                        "test_width_multiplicator_90",
+                        "test_width_multiplicator_135",
+                        "test_width_multiplicator_180",
+                        "test_width_multiplicator_225",
+                        "test_width_multiplicator_270",
+                        "test_width_multiplicator_315"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_factor2",
+            "name": "test_factor2",
+            "color": "#FFAD00",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_width_multiplicator_315,1",
+                        "test_width_multiplicator_0,1",
+                        "test_width_multiplicator_45,1",
+                        "test_width_multiplicator_90,1",
+                        "test_width_multiplicator_135,1",
+                        "test_width_multiplicator_180,1",
+                        "test_width_multiplicator_225,1",
+                        "test_width_multiplicator_270,1",
+                        "test_width_multiplicator_315,1"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_factor3",
+            "name": "test_factor3",
+            "color": "#db3eb1",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_width_multiplicator_315,2",
+                        "test_width_multiplicator_0,2",
+                        "test_width_multiplicator_45,2",
+                        "test_width_multiplicator_90,2",
+                        "test_width_multiplicator_135,2",
+                        "test_width_multiplicator_180,2",
+                        "test_width_multiplicator_225,2",
+                        "test_width_multiplicator_270,2",
+                        "test_width_multiplicator_315,2"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_factor4",
+            "name": "test_factor4",
+            "color": "#4D4DFF",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_width_multiplicator_315,3",
+                        "test_width_multiplicator_0,3",
+                        "test_width_multiplicator_45,3",
+                        "test_width_multiplicator_90,3",
+                        "test_width_multiplicator_135,3",
+                        "test_width_multiplicator_180,3",
+                        "test_width_multiplicator_225,3",
+                        "test_width_multiplicator_270,3",
+                        "test_width_multiplicator_315,3"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_rotated_large",
+            "name": "test_rotated_large",
+            "color": "#4D4DFF",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_large_node_rot_315,0",
+                        "test_large_node_rot_0,0",
+                        "test_large_node_rot_45,1",
+                        "test_large_node_rot_45,0",
+                        "test_large_node_rot_90,0",
+                        "test_large_node_rot_135,1",
+                        "test_large_node_rot_135,0",
+                        "test_large_node_rot_180,0",
+                        "test_large_node_rot_225,1",
+                        "test_large_node_rot_225,0",
+                        "test_large_node_rot_270,0",
+                        "test_large_node_rot_270,0",
+                        "test_large_node_rot_315,1"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_rotated_large2",
+            "name": "test_rotated_large2",
+            "color": "#db3eb1",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_large_node_rot_315,1,0",
+                        "test_large_node_rot_0,1,1",
+                        "test_large_node_rot_45,1,1",
+                        "test_large_node_rot_45,1",
+                        "test_large_node_rot_90,1,1",
+                        "test_large_node_rot_135,1,1",
+                        "test_large_node_rot_135,1",
+                        "test_large_node_rot_180,1",
+                        "test_large_node_rot_225,1,1",
+                        "test_large_node_rot_225,1",
+                        "test_large_node_rot_270,1,1",
+                        "test_large_node_rot_270,1",
+                        "test_large_node_rot_315,1,1"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_rotated_large3",
+            "name": "test_rotated_large3",
+            "color": "#FFAD00",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_large_node_center,5,1",
+                        "test_large_node_rot_0,0,0"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,0,1",
+                        "test_large_node_rot_180,0,1"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,2,0",
+                        "test_large_node_rot_90,1,1"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,2,3",
+                        "test_large_node_rot_270,0,2"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,4,0",
+                        "test_large_node_rot_90,1,3"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,4,1",
+                        "test_large_node_rot_270,0,0"
+                    ]
+                }
+            ]
+        },
+        {
+            "symbol": "test_rotated_large4",
+            "name": "test_rotated_large4",
+            "color": "#44D62C",
+            "width": 0.4,
+            "connections": [
+                {
+                    "nodes": [
+                        "test_large_node_center,5,2",
+                        "test_large_node_rot_0,1,1"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,0,2",
+                        "test_large_node_rot_180,1,0"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,1,0",
+                        "test_large_node_rot_90,1,0"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,1,3",
+                        "test_large_node_rot_270,0,3"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,3,0",
+                        "test_large_node_rot_90,0,2"
+                    ]
+                },
+                {
+                    "nodes": [
+                        "test_large_node_center,3,3",
+                        "test_large_node_rot_270,0,1"
+                    ]
+                }
+            ]
+        }
+    ],
+    "markerClasses": [],
+    "labelClasses": [],
+    "labels": []
+}
