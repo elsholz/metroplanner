@@ -1,5 +1,6 @@
 {
     "schema_version": "0.0.1",
+    "planSlug": "wesel",
     "planName": "Liniennetzplan Wesel",
     "colorTheme": "dark",
     "nodes": [
