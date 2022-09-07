@@ -39,6 +39,9 @@
                                 },
                                 "sizeFactor": {
                                     "type": "number"
+                                },
+                                "rotation": {
+                                    "type": "number"
                                 }
                             },
                             "required": [
