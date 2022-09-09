@@ -10,8 +10,8 @@
                 "type": "string"
             },
             "nodes": {
-                "type": "array",
-                "items": {
+                "type": "object",
+                "additionalProperties": {
                     "type": "object",
                     "properties": {
                         "id": {
@@ -71,8 +71,8 @@
                 }
             },
             "lines": {
-                "type": "array",
-                "items": {
+                "type": "object",
+                "additionalProperties": {
                     "type": "object",
                     "properties": {
                         "symbol": {
@@ -122,66 +122,6 @@
                     ]
                 }
             },
-            "markerClasses": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "text": {
-                            "type": "string"
-                        },
-                        "location": {
-                            "type": "array",
-                            "items": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "font-size": {
-                            "type": "number"
-                        }
-                    },
-                    "required": [
-                        "text",
-                        "location",
-                        "font-size"
-                    ]
-                }
-            },
-            "labelClasses": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "text": {
-                            "type": "string"
-                        },
-                        "location": {
-                            "type": "array",
-                            "items": [
-                                {
-                                    "type": "string"
-                                },
-                                {
-                                    "type": "string"
-                                }
-                            ]
-                        },
-                        "fontSize": {
-                            "type": "number"
-                        }
-                    },
-                    "required": [
-                        "text",
-                        "location",
-                        "fontSize"
-                    ]
-                }
-            },
             "labels": {
                 "type": "array",
                 "items": {
@@ -193,9 +133,7 @@
         "required": [
             "planName",
             "colorTheme",
-            "nodes",
-            "markerClasses",
-            "labelClasses"
+            "nodes"
         ]
     }
 }
