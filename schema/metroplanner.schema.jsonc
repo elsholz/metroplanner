@@ -14,9 +14,6 @@
                 "additionalProperties": {
                     "type": "object",
                     "properties": {
-                        "id": {
-                            "type": "string"
-                        },
                         "location": {
                             "type": "array",
                             "items": {
