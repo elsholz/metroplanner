@@ -71,8 +71,8 @@
                 }
             },
             "lines": {
-                "type": "object",
-                "additionalProperties": {
+                "type": "array",
+                "items": {
                     "type": "object",
                     "properties": {
                         "symbol": {
