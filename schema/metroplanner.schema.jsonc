@@ -62,7 +62,6 @@
                         }
                     },
                     "required": [
-                        "id",
                         "location"
                     ]
                 }
@@ -79,6 +78,15 @@
                             "type": "string"
                         },
                         "color": {
+                            "type": "string"
+                        },
+                        "borderWidth": {
+                            "type": "number"
+                        },
+                        "borderStyle": {
+                            "type": "string"
+                        },
+                        "borderColor": {
                             "type": "string"
                         },
                         "width": {
@@ -130,7 +138,9 @@
         "required": [
             "planName",
             "colorTheme",
-            "nodes"
+            "nodes",
+            "lines",
+            "labels"
         ]
     }
 }
