@@ -1,5 +1,38 @@
 {
     "$jsonSchema": {
+        "definitions": {
+            "styling": {
+                "type": "object",
+                "properties":{
+                    "fontSize": {
+                        "type":"number"
+                    }
+                }
+            },
+            "anchor": {
+                "type": "object",
+                "properties": {
+                    "node": {
+                        "type": "string"
+                    },
+                    "xShift": {
+                        "type": "float"
+                    },
+                    "yShift": {
+                        "type": "float"
+                    },
+                    "width": {
+                        "type": "float"
+                    },
+                    "height": {
+                        "type": "float"
+                    }
+                },
+                "required": [
+                    "node"
+                ]
+            }
+        },
         "bsonType": "object",
         "description": "Document describing a mountain peak",
         "properties": {
@@ -49,10 +82,27 @@
                             "type": "object",
                             "properties": {
                                 "class": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "enum": [
+                                        "center",
+                                        "left_ascending",
+                                        "right_ascending",
+                                        "bottom_ascending",
+                                        "top_ascending",
+                                        "left_descending",
+                                        "right_descending",
+                                        "bottom_descending",
+                                        "top_descending"
+                                    ]
                                 },
                                 "text": {
                                     "type": "string"
+                                },
+                                "anchor": {
+                                    "$ref": "#/definitions/anchor"
+                                },
+                                "styling": {
+                                    "$ref": "#/definitions/styling"
                                 }
                             },
                             "required": [
