@@ -1,38 +1,5 @@
 {
     "$jsonSchema": {
-        "definitions": {
-            "styling": {
-                "type": "object",
-                "properties":{
-                    "fontSize": {
-                        "type":"number"
-                    }
-                }
-            },
-            "anchor": {
-                "type": "object",
-                "properties": {
-                    "node": {
-                        "type": "string"
-                    },
-                    "xShift": {
-                        "type": "float"
-                    },
-                    "yShift": {
-                        "type": "float"
-                    },
-                    "width": {
-                        "type": "float"
-                    },
-                    "height": {
-                        "type": "float"
-                    }
-                },
-                "required": [
-                    "node"
-                ]
-            }
-        },
         "bsonType": "object",
         "description": "Document describing a mountain peak",
         "properties": {
@@ -99,10 +66,47 @@
                                     "type": "string"
                                 },
                                 "anchor": {
-                                    "$ref": "#/definitions/anchor"
+                                    "type": "object",
+                                    "properties": {
+                                        "node": {
+                                            "oneOf": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "number"
+                                                    },
+                                                    "minItems": 2,
+                                                    "maxItems": 2
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        },
+                                        "xShift": {
+                                            "type": "number"
+                                        },
+                                        "yShift": {
+                                            "type": "number"
+                                        },
+                                        "width": {
+                                            "type": "number"
+                                        },
+                                        "height": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "required": [
+                                        "node"
+                                    ]
                                 },
                                 "styling": {
-                                    "$ref": "#/definitions/styling"
+                                    "type": "object",
+                                    "properties": {
+                                        "fontSize": {
+                                            "type": "number"
+                                        }
+                                    }
                                 }
                             },
                             "required": [
@@ -150,18 +154,38 @@
                                     "nodes": {
                                         "type": "array",
                                         "items": {
-                                            "oneOf": [
-                                                {
-                                                    "type": "string"
+                                            "type": "object",
+                                            "properties": {
+                                                "node": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            },
+                                                            "minItems": 2,
+                                                            "maxItems": 2
+                                                        },
+                                                        {
+                                                            "type": "string"
+                                                        }
+                                                    ]
                                                 },
-                                                {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "number"
-                                                    },
-                                                    "minItems": 2,
-                                                    "maxItems": 2
+                                                "xShift": {
+                                                    "type": "number"
+                                                },
+                                                "yShift": {
+                                                    "type": "number"
+                                                },
+                                                "width": {
+                                                    "type": "number"
+                                                },
+                                                "height": {
+                                                    "type": "number"
                                                 }
+                                            },
+                                            "required": [
+                                                "node"
                                             ]
                                         }
                                     }
