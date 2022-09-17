@@ -1,7 +1,7 @@
 {
     "$jsonSchema": {
         "bsonType": "object",
-        "description": "Document describing a mountain peak",
+        "description": "Document describing a metro plan",
         "properties": {
             "planName": {
                 "type": "string"
@@ -43,75 +43,6 @@
                             },
                             "required": [
                                 "class"
-                            ]
-                        },
-                        "label": {
-                            "type": "object",
-                            "properties": {
-                                "class": {
-                                    "type": "string",
-                                    "enum": [
-                                        "center",
-                                        "left_ascending",
-                                        "right_ascending",
-                                        "bottom_ascending",
-                                        "top_ascending",
-                                        "left_descending",
-                                        "right_descending",
-                                        "bottom_descending",
-                                        "top_descending"
-                                    ]
-                                },
-                                "text": {
-                                    "type": "string"
-                                },
-                                "anchor": {
-                                    "type": "object",
-                                    "properties": {
-                                        "node": {
-                                            "oneOf": [
-                                                {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "number"
-                                                    },
-                                                    "minItems": 2,
-                                                    "maxItems": 2
-                                                },
-                                                {
-                                                    "type": "string"
-                                                }
-                                            ]
-                                        },
-                                        "xShift": {
-                                            "type": "number"
-                                        },
-                                        "yShift": {
-                                            "type": "number"
-                                        },
-                                        "width": {
-                                            "type": "number"
-                                        },
-                                        "height": {
-                                            "type": "number"
-                                        }
-                                    },
-                                    "required": [
-                                        "node"
-                                    ]
-                                },
-                                "styling": {
-                                    "type": "object",
-                                    "properties": {
-                                        "fontSize": {
-                                            "type": "number"
-                                        }
-                                    }
-                                }
-                            },
-                            "required": [
-                                "class",
-                                "text"
                             ]
                         }
                     },
@@ -183,10 +114,7 @@
                                                 "height": {
                                                     "type": "number"
                                                 }
-                                            },
-                                            "required": [
-                                                "node"
-                                            ]
+                                            }
                                         }
                                     }
                                 }
@@ -205,7 +133,72 @@
                 "type": "array",
                 "items": {
                     "type": "object",
-                    "properties": {}
+                    "properties": {
+                        "type": "object",
+                        "properties": {
+                            "class": {
+                                "type": "string",
+                                "enum": [
+                                    "center",
+                                    "left_ascending",
+                                    "right_ascending",
+                                    "bottom_ascending",
+                                    "top_ascending",
+                                    "left_descending",
+                                    "right_descending",
+                                    "bottom_descending",
+                                    "top_descending"
+                                ]
+                            },
+                            "text": {
+                                "type": "string"
+                            },
+                            "anchor": {
+                                "type": "object",
+                                "properties": {
+                                    "node": {
+                                        "oneOf": [
+                                            {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "number"
+                                                },
+                                                "minItems": 2,
+                                                "maxItems": 2
+                                            },
+                                            {
+                                                "type": "string"
+                                            }
+                                        ]
+                                    },
+                                    "xShift": {
+                                        "type": "number"
+                                    },
+                                    "yShift": {
+                                        "type": "number"
+                                    },
+                                    "width": {
+                                        "type": "number"
+                                    },
+                                    "height": {
+                                        "type": "number"
+                                    }
+                                }
+                            },
+                            "styling": {
+                                "type": "object",
+                                "properties": {
+                                    "fontSize": {
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        },
+                        "required": [
+                            "class",
+                            "text"
+                        ]
+                    }
                 }
             }
         },

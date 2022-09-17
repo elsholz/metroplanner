@@ -18,13 +18,12 @@ anchor = {
         "width": {"type": "number"},
         "height": {"type": "number"},
     },
-    "required": ["node"],
 }
 
 schema = {
     "$jsonSchema": {
         "bsonType": "object",
-        "description": "Document describing a mountain peak",
+        "description": "Document describing a metro plan",
         "properties": {
             "planName": {"type": "string"},
             "colorTheme": {"type": "string"},
@@ -44,29 +43,6 @@ schema = {
                                 "rotation": {"type": "number"},
                             },
                             "required": ["class"],
-                        },
-                        "label": {
-                            "type": "object",
-                            "properties": {
-                                "class": {
-                                    "type": "string",
-                                    "enum": [
-                                        "center",
-                                        "left_ascending",
-                                        "right_ascending",
-                                        "bottom_ascending",
-                                        "top_ascending",
-                                        "left_descending",
-                                        "right_descending",
-                                        "bottom_descending",
-                                        "top_descending",
-                                    ],
-                                },
-                                "text": {"type": "string"},
-                                "anchor": anchor,
-                                "styling": styling,
-                            },
-                            "required": ["class", "text"],
                         },
                     },
                     "required": ["location"],
@@ -100,7 +76,35 @@ schema = {
                     "required": ["symbol", "name", "color", "connections"],
                 },
             },
-            "labels": {"type": "array", "items": {"type": "object", "properties": {}}},
+            "labels": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "type": "object",
+                        "properties": {
+                            "class": {
+                                "type": "string",
+                                "enum": [
+                                    "center",
+                                    "left_ascending",
+                                    "right_ascending",
+                                    "bottom_ascending",
+                                    "top_ascending",
+                                    "left_descending",
+                                    "right_descending",
+                                    "bottom_descending",
+                                    "top_descending",
+                                ],
+                            },
+                            "text": {"type": "string"},
+                            "anchor": anchor,
+                            "styling": styling,
+                        },
+                        "required": ["class", "text"],
+                    },
+                },
+            },
         },
         "required": ["planName", "colorTheme", "nodes", "lines", "labels"],
     }
