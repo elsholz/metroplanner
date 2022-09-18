@@ -26,7 +26,7 @@ schema = {
         "description": "Document describing a metro plan",
         "properties": {
             "planName": {"type": "string"},
-            "colorTheme": {"type": "string"},
+            "colorTheme": {"type": "string", "enum": ["dark", "bright"]},
             "nodes": {
                 "type": "object",
                 "additionalProperties": {
@@ -36,13 +36,16 @@ schema = {
                         "marker": {
                             "type": "object",
                             "properties": {
-                                "class": {"type": "string"},
                                 "width": {"type": "number"},
                                 "height": {"type": "number"},
-                                "sizeFactor": {"type": "number"},
+                                "sizeFactor": {
+                                    "oneOf": [
+                                        {"type": "number"},
+                                        {"type": "string", "enum": ["sqrt2"]},
+                                    ]
+                                },
                                 "rotation": {"type": "number"},
                             },
-                            "required": ["class"],
                         },
                     },
                     "required": ["location"],
@@ -81,28 +84,23 @@ schema = {
                 "items": {
                     "type": "object",
                     "properties": {
-                        "type": "object",
-                        "properties": {
-                            "class": {
-                                "type": "string",
-                                "enum": [
-                                    "center",
-                                    "left_ascending",
-                                    "right_ascending",
-                                    "bottom_ascending",
-                                    "top_ascending",
-                                    "left_descending",
-                                    "right_descending",
-                                    "bottom_descending",
-                                    "top_descending",
-                                ],
-                            },
-                            "text": {"type": "string"},
-                            "anchor": anchor,
-                            "styling": styling,
+                        "class": {
+                            "type": "string",
+                            "enum": [
+                                "centered",
+                                "left_ascending",
+                                "right_ascending",
+                                "left_descending",
+                                "right_descending",
+                                "left",
+                                "right",
+                            ],
                         },
-                        "required": ["class", "text"],
+                        "text": {"type": "string"},
+                        "anchor": anchor,
+                        "styling": styling,
                     },
+                    "required": ["class", "text", "anchor"],
                 },
             },
         },

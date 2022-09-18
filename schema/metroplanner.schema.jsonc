@@ -7,7 +7,11 @@
                 "type": "string"
             },
             "colorTheme": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                    "dark",
+                    "bright"
+                ]
             },
             "nodes": {
                 "type": "object",
@@ -25,9 +29,6 @@
                         "marker": {
                             "type": "object",
                             "properties": {
-                                "class": {
-                                    "type": "string"
-                                },
                                 "width": {
                                     "type": "number"
                                 },
@@ -35,15 +36,22 @@
                                     "type": "number"
                                 },
                                 "sizeFactor": {
-                                    "type": "number"
+                                    "oneOf": [
+                                        {
+                                            "type": "number"
+                                        },
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "sqrt2"
+                                            ]
+                                        }
+                                    ]
                                 },
                                 "rotation": {
                                     "type": "number"
                                 }
-                            },
-                            "required": [
-                                "class"
-                            ]
+                            }
                         }
                     },
                     "required": [
@@ -134,71 +142,67 @@
                 "items": {
                     "type": "object",
                     "properties": {
-                        "type": "object",
-                        "properties": {
-                            "class": {
-                                "type": "string",
-                                "enum": [
-                                    "center",
-                                    "left_ascending",
-                                    "right_ascending",
-                                    "bottom_ascending",
-                                    "top_ascending",
-                                    "left_descending",
-                                    "right_descending",
-                                    "bottom_descending",
-                                    "top_descending"
-                                ]
-                            },
-                            "text": {
-                                "type": "string"
-                            },
-                            "anchor": {
-                                "type": "object",
-                                "properties": {
-                                    "node": {
-                                        "oneOf": [
-                                            {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "number"
-                                                },
-                                                "minItems": 2,
-                                                "maxItems": 2
+                        "class": {
+                            "type": "string",
+                            "enum": [
+                                "centered",
+                                "left_ascending",
+                                "right_ascending",
+                                "left_descending",
+                                "right_descending",
+                                "left",
+                                "right"
+                            ]
+                        },
+                        "text": {
+                            "type": "string"
+                        },
+                        "anchor": {
+                            "type": "object",
+                            "properties": {
+                                "node": {
+                                    "oneOf": [
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "number"
                                             },
-                                            {
-                                                "type": "string"
-                                            }
-                                        ]
-                                    },
-                                    "xShift": {
-                                        "type": "number"
-                                    },
-                                    "yShift": {
-                                        "type": "number"
-                                    },
-                                    "width": {
-                                        "type": "number"
-                                    },
-                                    "height": {
-                                        "type": "number"
-                                    }
-                                }
-                            },
-                            "styling": {
-                                "type": "object",
-                                "properties": {
-                                    "fontSize": {
-                                        "type": "number"
-                                    }
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "xShift": {
+                                    "type": "number"
+                                },
+                                "yShift": {
+                                    "type": "number"
+                                },
+                                "width": {
+                                    "type": "number"
+                                },
+                                "height": {
+                                    "type": "number"
                                 }
                             }
                         },
-                        "required": [
-                            "class",
-                            "text"
-                        ]
-                    }
+                        "styling": {
+                            "type": "object",
+                            "properties": {
+                                "fontSize": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "class",
+                        "text",
+                        "anchor"
+                    ]
                 }
             }
         },
