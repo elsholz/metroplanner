@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Metro Plan Template</title>
+</head>
+
+<body>
+    <style id="style"></style>
+    <div id="canvas_contents">
+        <div id="landscape" style="z-index: -10;"></div>
+        <!--<div id="frame"
+        style=" margin: 5px; margin-top: 40px; width: 2200px; height: 1280px; border: 1px solid white; overflow: scroll;">
+    </div>-->
+
+        <div id="lines"></div>
+
+        <div id="nodes"></div>
+
+        <div id="labels" style="z-index: 10;"></div>
+
+
+    </div>
+    <div id="scripts">
+        <script type="text/javascript" src="/metroplanner.js"></script>
+        <script type="text/javascript">
+            let url = "/api/p/" + window.location.href.split("/").slice(-1)[0];
+
+            fetch(url)
+                .then(response => response.json())
+                .then(out => {
+                    renderAll(out)
+                    let scripts = document.getElementById("scripts")
+                    scripts.parentNode.removeChild(scripts)
+                })
+                .catch(err => { console.log("Error::", err) });
+        </script>
+    </div>
+</body>
+
+</html>
