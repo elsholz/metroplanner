@@ -19,7 +19,7 @@
 
     <style>
         .tab {
-            width: 100%;
+            /*width: 100%;*/
             height: 100%;
             width: 120px;
             background-color: #222;
@@ -80,8 +80,12 @@
                 <a class="p-2 text-light" href="#">Contact and Support</a>
             </nav>
         </div>
-        <div class="col-md-2 d-flex justify-content-center">
-            <a class="px-4 btn btn-outline-light" href="#">Log in or Sign Up</a>
+        <div class="col-md-1 d-flex justify-content-center">
+            <button class="btn btn-success mr-3" onclick="renderAll()">Redraw</button>
+        </div>
+        <div class="col-md-1 d-flex justify-content-center">
+            <button class="btn btn-success mr-3" onclick="downloadData()">Download</button>
+            <a id="downloadAnchorElem" style="display:none"></a>
         </div>
     </div>
 
@@ -116,10 +120,11 @@
                 .then(response => response.json())
                 .then(out => {
                     // console.log('Checkout this JSON! ', out)
-                    renderAll(out)
+                    setData(out)
+                    renderAll()
                     renderSidePanel("lines")
                 })
-                .catch(err => { console.log("Error!", err )});
+                .catch(err => { console.log("Error!", err) });
 
 
 

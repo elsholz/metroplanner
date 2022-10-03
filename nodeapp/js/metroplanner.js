@@ -9,8 +9,8 @@ let max_x = -Infinity
 let max_y = -Infinity
 
 let planData = {
-    diffX: 7,
-    diffY: 7,
+    baseDiffX: 7,
+    baseDiffY: 7,
 }
 
 const labelTypes = {
@@ -200,6 +200,7 @@ function drawLines() {
     let lines = planData.lines
     let nodes = planData.nodes
     let div_for_lines = document.getElementById("lines")
+    div_for_lines.innerHTML = ''
     // Draw lines
 
     for (const [key, value] of Object.entries(lines)) {
@@ -346,6 +347,7 @@ function placeMarker(key, value) {
     document.getElementById("nodes").appendChild(marker)
 }
 function drawMarkers() {
+    document.getElementById("nodes").innerHTML = ""
     for (const [key, value] of Object.entries(planData.nodes)) {
         // console.log(key, value)
         placeMarker(key, value)
@@ -434,6 +436,7 @@ function placeLabel(lbl) {
     }
 }
 function drawLabels() {
+    document.getElementById("labels").innerHTML = ""
     for (let lbl of planData.labels) {
         placeLabel(lbl)
     }
@@ -486,17 +489,18 @@ function get_left_shift(direction, width) {
     return -Math.cos(deg_to_rad(45 + direction)) * Math.SQRT2 * width * coordinate_scalar / 2
 }
 
-function renderAll(data) {
-    let lines = data.lines
-    let nodes = data.nodes
-
+function setData(data) {
     planData._id = data._id
     planData.lines = data.lines
     planData.nodes = data.nodes
     planData.labels = data.labels
     planData.planName = data.planName
     planData.colorTheme = data.colorTheme
+}
 
+function renderAll() {
+    let lines = planData.lines
+    let nodes = planData.nodes
 
     // optional extra: collect their borders (like min/max of stations and labels)
     for (const [key, value] of Object.entries(nodes)) {
@@ -539,8 +543,8 @@ function renderAll(data) {
 
     // console.log(min_x, min_y, max_x, max_y)
 
-    planData.diffX = -min_x + planData.diffX
-    planData.diffY = -min_y + planData.diffY
+    planData.diffX = -min_x + planData.baseDiffX
+    planData.diffY = -min_y + planData.baseDiffY
     // console.log("plan data:", planData)
 
     drawLines()
@@ -580,19 +584,19 @@ function renderAll(data) {
 
             label.style.left = /*parseFloat(label_node_data.attributes.style.left.slice(0, -2)) + */ /****** label_orig_left + get_x(label_point[0]) + "px"
 label.style.top = /*parseFloat(label_node_data.attributes.style.top.slice(0, -2)) +*/ /*********label_orig_top + get_y(label_point[1]) + "px"
-                                                                                                                                    }
-                                                                                                                                
-                                                                                                                                    function stop_dragging() {
-                                                                                                                                        document.onmouseup = null;
-                                                                                                                                        document.onmousemove = null;
-                                                                                                                                        nodes[marker.id].location = [
-                                                                                                                                            Math.round(- diff_x + (marker.style.left.slice(0, -2)) / coordinate_scalar + marker.style.width.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                            Math.round(- diff_y + (marker.style.top.slice(0, -2)) / coordinate_scalar + marker.style.height.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                        ]
-                                                                                                                                    }
-                                                                                                                                }
-                                                                                                                                
-                                                                                                                                add_events() ******/
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                    
+                                                                                                                                                                                                                        function stop_dragging() {
+                                                                                                                                                                                                                            document.onmouseup = null;
+                                                                                                                                                                                                                            document.onmousemove = null;
+                                                                                                                                                                                                                            nodes[marker.id].location = [
+                                                                                                                                                                                                                                Math.round(- diff_x + (marker.style.left.slice(0, -2)) / coordinate_scalar + marker.style.width.slice(0, -2) / 2 / coordinate_scalar),
+                                                                                                                                                                                                                                Math.round(- diff_y + (marker.style.top.slice(0, -2)) / coordinate_scalar + marker.style.height.slice(0, -2) / 2 / coordinate_scalar),
+                                                                                                                                                                                                                            ]
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                    
+                                                                                                                                                                                                                    add_events() ******/
 
 
     //////// }
@@ -612,23 +616,184 @@ label.style.top = /*parseFloat(label_node_data.attributes.style.top.slice(0, -2)
 }
 
 
+let stationFilter = ''
+
+function applyStationFilter() {
+    stationFilter = document.getElementById("inputStationFilter").value.toLowerCase()
+    renderSidePanel("stations")
+}
+
+function createNode() {
+    planData.nodes[stationFilter] = {
+        location: [0, 0],
+        marker: {
+            width: 1,
+            height: 1,
+            sizeFactor: 1,
+            rotation: 0
+        }
+    }
+    planData.labels.push({
+        class: "right",
+        text: stationFilter,
+        anchor: {
+            node: stationFilter
+        }
+    })
+    renderSidePanel("stations")
+}
 
 function renderSidePanel(panel) {
     // let tabcontent = document.getElementById("tabcontent")
     let containerNodesDiv = document.getElementById("tabContent")
+    planData.nodeNameByID = getMappingNodeName()
     let res = ""
     if (panel == "stations") {
+        res += `
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-dark text-light" id="">Filter:</span>
+                                            <input id="inputStationFilter" type="text" class="form-control bg-dark text-light" aria-label="Small" onchange="applyStationFilter()"
+                                                aria-describedby="inputGroup-sizing-sm"  value="${stationFilter}">
+                                                <button class="btn btn-success btn-outline-light btn-sm" type="button" onclick="createNode()"><strong>+ Add Station</strong></button>
+                                        </div>
+        `
+
         for (let [key, value] of Object.entries(planData.nodes)) {
-            console.log(key)
-            res += panelItemStation(key, key, value.marker.sizeFactor, value.marker.rotation, value.location, value.marker.width, value.marker.height)
+            if (key.toLowerCase().includes(stationFilter) || planData.nodeNameByID[key].toLowerCase().includes(stationFilter)) {
+                res += panelItemStation(key, planData.nodeNameByID[key], value.marker.sizeFactor, value.marker.rotation, value.location, value.marker.width, value.marker.height,)
+            }
         }
     } else if (panel == "lines") {
         for (let line of planData.lines) {
-            res += panelItemNode(line.color, line.symbol, line.name)
+            res += panelItemLine(line.color, line.symbol, line.name, line.width, line.connections)
         }
     }
 
     containerNodesDiv.innerHTML = res
+}
+
+function downloadData() {
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+        _id: planData._id,
+        planName: planData.planName,
+        nodes: planData.nodes,
+        lines: planData.lines,
+        labels: planData.labels,
+        colorTheme: planData.colorTheme,
+        savedAt: new Date().toISOString(),
+    }));
+    var dlAnchorElem = document.getElementById('downloadAnchorElem');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", planData._id + "_metroplanner_data.json");
+    dlAnchorElem.click();
+}
+
+function redrawEverything() {
+    drawLines()
+    drawLabels()
+    drawMarkers()
+}
+
+function incNode(inp, node, idx) {
+    let d = document.getElementById(inp)
+    d.value++
+    applyNodeLocation(node)
+}
+
+function decNode(inp, node, idx) {
+    let d = document.getElementById(inp)
+    d.value--
+    applyNodeLocation(node)
+}
+function applyNodeLocation(nodeid) {
+    let d = document.getElementById("inputX" + nodeid)
+    planData.nodes[nodeid].location[0] = Number.parseFloat(d.value)
+    d = document.getElementById("inputY" + nodeid)
+    planData.nodes[nodeid].location[1] = Number.parseFloat(d.value)
+    redrawEverything()
+}
+
+function incNodeWidth(nodeID) {
+    let el = document.getElementById("inputNodeWidth" + nodeID)
+    el.value = Number.parseFloat(el.value) + 1
+    applyNodeWidth(nodeID)
+}
+function decNodeWidth(nodeID) {
+    let el = document.getElementById("inputNodeWidth" + nodeID)
+    el.value = Number.parseFloat(el.value) - 1
+    applyNodeWidth(nodeID)
+}
+function incNodeHeight(nodeID) {
+    let el = document.getElementById("inputNodeHeight" + nodeID)
+    el.value = Number.parseFloat(el.value) + 1
+    applyNodeHeight(nodeID)
+}
+function decNodeHeight(nodeID) {
+    let el = document.getElementById("inputNodeHeight" + nodeID)
+    el.value = Number.parseFloat(el.value) - 1
+    applyNodeHeight(nodeID)
+}
+function applyNodeHeight(nodeID) {
+    let el = document.getElementById("inputNodeHeight" + nodeID)
+    planData.nodes[nodeID].marker.height = Number.parseFloat(el.value)
+    drawMarkers()
+}
+function applyNodeWidth(nodeID) {
+    let el = document.getElementById("inputNodeWidth" + nodeID)
+    planData.nodes[nodeID].marker.width = Number.parseFloat(el.value)
+    drawMarkers()
+}
+
+function incNodeRotation(nodeID) {
+    let el = document.getElementById("inputNodeRotation" + nodeID)
+    el.value = Number.parseFloat(el.value) + 45
+    applyNodeRotation(nodeID)
+}
+function decNodeRotation(nodeID) {
+    let el = document.getElementById("inputNodeRotation" + nodeID)
+    el.value = Number.parseFloat(el.value) - 45
+    applyNodeRotation(nodeID)
+}
+function applyNodeRotation(nodeID) {
+    let el = document.getElementById("inputNodeRotation" + nodeID)
+    planData.nodes[nodeID].marker.rotation = Number.parseFloat(el.value)
+    redrawEverything()
+}
+function applySizeFactor(nodeID) {
+    let el = document.getElementById("selectSizeFactor" + nodeID)
+    planData.nodes[nodeID].marker.sizeFactor = Number.parseFloat(el.value)
+    redrawEverything()
+}
+
+function changeNodeID(oldNodeID) {
+    alert("Not implemented")
+    // renderSidePanel("stations")
+}
+
+function changeNodeName(nodeID) {
+    let el = document.getElementById("inputStationName" + nodeID)
+    let newName = el.value
+    changeLabel(nodeID, newName)
+    drawLabels()
+}
+
+function getMappingNodeName() {
+    res = {}
+    for (let item of planData.labels) {
+        res[item.anchor.node] = item.text
+    }
+    return res
+}
+
+function changeLabel(nodeID, newLabelText) {
+    for (let item of planData.labels) {
+        if (item.anchor.node === nodeID) {
+            console.log("Item found!", item)
+            item.text = newLabelText
+            break
+        }
+    }
+    planData.nodeNameByID = getMappingNodeName()
 }
 
 
@@ -650,7 +815,7 @@ function panelItemStation(stationID, stationName, sizeFactor, rotation, location
                                     style="background-color: #222; margin-left:10px; color: #ccc; text-align: center; border-radius: 15px; border-color: #777;"
                                     aria-describedby="inputGroup-sizing-sm" value="${stationID}">
 
-                                <input type="text" class="form-control" aria-label="Small"
+                                <input id="inputStationName${stationID}" type="text" class="form-control" aria-label="Small" onchange="changeNodeName('${stationID}')"
                                     style="margin-left: 5px; width: 40%; background-color: #222; color:white; border-radius: 15px; text-align: center; border-color: #777;"
                                     aria-describedby="inputGroup-sizing-sm" value="${stationName}">
                             </div>
@@ -662,60 +827,62 @@ function panelItemStation(stationID, stationName, sizeFactor, rotation, location
                     <div class="card-body">
                         <!-- Location -->
                         <div class="row bg-inherit mb-2">
-                            <div class="col-md-6 bg-inherit ml0 ml-0" style="padding:0; ">
-                                <div class="input-group input-group-sm" style="">
+                            <div class="col-md-6 bg-inherit ml0 ml-0">
+                                <div class="input-group input-group-sm">
                                     <span class="input-group-prepend input-group-text bg-dark text-light" id="">x:</span>
-                                    <button class="btn btn-outline-light" type="button">-</button>
-                                    <span class="input-group-text bg-dark text-light" id="">${location[0]}</span>
-                                    <button class="input-group-append btn btn-outline-light" type="button">+</button>
-                                        <!--<div class="input-group-btn">-->
+                                    <button class="btn btn-outline-light" type="button" onclick="decNode('inputX${stationID}', '${stationID}', 0)">-</button>
+                                    <input id="inputX${stationID}" type="text" class="form-control bg-dark text-light" aria-label="Small"
+                                        aria-describedby="inputGroup-sizing-sm" onchange="applyNodeLocation('${stationID}')" value="${location[0]}">
+                                    <button class="input-group-append btn btn-outline-light" type="button" onclick="incNode('inputX${stationID}', '${stationID}', 0)">+</button>
                                 </div>
-
                             </div>
-                            <div class="col-md-6 bg-inherit ml0 ml-0" style="padding:0">
+                            <div class="col-md-6 bg-inherit ml0 ml-0">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text bg-dark text-light" id="">y:</span>
-                                    <button class="btn btn-outline-light" type="button">-</button>
-                                    <span class="input-group-text bg-dark text-light" id="">${location[1]}</span>
-                                    <button class="btn btn-outline-light" type="button">+</button>
+                                    <button class="btn btn-outline-light" type="button" onclick="decNode('inputY${stationID}', '${stationID}', 1)">-</button>
+                                    <input id="inputY${stationID}" type="text" onchange="applyNodeLocation('${stationID}')" class="form-control bg-dark text-light" aria-label="Small"
+                                        aria-describedby="inputGroup-sizing-sm" value="${location[1]}">
+                                    <button class="btn btn-outline-light" type="button" onclick="incNode('inputY${stationID}', '${stationID}', 1)">+</button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Dimensions -->
                         <div class="row bg-inherit mb-2">
-                            <div class="col-md-6 bg-inherit " style="padding: 0">
+                            <div class="col-md-6 bg-inherit">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text bg-dark text-light" id="">Width:</span>
-                                    <button class="btn btn-outline-light" type="button">-</button>
-                                    <span class="input-group-text bg-dark text-light" id="" style="">${width || 0}</span>
-                                    <button class="btn btn-outline-light" type="button">+</button>
+                                    <button class="btn btn-outline-light" type="button" onclick="decNodeWidth('${stationID}')">-</button>
+                                    <input id="inputNodeWidth${stationID}" type="text" class="form-control bg-dark text-light" aria-label="Small" onchange="applyNodeWidth('${stationID}')"
+                                        aria-describedby="inputGroup-sizing-sm" value="${width || 0}">
+                                    <button class="btn btn-outline-light" onclick="incNodeWidth('${stationID}')" type="button">+</button>
                                 </div>
                             </div>
-                            <div class="col-md-6 bg-inherit " style="padding: 0">
+                            <div class="col-md-6 bg-inherit">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text bg-dark text-light" id="">Height:</span>
-                                    <button class="btn btn-outline-light" type="button">-</button>
-                                    <span class="input-group-text bg-dark text-light" id="">${height || 0}</span>
-                                    <button class="btn btn-outline-light" type="button">+</button>
+                                    <button class="btn btn-outline-light" type="button" onclick="decNodeHeight('${stationID}')">-</button>
+                                    <input id="inputNodeHeight${stationID}" type="text" class="form-control bg-dark text-light" aria-label="Small" onchange="applyNodeHeight('${stationID}')"
+                                        aria-describedby="inputGroup-sizing-sm" value="${height || 0}">
+                                    <button class="btn btn-outline-light" onclick="incNodeHeight('${stationID}')" type="button">+</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row bg-inherit">
-                            <div class="col-md-6 bg-inherit" style="padding: 0">
+                            <div class="col-md-7 bg-inherit">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text bg-dark text-light" id="">Rotation:</span>
-                                    <button class="btn btn-outline-light" type="button">-</button>
-                                    <span class="input-group-text bg-dark text-light" id="">${rotation || 0}°</span>
-                                    <!--<input type="text" class="form-control" style="width: 10%">-->
-                                    <button class="btn btn-outline-light" type="button">+</button>
+                                    <button class="btn btn-outline-light" onclick="decNodeRotation('${stationID}')" type="button">-</button>
+                                    <input id="inputNodeRotation${stationID}" type="text" class="form-control bg-dark text-light" aria-label="Small" onchange="applyNodeRotation('${stationID}')"
+                                        aria-describedby="inputGroup-sizing-sm" value="${rotation || 0}">
+                                    <button class="btn btn-outline-light" onclick="incNodeRotation('${stationID}')" type="button">+</button>
                                 </div>
                             </div>
-                            <div class="col-md-6 bg-inherit" style="padding: 0">
+                            <div class="col-md-5 bg-inherit">
                                 <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-dark text-light" id="">Size Factor:</span>
-                                    <select class="custom-select bg-dark text-light rounded-right"
+                                    <span class="input-group-text bg-dark text-light" id="">Scale:</span>
+                                    <select id="selectSizeFactor${stationID}" class="custom-select bg-dark text-light rounded-right" onchange="applySizeFactor('${stationID}')"
                                         id="inputGroupSelect02" value="${sizeFactor || 1}">
                                         <option selected>1</option>
                                         <option value="2">√2</option>
@@ -728,8 +895,118 @@ function panelItemStation(stationID, stationName, sizeFactor, rotation, location
             </div>`
 }
 
-function panelItemNode(lineColor, lineSymbol, lineName) {
+function addStation(lineID, idx, index) {
+    for (let item of planData.lines) {
+        if (item.symbol === lineID) {
+            let stops = item.connections[idx].nodes
+            let obj = {
+                node: "",
+                xShift: 0,
+                yShift: 0
+            }
+            if (index >= stops.length) {
+                stops.push(obj)
+            }
+            else {
+
+                stops.splice(index, 0, obj);
+            }
+
+
+        }
+    }
+    renderSidePanel("lines")
+}
+
+function addConnections(lineID) {
+    for (let item of planData.lines) {
+        if (item.symbol === lineID) {
+            item.connections.push({
+                nodes: []
+            })
+        }
+    }
+    renderSidePanel("lines")
+}
+
+function panelSubItemStops(cons, idx, lineID) {
+    let res = ''
+    res += `
+                                <div class="row bg-inherit mt-2 mb-2">
+                                    <div class="col-md-12 bg-inherit">
+                                        <button class="btn btn-success btn-outline-light btn-sm" type="button" onclick="addStation('${lineID}', ${idx}, 0)"><strong>+ Add Station</strong></button>
+                                    </div>
+                                </div>
+                                `
+
+    for (let [index, stop] of cons.nodes.entries()) {
+        console.log(stop)
+        res += `
+                                <div class="row bg-inherit mb-3 mt-3" style="">
+                                    <div class="col-md-6 bg-inherit">
+                                        <div class="input-group input-group-sm" style="">
+                                            <span class="input-group-prepend input-group-text bg-dark text-light" id="">Node:</span>
+                                            <input id="anchorNodeInput" class="form-control bg-dark text-light custom-select" aria-label="Small"
+                                                aria-describedby="inputGroup-sizing-sm" list="nodesDataList" value="${stop.node}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 bg-inherit">
+                                            <button class="btn btn-sm btn-outline-light" type="button">v</button>
+                                            <button class="btn btn-sm btn-outline-light" type="button">^</button>
+                                            <button class="btn btn-sm btn-outline-light bg-success" onclick="addStation('${lineID}', ${idx}, ${index + 1})" type="button">+</button>
+                                            <button class="btn btn-sm btn-outline-light bg-danger" type="button">x</button>
+                                    </div>
+                                    <div class="col-md-6 bg-inherit">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-dark text-light" id="">x:</span>
+                                            <button class="btn btn-outline-light" type="button">-</button>
+                                            <input type="text" class="form-control bg-dark text-light" aria-label="Small"
+                                                aria-describedby="inputGroup-sizing-sm" value="${stop.xShift || 0}">
+                                            <button class="btn btn-outline-light" type="button">+</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 bg-inherit">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-dark text-light" id="">y:</span>
+                                            <button class="btn btn-outline-light" type="button">-</button>
+                                            <input type="text" class="form-control bg-dark text-light" aria-label="Small"
+                                                aria-describedby="inputGroup-sizing-sm" value="${stop.yShift || 0}">
+                                            <button class="btn btn-outline-light" type="button">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+    `
+    }
+    return res
+}
+
+function panelItemLine(lineColor, lineSymbol, lineName, lineWidth, lineConnections) {
+    let stopDivs = ''
+    let options = ''
+    for (let [k, v] of Object.entries(planData.nodes)) {
+        options += `
+                                                <option value="${k}">${k}</option>
+        `
+    }
+    for (const [idx, item] of lineConnections.entries()) {
+        stopDivs += `
+                                <div class="row bg-inherit mb-2" style="border: 2px solid #00f6">
+                                    <div class="col-md-12 bg-inherit ml0 ml-0">
+                                        ${panelSubItemStops(item, idx, lineSymbol)}
+                                    </div>
+                                </div>
+    `}
+    stopDivs += `
+                                <div class="row bg-inherit mb-2">
+                                    <div class="col-md-12 bg-inherit ml0 ml-0">
+                                        <button class="btn btn-success btn-outline-light " type="button" onclick="addConnections('${lineSymbol}')"><strong>Add more connected Nodes to this line</strong></button>
+                                    </div>
+                                </div>
+                                `
     return `
+            <datalist id="nodesDataList">
+                ${options}
+            </datalist>
             <div class="card ">
                 <div class="card-header " id="headingOne" style=" background-color: ${lineColor}">
                     <div class="row">
@@ -755,13 +1032,60 @@ function panelItemNode(lineColor, lineSymbol, lineName) {
                 <hr style="margin: 0">
                 <div id="collapse_${lineSymbol}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
+                        Settings:
+                        <!-- Basics -->
+                        <div class="row bg-inherit mt-2 mb-2">
+                            <div class="col-md-8 bg-inherit ml0 ml-0">
+                                <div class="input-group input-group-sm" style="">
+                                    <span class="input-group-prepend input-group-text bg-dark text-light" id="">Color:</span>
+                                    <input id="lineColorTextInput" class="form-control bg-dark text-light custom-select" aria-label="Small"
+                                        aria-describedby="inputGroup-sizing-sm" list="colorDataList" value="${lineColor}">
+                                    <datalist id="colorDataList">
+                                        <option value="hsl(0, 100%, 50%)">Line Color 1</option>
+                                        <option value="hsl(40, 100%, 50%)">Line Color 2</option>
+                                        <option value="hsl(80, 100%, 50%)">Line Color 3</option>
+                                        <option value="hsl(120, 100%, 50%)">Line Color 4</option>
+                                        <option value="hsl(160, 100%, 50%)">Line Color 5</option>
+                                        <option value="hsl(200, 100%, 50%)">Line Color 6</option>
+                                        <option value="hsl(240, 100%, 50%)">Line Color 7</option>
+                                        <option value="hsl(280, 100%, 50%)">Line Color 8</option>
+                                        <option value="hsl(320, 100%, 50%)">Line Color 9</option>
+
+                                        <option value="white">White</option>
+                                        <option value="black">Black</option>
+
+                                        <option value="hsl(207.2, 89.8%, 23.1%)">Water</option>
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-md-4 bg-inherit ml0 ml-0">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-dark text-light" id="">Width:</span>
+                                    <input type="text" class="form-control bg-dark text-light" aria-label="Small"
+                                        aria-describedby="inputGroup-sizing-sm" value="${lineWidth}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        Connections:
+                        <!-- Connections-->
+                        <div class="row bg-inherit mb-2">
+                            <div class="col-md-12 bg-inherit">
+                                ${stopDivs}
+                            </div>
+                        </div>
+
+
                         <!-- Location -->
                         <div class="row bg-inherit mb-2">
                             <div class="col-md-6 bg-inherit ml0 ml-0" style="padding:0; ">
                                 <div class="input-group input-group-sm" style="">
                                     <span class="input-group-prepend input-group-text bg-dark text-light" id="">x:</span>
                                     <button class="btn btn-outline-light" type="button">-</button>
-                                    <span class="input-group-text bg-dark text-light" id="">${0}</span>
+                                    <input type="text" class="form-control bg-dark text-light" aria-label="Small"
+                                        aria-describedby="inputGroup-sizing-sm" value="${0}">
                                     <button class="input-group-append btn btn-outline-light" type="button">+</button>
                                         <!--<div class="input-group-btn">-->
                                 </div>
