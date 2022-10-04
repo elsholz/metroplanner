@@ -109,6 +109,36 @@ function loadCSS(baseCSS) {
     // document.getElementsByTagName('head')[0].appendChild(style);
 
     // document.getElementById('someElementId').className = 'cssClass';
+    let shadow = coordinate_scalar / 4
+    style.innerHTML += `
+        .label{
+            text-shadow: 0 0 ${shadow}px black, 0px 0px ${shadow}px black, 0px 0px ${shadow}px black;
+        }
+
+        .label.centered {
+            text-shadow: none;
+        }
+
+        body {
+            font-family: Oxygen-Sans, Arial, Helvetica, sans-serif;
+            margin: 0px;
+            background-color: #112;
+            color: white;
+            font-weight: bold;
+            font-size: ${coordinate_scalar / 20 * 18}px;
+        }
+
+        .marker {
+            border-style: solid;
+            border-color: #eef;
+            color: #000;
+            background-color: #002;
+            transform-origin: top left;
+            box-shadow: 0px 0px ${coordinate_scalar / 20 * 3}px ${coordinate_scalar / 20}px #aaf;
+            border-radius: ${coordinate_scalar / 2}px;
+            border-width: ${coordinate_scalar / 10}px;
+        }
+    `
 }
 
 function addCSSLine(lineClass, backgroundColor, borderRadius, boxShadow, borderWidth, borderStyle, borderColor) {
@@ -388,7 +418,7 @@ function placeLabel(lbl) {
                     height: "0px",
                     "text-align": "left",
                 },
-                class: "label",
+                class: "label " + labelClass,
             },
             innerHTML: (labelText || "")
         }
@@ -584,19 +614,19 @@ function renderAll() {
 
             label.style.left = /*parseFloat(label_node_data.attributes.style.left.slice(0, -2)) + */ /****** label_orig_left + get_x(label_point[0]) + "px"
 label.style.top = /*parseFloat(label_node_data.attributes.style.top.slice(0, -2)) +*/ /*********label_orig_top + get_y(label_point[1]) + "px"
-                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                    
-                                                                                                                                                                                                                        function stop_dragging() {
-                                                                                                                                                                                                                            document.onmouseup = null;
-                                                                                                                                                                                                                            document.onmousemove = null;
-                                                                                                                                                                                                                            nodes[marker.id].location = [
-                                                                                                                                                                                                                                Math.round(- diff_x + (marker.style.left.slice(0, -2)) / coordinate_scalar + marker.style.width.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                                                                                                                Math.round(- diff_y + (marker.style.top.slice(0, -2)) / coordinate_scalar + marker.style.height.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                                                                                                            ]
-                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                    
-                                                                                                                                                                                                                    add_events() ******/
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                            function stop_dragging() {
+                                                                                                                                                                                                                                                document.onmouseup = null;
+                                                                                                                                                                                                                                                document.onmousemove = null;
+                                                                                                                                                                                                                                                nodes[marker.id].location = [
+                                                                                                                                                                                                                                                    Math.round(- diff_x + (marker.style.left.slice(0, -2)) / coordinate_scalar + marker.style.width.slice(0, -2) / 2 / coordinate_scalar),
+                                                                                                                                                                                                                                                    Math.round(- diff_y + (marker.style.top.slice(0, -2)) / coordinate_scalar + marker.style.height.slice(0, -2) / 2 / coordinate_scalar),
+                                                                                                                                                                                                                                                ]
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                        add_events() ******/
 
 
     //////// }
@@ -617,10 +647,15 @@ label.style.top = /*parseFloat(label_node_data.attributes.style.top.slice(0, -2)
 
 
 let stationFilter = ''
+let lineFilter = ''
 
 function applyStationFilter() {
     stationFilter = document.getElementById("inputStationFilter").value.toLowerCase()
     renderSidePanel("stations")
+}
+function applyLineFilter() {
+    lineFilter = document.getElementById("inputLineFilter").value.toLowerCase()
+    renderSidePanel("lines")
 }
 
 function createNode() {
@@ -641,6 +676,17 @@ function createNode() {
         }
     })
     renderSidePanel("stations")
+}
+
+function createLine() {
+    planData.lines.push({
+        symbol: lineFilter,
+        name: lineFilter,
+        connections: [],
+        color: "white",
+        width: 0.5,
+    })
+    renderSidePanel("lines")
 }
 
 function renderSidePanel(panel) {
@@ -664,8 +710,18 @@ function renderSidePanel(panel) {
             }
         }
     } else if (panel == "lines") {
+        res += `
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-dark text-light" id="">Filter:</span>
+                                            <input id="inputLineFilter" type="text" class="form-control bg-dark text-light" aria-label="Small" onchange="applyLineFilter()"
+                                                aria-describedby="inputGroup-sizing-sm"  value="${lineFilter}">
+                                                <button class="btn btn-success btn-outline-light btn-sm" type="button" onclick="createLine()"><strong>+ Add Line</strong></button>
+                                        </div>
+        `
         for (let line of planData.lines) {
-            res += panelItemLine(line.color, line.symbol, line.name, line.width, line.connections)
+            if (line.symbol.toLowerCase().includes(lineFilter) || line.name.toLowerCase().includes(lineFilter)) {
+                res += panelItemLine(line.color, line.symbol, line.name, line.width, line.connections)
+            }
         }
     }
 
@@ -796,7 +852,6 @@ function changeLabel(nodeID, newLabelText) {
     planData.nodeNameByID = getMappingNodeName()
 }
 
-
 // Templates
 function panelItemStation(stationID, stationName, sizeFactor, rotation, location, width, height) {
     return `
@@ -895,27 +950,40 @@ function panelItemStation(stationID, stationName, sizeFactor, rotation, location
             </div>`
 }
 
-function addStation(lineID, idx, index) {
+function addStation(lineID, conIdx, element) {
+    let container = element.parentNode.parentNode.parentNode
+    let children = Array.from(container.children)
+
+    console.log("container:", container)
+    console.log("children:", children)
+
     for (let item of planData.lines) {
         if (item.symbol === lineID) {
-            let stops = item.connections[idx].nodes
+            let stops = item.connections[conIdx].nodes
             let obj = {
                 node: "",
                 xShift: 0,
                 yShift: 0
             }
+
+            let index = children.indexOf(element)
+
+            let p = new DOMParser()
+            let newElement = p.parseFromString(stopNodeHTML(obj, lineID, conIdx), "text/html").firstChild.childNodes[1].childNodes[0]
+            console.log("new Element:", newElement)
+
             if (index >= stops.length) {
                 stops.push(obj)
+                container.appendChild(newElement)
             }
             else {
-
                 stops.splice(index, 0, obj);
+                container.insertBefore(newElement, element.parentNode.parentNode)
             }
-
-
         }
     }
-    renderSidePanel("lines")
+    // renderSidePanel("lines")
+    drawLines()
 }
 
 function addConnections(lineID) {
@@ -931,17 +999,40 @@ function addConnections(lineID) {
 
 function panelSubItemStops(cons, idx, lineID) {
     let res = ''
+
+    for (let [index, stop] of cons.nodes.entries()) {
+        // console.log(stop)
+        res += stopNodeHTML(stop, lineID, idx)
+    }
+
     res += `
                                 <div class="row bg-inherit mt-2 mb-2">
                                     <div class="col-md-12 bg-inherit">
-                                        <button class="btn btn-success btn-outline-light btn-sm" type="button" onclick="addStation('${lineID}', ${idx}, 0)"><strong>+ Add Station</strong></button>
+                                        <button class="btn btn-success btn-outline-light btn-sm" type="button" onclick="addStation('${lineID}', ${idx}, this)"><strong>+ Add Station</strong></button>
                                     </div>
                                 </div>
                                 `
 
-    for (let [index, stop] of cons.nodes.entries()) {
-        console.log(stop)
-        res += `
+    return res
+}
+
+function removeStop(lineID, idx, stop) {
+    for (let item of planData.lines) {
+        if (item.symbol === lineID) {
+            let stops = item.connections[idx].nodes
+            let itemIndex = Array.from(stop.parentNode.parentNode.parentNode.children).indexOf(stop.parentNode.parentNode)
+
+            stops.splice(itemIndex, 1)
+            stop.parentNode.parentNode.parentNode.removeChild(stop.parentNode.parentNode)
+        }
+    }
+
+    console.log("Drawing lines")
+    drawLines()
+}
+
+function stopNodeHTML(stop, lineID, idx) {
+    return `
                                 <div class="row bg-inherit mb-3 mt-3" style="">
                                     <div class="col-md-6 bg-inherit">
                                         <div class="input-group input-group-sm" style="">
@@ -953,8 +1044,8 @@ function panelSubItemStops(cons, idx, lineID) {
                                     <div class="col-md-6 bg-inherit">
                                             <button class="btn btn-sm btn-outline-light" type="button">v</button>
                                             <button class="btn btn-sm btn-outline-light" type="button">^</button>
-                                            <button class="btn btn-sm btn-outline-light bg-success" onclick="addStation('${lineID}', ${idx}, ${index + 1})" type="button">+</button>
-                                            <button class="btn btn-sm btn-outline-light bg-danger" type="button">x</button>
+                                            <button class="btn btn-sm btn-outline-light bg-success" onclick="addStation('${lineID}', ${idx}, this)" type="button">+</button>
+                                            <button class="btn btn-sm btn-outline-light bg-danger" onclick="removeStop('${lineID}', ${idx}, this)" type="button">x</button>
                                     </div>
                                     <div class="col-md-6 bg-inherit">
                                         <div class="input-group input-group-sm">
@@ -976,8 +1067,6 @@ function panelSubItemStops(cons, idx, lineID) {
                                     </div>
                                 </div>
     `
-    }
-    return res
 }
 
 function panelItemLine(lineColor, lineSymbol, lineName, lineWidth, lineConnections) {
@@ -1146,3 +1235,6 @@ function panelItemLine(lineColor, lineSymbol, lineName, lineWidth, lineConnectio
                 </div>
             </div>`
 }
+
+let expandedLines = []
+let expandedStations = []
