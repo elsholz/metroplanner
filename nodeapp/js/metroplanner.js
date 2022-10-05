@@ -614,19 +614,19 @@ function renderAll() {
 
             label.style.left = /*parseFloat(label_node_data.attributes.style.left.slice(0, -2)) + */ /****** label_orig_left + get_x(label_point[0]) + "px"
 label.style.top = /*parseFloat(label_node_data.attributes.style.top.slice(0, -2)) +*/ /*********label_orig_top + get_y(label_point[1]) + "px"
-                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                            function stop_dragging() {
-                                                                                                                                                                                                                                                document.onmouseup = null;
-                                                                                                                                                                                                                                                document.onmousemove = null;
-                                                                                                                                                                                                                                                nodes[marker.id].location = [
-                                                                                                                                                                                                                                                    Math.round(- diff_x + (marker.style.left.slice(0, -2)) / coordinate_scalar + marker.style.width.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                                                                                                                                    Math.round(- diff_y + (marker.style.top.slice(0, -2)) / coordinate_scalar + marker.style.height.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                        add_events() ******/
+                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                            function stop_dragging() {
+                                                                                                                                                                                                                                                                                                document.onmouseup = null;
+                                                                                                                                                                                                                                                                                                document.onmousemove = null;
+                                                                                                                                                                                                                                                                                                nodes[marker.id].location = [
+                                                                                                                                                                                                                                                                                                    Math.round(- diff_x + (marker.style.left.slice(0, -2)) / coordinate_scalar + marker.style.width.slice(0, -2) / 2 / coordinate_scalar),
+                                                                                                                                                                                                                                                                                                    Math.round(- diff_y + (marker.style.top.slice(0, -2)) / coordinate_scalar + marker.style.height.slice(0, -2) / 2 / coordinate_scalar),
+                                                                                                                                                                                                                                                                                                ]
+                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                        add_events() ******/
 
 
     //////// }
@@ -1024,12 +1024,107 @@ function removeStop(lineID, idx, stop) {
 
             stops.splice(itemIndex, 1)
             stop.parentNode.parentNode.parentNode.removeChild(stop.parentNode.parentNode)
+            break
         }
     }
 
     console.log("Drawing lines")
     drawLines()
 }
+
+function getConIdx(stop) {
+    return Array.from(stop.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.children).
+        indexOf(stop.parentNode.parentNode.parentNode.parentNode.parentNode)
+}
+
+function getStopIdx(stop) {
+    return Array.from(stop.parentNode.parentNode.parentNode.parentNode.children).indexOf(stop.parentNode.parentNode.parentNode)
+}
+
+function applyXShift(lineID, element) {
+    console.log(element)
+    console.log(getStopIdx(element))
+    console.log(getConIdx(element))
+
+    for (let item of planData.lines) {
+        if (item.symbol == lineID) {
+            item.connections[getConIdx(element)].nodes[getStopIdx(element)].xShift = Number.parseFloat(element.value)
+            console.log("Applying xShift!")
+            console.log(element.value)
+            break
+        }
+    }
+
+    drawLines()
+}
+
+function applyYShift(lineID, element) {
+    for (let item of planData.lines) {
+        if (item.symbol == lineID) {
+            item.connections[getConIdx(element)].nodes[getStopIdx(element)].yShift = Number.parseFloat(element.value)
+            break
+        }
+    }
+
+    drawLines()
+}
+
+function incYShift(lineID, element) {
+    if (element.parentNode.parentNode.parentNode.children[0].children[0].children[1].value in planData.nodes) {
+        let p = element.parentNode.children[2]
+        p.value++
+        applyYShift(lineID, p)
+    }
+}
+
+function decYShift(lineID, element) {
+    if (element.parentNode.parentNode.parentNode.children[0].children[0].children[1].value in planData.nodes) {
+        let p = element.parentNode.children[2]
+        p.value--
+        applyYShift(lineID, p)
+    }
+}
+
+function incXShift(lineID, element) {
+    if (element.parentNode.parentNode.parentNode.children[0].children[0].children[1].value in planData.nodes) {
+        let p = element.parentNode.children[2]
+        p.value++
+        applyXShift(lineID, p)
+    }
+}
+
+function decXShift(lineID, element) {
+    if (element.parentNode.parentNode.parentNode.children[0].children[0].children[1].value in planData.nodes) {
+        let p = element.parentNode.children[2]
+        p.value--
+        applyXShift(lineID, p)
+    }
+}
+
+function changeStopNode(lineID, element){
+    console.log(element)
+    let stopIdx = getStopIdx(element)
+    let conIdx = getConIdx(element)
+    console.log(stopIdx, conIdx)
+
+    for (let item of planData.lines){
+        if (item.symbol == lineID){
+            let node = element.value
+            console.log(node)
+            if (node in planData.nodes){
+                item.connections[getConIdx(element)].nodes[getStopIdx(element)].node = node
+            }
+            else {
+                let coords = node.split(",");
+                item.connections[getConIdx(element)].nodes[getStopIdx(element)].node = [Number.parseFloat(coords[0]), Number.parseFloat(coords[1])]
+            }
+            break
+        }
+    }
+    
+    drawLines()
+}
+
 
 function stopNodeHTML(stop, lineID, idx) {
     return `
@@ -1038,7 +1133,7 @@ function stopNodeHTML(stop, lineID, idx) {
                                         <div class="input-group input-group-sm" style="">
                                             <span class="input-group-prepend input-group-text bg-dark text-light" id="">Node:</span>
                                             <input id="anchorNodeInput" class="form-control bg-dark text-light custom-select" aria-label="Small"
-                                                aria-describedby="inputGroup-sizing-sm" list="nodesDataList" value="${stop.node}">
+                                                aria-describedby="inputGroup-sizing-sm" list="nodesDataList" value="${stop.node}" onchange="changeStopNode('${lineID}', this)">
                                         </div>
                                     </div>
                                     <div class="col-md-6 bg-inherit">
@@ -1050,19 +1145,19 @@ function stopNodeHTML(stop, lineID, idx) {
                                     <div class="col-md-6 bg-inherit">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text bg-dark text-light" id="">x:</span>
-                                            <button class="btn btn-outline-light" type="button">-</button>
-                                            <input type="text" class="form-control bg-dark text-light" aria-label="Small"
+                                            <button class="btn btn-outline-light" type="button" onclick="decXShift('${lineID}', this)">-</button>
+                                            <input type="text" class="form-control bg-dark text-light" aria-label="Small" onchange="applyXShift('${lineID}', this)"
                                                 aria-describedby="inputGroup-sizing-sm" value="${stop.xShift || 0}">
-                                            <button class="btn btn-outline-light" type="button">+</button>
+                                            <button class="btn btn-outline-light" type="button" onclick="incXShift('${lineID}', this)">+</button>
                                         </div>
                                     </div>
                                     <div class="col-md-6 bg-inherit">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text bg-dark text-light" id="">y:</span>
-                                            <button class="btn btn-outline-light" type="button">-</button>
-                                            <input type="text" class="form-control bg-dark text-light" aria-label="Small"
+                                            <button class="btn btn-outline-light" type="button" onclick="decYShift('${lineID}', this)">-</button>
+                                            <input type="text" class="form-control bg-dark text-light" aria-label="Small" onchange="applyYShift('${lineID}', this)"
                                                 aria-describedby="inputGroup-sizing-sm" value="${stop.yShift || 0}">
-                                            <button class="btn btn-outline-light" type="button">+</button>
+                                            <button class="btn btn-outline-light" type="button" onclick="incYShift('${lineID}', this)">+</button>
                                         </div>
                                     </div>
                                 </div>
