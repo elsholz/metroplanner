@@ -162,66 +162,33 @@ function getNodeData(key) {
 
 function getConnectionPoint(anchor) {
     if (typeof anchor.node == "string") {
-        let nodeId = anchor.node
-        let conPX = anchor.xShift || 0
-        let conPY = anchor.yShift || 0
+        if (anchor.node in planData.nodes) {
 
-        let node = planData.nodes[nodeId]
-        let locX = node.location[0]
-        let locY = node.location[1]
-        let rotation = node.marker.rotation || 0
-        let sizeFactor = node.marker.sizeFactor || 1
+            let nodeId = anchor.node
+            let conPX = anchor.xShift || 0
+            let conPY = anchor.yShift || 0
 
-        locX += Math.sin(deg_to_rad(90 - rotation)) * conPX * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
-        locY -= Math.cos(deg_to_rad(90 - rotation)) * conPX * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
+            let node = planData.nodes[nodeId]
+            let locX = node.location[0]
+            let locY = node.location[1]
+            let rotation = node.marker.rotation || 0
+            let sizeFactor = node.marker.sizeFactor || 1
 
-        if (conPY) {
-            locX += Math.sin(deg_to_rad(rotation)) * conPY * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
-            locY += Math.cos(deg_to_rad(rotation)) * conPY * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
+            locX += Math.sin(deg_to_rad(90 - rotation)) * conPX * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
+            locY -= Math.cos(deg_to_rad(90 - rotation)) * conPX * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
+
+            if (conPY) {
+                locX += Math.sin(deg_to_rad(rotation)) * conPY * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
+                locY += Math.cos(deg_to_rad(rotation)) * conPY * sizeFactor// * Math.SQRT2 * coordinate_scalar / 2
+            }
+
+            return [locX, locY]
         }
-
-        return [locX, locY]
     }
     else {
-        return anchor.node
+        return [anchor.node[0] + (anchor.xShift || 0), anchor.node[1] + (anchor.yShift || 0)]
     }
 }
-// // take a station name + optional selector and return coordinates of the point to connect to
-// function get_connection_point(nodes, node_sel) {
-//     if (typeof node_sel == "string") {
-//         // named node without connection point (then, the location is used)
-//         // console.log(node_sel)
-//         let split_str = node_sel.split(",")
-//         let node_name = split_str[0]
-//         let con_p_x = split_str[1] || 0
-//         let con_p_y = split_str[2] || 0
-// 
-//         let loc_x = nodes[node_name].location[0]
-//         let loc_y = nodes[node_name].location[1]
-//         let rotation = nodes[node_name].marker.rotation || 0
-//         let width_factor = nodes[node_name].marker.sizeFactor || 1
-// 
-//         // get_y(location_y) - Math.sin(deg_to_rad(45 - rotation)) * Math.SQRT2 * coordinate_scalar / 2 + "px"
-//         // get_x(location_x) - Math.cos(deg_to_rad(45 - rotation)) * Math.SQRT2 * coordinate_scalar / 2 + "px"
-// 
-//         loc_x += Math.sin(deg_to_rad(90 - rotation)) * con_p_x * width_factor// * Math.SQRT2 * coordinate_scalar / 2
-//         loc_y -= Math.cos(deg_to_rad(90 - rotation)) * con_p_x * width_factor// * Math.SQRT2 * coordinate_scalar / 2
-// 
-//         if (con_p_y) {
-//             loc_x += Math.sin(deg_to_rad(rotation)) * con_p_y * width_factor// * Math.SQRT2 * coordinate_scalar / 2
-//             loc_y += Math.cos(deg_to_rad(rotation)) * con_p_y * width_factor// * Math.SQRT2 * coordinate_scalar / 2
-//         }
-// 
-//         return [loc_x, loc_y]
-//     }
-//     else if (Array.isArray(node_sel) && typeof node_sel[0] == "number" && typeof node_sel[1] == "number") {
-//         // unnamed node
-//         return node_sel
-//     }
-//     else
-//         throw Error(`Node ${node_sel} doesn't match pattern <String> or <Array[Number, Number]>`)
-// }
-
 
 function placeLine() {
 
@@ -250,18 +217,6 @@ function drawLines() {
             // "transform-origin": "top left",
         )
 
-        // check if stops' pattern matches either [a, b, c,…]. If so, convert to [[a, b, c, …]]
-        // let wrap_stops = true
-
-        // for (const [idx, s] of Object.entries(stops)) {
-        //     if (!((Array.isArray(s) && typeof s[0] in { "number": null, "string": null } && typeof s[1] == "number" && s.length == 2) || typeof s == "string")) {
-        //         wrap_stops = false
-        //     }
-        // }
-
-        //if (wrap_stops)
-        //    stops = [stops]
-
         // iterate through list of lists, consisting of nodes to be connected each
         for (const [index, connections] of Object.entries(stops)) {
             // iterate through the list of nodes that are to be connected
@@ -275,31 +230,33 @@ function drawLines() {
                 let to = getConnectionPoint(inbound_station)
                 // console.log("Line Segment", from, to, "\n",outbound_station, inbound_station)
 
-                let dx = to[0] - from[0]
-                let dy = to[1] - from[1]
+                if (to && from) {
+                    let dx = to[0] - from[0]
+                    let dy = to[1] - from[1]
 
-                let direction = (360 + 90 - (Math.atan2(dx, dy)) * (180 / Math.PI)) % 360
-                let length = Math.sqrt(dx ** 2 + dy ** 2)
+                    let direction = (360 + 90 - (Math.atan2(dx, dy)) * (180 / Math.PI)) % 360
+                    let length = Math.sqrt(dx ** 2 + dy ** 2)
 
 
-                let line_segment_data = {
-                    tag: "div",
-                    attributes: {
-                        id: key + "_" + from + "_" + to,
-                        style: {
-                            left: get_left_shift(direction, value.width + 2 * border_width) + get_x(from[0]) + "px",
-                            top: get_top_shift(direction, value.width + 2 * border_width) + get_y(from[1]) + "px",
-                            transform: `rotate(${direction}deg)`,
-                            width: value.width * coordinate_scalar + length * coordinate_scalar + "px",//((value.height * coordinate_scalar) || 16) + "px",
-                            height: (value.width - 2 * border_width) * coordinate_scalar + "px",
+                    let line_segment_data = {
+                        tag: "div",
+                        attributes: {
+                            id: key + "_" + from + "_" + to,
+                            style: {
+                                left: get_left_shift(direction, value.width + 2 * border_width) + get_x(from[0]) + "px",
+                                top: get_top_shift(direction, value.width + 2 * border_width) + get_y(from[1]) + "px",
+                                transform: `rotate(${direction}deg)`,
+                                width: value.width * coordinate_scalar + length * coordinate_scalar + "px",//((value.height * coordinate_scalar) || 16) + "px",
+                                height: (value.width - 2 * border_width) * coordinate_scalar + "px",
+                            },
+                            class: "line_segment " + lineClass
                         },
-                        class: "line_segment " + lineClass
-                    },
-                }
-                patch(line_segment_data.attributes, value.attributes)
+                    }
+                    patch(line_segment_data.attributes, value.attributes)
 
-                set_attributes(line_segment, line_segment_data.attributes)
-                div_for_lines.appendChild(line_segment)
+                    set_attributes(line_segment, line_segment_data.attributes)
+                    div_for_lines.appendChild(line_segment)
+                }
             }
         }
     }
@@ -308,16 +265,8 @@ function drawLines() {
 function placeMarker(key, value) {
     let node_type = value.type || "regularStop"
 
-    // let label_spec = value.label.class || "right_ascending,0,0"
-    // console.log(label_spec)
-    // let label_type = label_spec.split(",")[0]
-    // console.log(label_type)
-    // let lx = (label_spec.split(",")[1]) || 0
-    // let ly = (label_spec.split(",")[2]) || 0
-
     let node_types = {}
 
-    /////// let node_type_wrapper_data = (node_types[node_type] || { wrapper: {} }).wrapper
     let node_type_marker_data = (node_types[node_type] || { marker: {} }).marker
 
     let border_width = 2;
@@ -329,21 +278,8 @@ function placeMarker(key, value) {
         return get_x(location_x) - Math.cos(deg_to_rad(45 - rotation)) * Math.SQRT2 * coordinate_scalar / 2 + "px"
     }
 
-    // global defaults
-    // let wrapper_node_data = {
-    //     tag: "div",
-    //     attributes: {
-    //         id: key,
-    //         style: {
-    //             "z-index": 5,
-    //         },
-    //         class: "wrapper",
-    //     },
-    // }
-
     let left = get_station_left(value.location[0], value.marker.rotation || 0)
     let top = get_station_top(value.location[1], value.marker.rotation || 0)
-
 
     let marker_node_data = {
         tag: 'div',
@@ -360,19 +296,12 @@ function placeMarker(key, value) {
         },
     }
 
-
-
     patch(marker_node_data.attributes, node_type_marker_data);
     patch(marker_node_data.attributes, (value.marker || {}));
 
     // let wrapper = document.createElement(wrapper_node_data.tag)
     let marker = document.createElement(marker_node_data.tag);
     set_attributes(marker, marker_node_data.attributes)
-
-    // document.body.appendChild(wrapper)
-    // wrapper.appendChild(marker)
-    // wrapper.appendChild(label)
-
 
     document.getElementById("nodes").appendChild(marker)
 }
@@ -571,71 +500,13 @@ function renderAll() {
         });
     }
 
-    // console.log(min_x, min_y, max_x, max_y)
-
     planData.diffX = -min_x + planData.baseDiffX
     planData.diffY = -min_y + planData.baseDiffY
-    // console.log("plan data:", planData)
 
     drawLines()
     drawMarkers()
     drawLabels()
 
-
-
-    ///////////for (const [key, value] of Object.entries(nodes)) {
-    // let default_data = node_types.default
-    // let wrapper_data = default_data.wrapper 
-    // let marker_data = default_data.marker
-    // let label_data = default_data.label
-
-
-
-    /***** 
-    function add_events() {
-        document.getElementById(marker.id).onmousedown = handle_click
-
-        function handle_click(e) {
-            start_dragging(e)
-        }
-
-        function start_dragging(e) {
-            e = e || window.event;
-            e.preventDefault();
-            document.onmouseup = stop_dragging;
-            document.onmousemove = follow_cursor;
-        }
-
-        function follow_cursor(e) {
-            e = e || window.event;
-            e.preventDefault();
-            marker.style.left = get_station_left(Math.round(e.pageX / coordinate_scalar) - diff_x, (value.marker.rotation || 0))
-            marker.style.top = get_station_top(Math.round(e.pageY / coordinate_scalar) - diff_y, (value.marker.rotation || 0))
-
-            label.style.left = /*parseFloat(label_node_data.attributes.style.left.slice(0, -2)) + */ /****** label_orig_left + get_x(label_point[0]) + "px"
-label.style.top = /*parseFloat(label_node_data.attributes.style.top.slice(0, -2)) +*/ /*********label_orig_top + get_y(label_point[1]) + "px"
-                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                            function stop_dragging() {
-                                                                                                                                                                                                                                                                                                document.onmouseup = null;
-                                                                                                                                                                                                                                                                                                document.onmousemove = null;
-                                                                                                                                                                                                                                                                                                nodes[marker.id].location = [
-                                                                                                                                                                                                                                                                                                    Math.round(- diff_x + (marker.style.left.slice(0, -2)) / coordinate_scalar + marker.style.width.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                                                                                                                                                                                    Math.round(- diff_y + (marker.style.top.slice(0, -2)) / coordinate_scalar + marker.style.height.slice(0, -2) / 2 / coordinate_scalar),
-                                                                                                                                                                                                                                                                                                ]
-                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                                        add_events() ******/
-
-
-    //////// }
-    // function add_line() {
-    //     let ln = document.getElementById("linename").value
-    //     // console.log(ln)
-    //     lines[ln] = selected_items
-    // }
-    console.log("blabliblub")
     let url = "/style.css"
     fetch(url)
         .then(response => response.text())
@@ -690,7 +561,6 @@ function createLine() {
 }
 
 function renderSidePanel(panel) {
-    // let tabcontent = document.getElementById("tabcontent")
     let containerNodesDiv = document.getElementById("tabContent")
     planData.nodeNameByID = getMappingNodeName()
     let res = ""
@@ -954,8 +824,8 @@ function addStation(lineID, conIdx, element) {
     let container = element.parentNode.parentNode.parentNode
     let children = Array.from(container.children)
 
-    console.log("container:", container)
-    console.log("children:", children)
+    // console.log("container:", container)
+    //console.log("children:", children)
 
     for (let item of planData.lines) {
         if (item.symbol === lineID) {
@@ -966,11 +836,10 @@ function addStation(lineID, conIdx, element) {
                 yShift: 0
             }
 
-            let index = children.indexOf(element)
+            let index = children.indexOf(element.parentNode.parentNode)
 
             let p = new DOMParser()
             let newElement = p.parseFromString(stopNodeHTML(obj, lineID, conIdx), "text/html").firstChild.childNodes[1].childNodes[0]
-            console.log("new Element:", newElement)
 
             if (index >= stops.length) {
                 stops.push(obj)
@@ -980,6 +849,7 @@ function addStation(lineID, conIdx, element) {
                 stops.splice(index, 0, obj);
                 container.insertBefore(newElement, element.parentNode.parentNode)
             }
+            console.log("stops array:", stops)
         }
     }
     // renderSidePanel("lines")
@@ -1101,17 +971,17 @@ function decXShift(lineID, element) {
     }
 }
 
-function changeStopNode(lineID, element){
+function changeStopNode(lineID, element) {
     console.log(element)
     let stopIdx = getStopIdx(element)
     let conIdx = getConIdx(element)
     console.log(stopIdx, conIdx)
 
-    for (let item of planData.lines){
-        if (item.symbol == lineID){
+    for (let item of planData.lines) {
+        if (item.symbol == lineID) {
             let node = element.value
             console.log(node)
-            if (node in planData.nodes){
+            if (node in planData.nodes) {
                 item.connections[getConIdx(element)].nodes[getStopIdx(element)].node = node
             }
             else {
@@ -1121,7 +991,7 @@ function changeStopNode(lineID, element){
             break
         }
     }
-    
+
     drawLines()
 }
 
