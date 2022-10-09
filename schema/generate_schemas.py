@@ -202,7 +202,7 @@ def schema_stats():
             "properties": {
                 "_id": {
                     "type": "object",
-                    "properies": {
+                    "properties": {
                         "plan": {
                             "type": "string",
                             "description": "OID of the plan accessed",
