@@ -3,6 +3,9 @@
         "bsonType": "object",
         "description": "Document describing a metro plan",
         "properties": {
+            "public": {},
+            "forkedFrom": {},
+            "ownedBy": {},
             "planName": {
                 "type": "string"
             },
