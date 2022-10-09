@@ -1,0 +1,208 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document describing the state of a metro plan in its history",
+        "properties": {
+            "nodes": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                        },
+                        "marker": {
+                            "type": "object",
+                            "properties": {
+                                "width": {
+                                    "type": "number"
+                                },
+                                "height": {
+                                    "type": "number"
+                                },
+                                "sizeFactor": {
+                                    "oneOf": [
+                                        {
+                                            "type": "number"
+                                        },
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "sqrt2"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "rotation": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "label": {
+                            "type": "string",
+                            "description": "ID of the label created for this node."
+                        }
+                    },
+                    "required": [
+                        "location"
+                    ]
+                }
+            },
+            "lines": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "color": {
+                            "type": "string"
+                        },
+                        "borderWidth": {
+                            "type": "number"
+                        },
+                        "borderStyle": {
+                            "type": "string"
+                        },
+                        "borderColor": {
+                            "type": "string"
+                        },
+                        "width": {
+                            "type": "number"
+                        },
+                        "connections": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "nodes": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "node": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "number"
+                                                            },
+                                                            "minItems": 2,
+                                                            "maxItems": 2
+                                                        },
+                                                        {
+                                                            "type": "string"
+                                                        }
+                                                    ]
+                                                },
+                                                "xShift": {
+                                                    "type": "number"
+                                                },
+                                                "yShift": {
+                                                    "type": "number"
+                                                },
+                                                "width": {
+                                                    "type": "number"
+                                                },
+                                                "height": {
+                                                    "type": "number"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "symbol",
+                        "name",
+                        "color",
+                        "connections"
+                    ]
+                }
+            },
+            "labels": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "class": {
+                            "type": "string",
+                            "enum": [
+                                "centered",
+                                "left_ascending",
+                                "right_ascending",
+                                "left_descending",
+                                "right_descending",
+                                "left",
+                                "right"
+                            ]
+                        },
+                        "text": {
+                            "type": "string"
+                        },
+                        "anchor": {
+                            "type": "object",
+                            "properties": {
+                                "node": {
+                                    "oneOf": [
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "number"
+                                            },
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                        },
+                                        {
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "xShift": {
+                                    "type": "number"
+                                },
+                                "yShift": {
+                                    "type": "number"
+                                },
+                                "width": {
+                                    "type": "number"
+                                },
+                                "height": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "styling": {
+                            "type": "object",
+                            "properties": {
+                                "fontSize": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "class",
+                        "text",
+                        "anchor"
+                    ]
+                }
+            }
+        },
+        "required": [
+            "planName",
+            "colorTheme",
+            "nodes",
+            "lines",
+            "labels"
+        ]
+    }
+}

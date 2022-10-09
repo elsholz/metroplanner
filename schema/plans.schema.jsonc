@@ -3,218 +3,34 @@
         "bsonType": "object",
         "description": "Document describing a metro plan",
         "properties": {
-            "public": {},
-            "forkedFrom": {},
-            "ownedBy": {},
+            "forkedFrom": {
+                "type": "string",
+                "description": "Public link of the plan this one has been forked from."
+            },
+            "ownedBy": {
+                "type": "string",
+                "description": "User who owns this plan."
+            },
             "planName": {
-                "type": "string"
+                "type": "string",
+                "description": "Display name of this plan."
             },
             "colorTheme": {
                 "type": "string",
-                "enum": [
-                    "dark",
-                    "bright"
-                ]
+                "description": "ID of the plans color theme."
             },
-            "nodes": {
-                "type": "object",
-                "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                        "location": {
-                            "type": "array",
-                            "items": {
-                                "type": "number"
-                            },
-                            "minItems": 2,
-                            "maxItems": 2
-                        },
-                        "marker": {
-                            "type": "object",
-                            "properties": {
-                                "width": {
-                                    "type": "number"
-                                },
-                                "height": {
-                                    "type": "number"
-                                },
-                                "sizeFactor": {
-                                    "oneOf": [
-                                        {
-                                            "type": "number"
-                                        },
-                                        {
-                                            "type": "string",
-                                            "enum": [
-                                                "sqrt2"
-                                            ]
-                                        }
-                                    ]
-                                },
-                                "rotation": {
-                                    "type": "number"
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "location"
-                    ]
-                }
-            },
-            "lines": {
+            "history": {
                 "type": "array",
                 "items": {
-                    "type": "object",
-                    "properties": {
-                        "symbol": {
-                            "type": "string"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "color": {
-                            "type": "string"
-                        },
-                        "borderWidth": {
-                            "type": "number"
-                        },
-                        "borderStyle": {
-                            "type": "string"
-                        },
-                        "borderColor": {
-                            "type": "string"
-                        },
-                        "width": {
-                            "type": "number"
-                        },
-                        "connections": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "nodes": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "node": {
-                                                    "oneOf": [
-                                                        {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "number"
-                                                            },
-                                                            "minItems": 2,
-                                                            "maxItems": 2
-                                                        },
-                                                        {
-                                                            "type": "string"
-                                                        }
-                                                    ]
-                                                },
-                                                "xShift": {
-                                                    "type": "number"
-                                                },
-                                                "yShift": {
-                                                    "type": "number"
-                                                },
-                                                "width": {
-                                                    "type": "number"
-                                                },
-                                                "height": {
-                                                    "type": "number"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "symbol",
-                        "name",
-                        "color",
-                        "connections"
-                    ]
-                }
-            },
-            "labels": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "class": {
-                            "type": "string",
-                            "enum": [
-                                "centered",
-                                "left_ascending",
-                                "right_ascending",
-                                "left_descending",
-                                "right_descending",
-                                "left",
-                                "right"
-                            ]
-                        },
-                        "text": {
-                            "type": "string"
-                        },
-                        "anchor": {
-                            "type": "object",
-                            "properties": {
-                                "node": {
-                                    "oneOf": [
-                                        {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "number"
-                                            },
-                                            "minItems": 2,
-                                            "maxItems": 2
-                                        },
-                                        {
-                                            "type": "string"
-                                        }
-                                    ]
-                                },
-                                "xShift": {
-                                    "type": "number"
-                                },
-                                "yShift": {
-                                    "type": "number"
-                                },
-                                "width": {
-                                    "type": "number"
-                                },
-                                "height": {
-                                    "type": "number"
-                                }
-                            }
-                        },
-                        "styling": {
-                            "type": "object",
-                            "properties": {
-                                "fontSize": {
-                                    "type": "number"
-                                }
-                            }
-                        }
-                    },
-                    "required": [
-                        "class",
-                        "text",
-                        "anchor"
-                    ]
+                    "type": "string",
+                    "description": "The states of this plan in history. First item is the latest state."
                 }
             }
         },
         "required": [
             "planName",
             "colorTheme",
-            "nodes",
-            "lines",
-            "labels"
+            "history"
         ]
     }
 }

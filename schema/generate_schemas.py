@@ -53,6 +53,44 @@ def schema_color_themes():
 
 
 def schema_plans():
+    schema = {
+        "$jsonSchema": {
+            "bsonType": "object",
+            "description": "Document describing a metro plan",
+            "properties": {
+                "forkedFrom": {
+                    "type": "string",
+                    "description": "Public link of the plan this one has been forked from.",
+                },
+                "ownedBy": {
+                    "type": "string",
+                    "description": "User who owns this plan.",
+                },
+                "planName": {
+                    "type": "string",
+                    "description": "Display name of this plan.",
+                },
+                "colorTheme": {
+                    "type": "string",
+                    "description": "ID of the plans color theme.",
+                },
+                "history": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "The states of this plan in history. First item is the latest state.",
+                    },
+                },
+            },
+            "required": ["planName", "colorTheme", "history"],
+        }
+    }
+
+    with open("plans.schema.jsonc", "w") as fout:
+        fout.write(dumps(schema, indent=4, ensure_ascii=False))
+
+
+def schema_plan_history_state():
     styling = {"type": "object", "properties": {"fontSize": {"type": "number"}}}
 
     point = {
@@ -76,13 +114,8 @@ def schema_plans():
     schema = {
         "$jsonSchema": {
             "bsonType": "object",
-            "description": "Document describing a metro plan",
+            "description": "Document describing the state of a metro plan in its history",
             "properties": {
-                "public": {},
-                "forkedFrom": {},
-                "ownedBy": {},
-                "planName": {"type": "string"},
-                "colorTheme": {"type": "string", "enum": ["dark", "bright"]},
                 "nodes": {
                     "type": "object",
                     "additionalProperties": {
@@ -103,16 +136,19 @@ def schema_plans():
                                     "rotation": {"type": "number"},
                                 },
                             },
+                            "label": {
+                                "type": "string",
+                                "description": "ID of the label created for this node."
+                            }
                         },
                         "required": ["location"],
                     },
                 },
                 "lines": {
-                    "type": "array",
-                    "items": {
+                    "type": "object",
+                    "additionalProperties": {
                         "type": "object",
                         "properties": {
-                            "symbol": {"type": "string"},
                             "name": {"type": "string"},
                             "color": {"type": "string"},
                             "borderWidth": {"type": "number"},
@@ -136,8 +172,9 @@ def schema_plans():
                     },
                 },
                 "labels": {
-                    "type": "array",
-                    "items": {
+                    # label objects mapped by a unique id that is randomly generated at creation
+                    "type": "object",
+                    "additionalProperties": {
                         "type": "object",
                         "properties": {
                             "class": {
@@ -164,11 +201,21 @@ def schema_plans():
         }
     }
 
-    with open("plans.schema.jsonc", "w") as fout:
+    with open("plan_states.schema.jsonc", "w") as fout:
         fout.write(dumps(schema, indent=4, ensure_ascii=False))
 
 
 def schema_links():
+    """
+        For each plan, a publicly sharable shortlink ist created
+        that consists of 12 random characters. This shortlink
+        is inactive by default. When activated, a shortlink allows
+        any user to view a plan, it is thereby publicly shared.
+        
+        Plans cannot be accessed directly, only via a share-link.
+        Only the edit URL includes the plan OID, but this page
+        includes user-authorization.
+    """
     schema = {
         "$jsonSchema": {
             "bsonType": "object",
@@ -244,5 +291,6 @@ def schema_stats():
 
 schema_color_themes()
 schema_plans()
+schema_plan_history_state()
 schema_links()
 schema_stats()
