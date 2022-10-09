@@ -11,7 +11,11 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(require("./routes/record"));
+
+// Routes:
+app.use(require("./routes/stats"));
+app.use(require("./routes/links"));
+app.use(require("./routes/colorThemes"));
 
 // Global error handling
 app.use(function (err, _req, res) {
