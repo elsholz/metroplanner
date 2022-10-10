@@ -44,8 +44,69 @@
                             }
                         },
                         "label": {
-                            "type": "string",
-                            "description": "ID of the label created for this node."
+                            "type": "object",
+                            "properties": {
+                                "class": {
+                                    "type": "string",
+                                    "enum": [
+                                        "centered",
+                                        "left_ascending",
+                                        "right_ascending",
+                                        "left_descending",
+                                        "right_descending",
+                                        "left",
+                                        "right"
+                                    ]
+                                },
+                                "text": {
+                                    "type": "string"
+                                },
+                                "anchor": {
+                                    "type": "object",
+                                    "properties": {
+                                        "node": {
+                                            "oneOf": [
+                                                {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "number"
+                                                    },
+                                                    "minItems": 2,
+                                                    "maxItems": 2
+                                                },
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        },
+                                        "xShift": {
+                                            "type": "number"
+                                        },
+                                        "yShift": {
+                                            "type": "number"
+                                        },
+                                        "width": {
+                                            "type": "number"
+                                        },
+                                        "height": {
+                                            "type": "number"
+                                        }
+                                    }
+                                },
+                                "styling": {
+                                    "type": "object",
+                                    "properties": {
+                                        "fontSize": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            },
+                            "required": [
+                                "class",
+                                "text",
+                                "anchor"
+                            ]
                         }
                     },
                     "required": [
@@ -128,7 +189,7 @@
                     ]
                 }
             },
-            "labels": {
+            "additionalLabels": {
                 "type": "object",
                 "additionalProperties": {
                     "type": "object",
@@ -201,8 +262,7 @@
             "planName",
             "colorTheme",
             "nodes",
-            "lines",
-            "labels"
+            "lines"
         ]
     }
 }

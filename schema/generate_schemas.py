@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from json import dumps
 
 
@@ -111,6 +112,28 @@ def schema_plan_history_state():
         },
     }
 
+    label_basics = {
+        "type": "object",
+        "properties": {
+            "class": {
+                "type": "string",
+                "enum": [
+                    "centered",
+                    "left_ascending",
+                    "right_ascending",
+                    "left_descending",
+                    "right_descending",
+                    "left",
+                    "right",
+                ],
+            },
+            "text": {"type": "string"},
+            "anchor": anchor,
+            "styling": styling,
+        },
+        "required": ["class", "text", "anchor"],
+    }
+
     schema = {
         "$jsonSchema": {
             "bsonType": "object",
@@ -136,10 +159,7 @@ def schema_plan_history_state():
                                     "rotation": {"type": "number"},
                                 },
                             },
-                            "label": {
-                                "type": "string",
-                                "description": "ID of the label created for this node."
-                            }
+                            "label": label_basics,
                         },
                         "required": ["location"],
                     },
@@ -171,33 +191,13 @@ def schema_plan_history_state():
                         "required": ["symbol", "name", "color", "connections"],
                     },
                 },
-                "labels": {
+                "additionalLabels": {
                     # label objects mapped by a unique id that is randomly generated at creation
                     "type": "object",
-                    "additionalProperties": {
-                        "type": "object",
-                        "properties": {
-                            "class": {
-                                "type": "string",
-                                "enum": [
-                                    "centered",
-                                    "left_ascending",
-                                    "right_ascending",
-                                    "left_descending",
-                                    "right_descending",
-                                    "left",
-                                    "right",
-                                ],
-                            },
-                            "text": {"type": "string"},
-                            "anchor": anchor,
-                            "styling": styling,
-                        },
-                        "required": ["class", "text", "anchor"],
-                    },
+                    "additionalProperties": label_basics,
                 },
             },
-            "required": ["planName", "colorTheme", "nodes", "lines", "labels"],
+            "required": ["planName", "colorTheme", "nodes", "lines"],
         }
     }
 
@@ -207,14 +207,14 @@ def schema_plan_history_state():
 
 def schema_links():
     """
-        For each plan, a publicly sharable shortlink ist created
-        that consists of 12 random characters. This shortlink
-        is inactive by default. When activated, a shortlink allows
-        any user to view a plan, it is thereby publicly shared.
-        
-        Plans cannot be accessed directly, only via a share-link.
-        Only the edit URL includes the plan OID, but this page
-        includes user-authorization.
+    For each plan, a publicly sharable shortlink ist created
+    that consists of 12 random characters. This shortlink
+    is inactive by default. When activated, a shortlink allows
+    any user to view a plan, it is thereby publicly shared.
+
+    Plans cannot be accessed directly, only via a share-link.
+    Only the edit URL includes the plan OID, but this page
+    includes user-authorization.
     """
     schema = {
         "$jsonSchema": {
