@@ -17,7 +17,7 @@ def schema_color_themes():
                     "description": "Whether this color theme is public and can be forked.",
                 },
                 "forkedFrom": {
-                    "type": "string",
+                    "type": "objectId",
                     "description": "ID of the color theme this one has been forked from",
                 },
                 "ownedBy": {
@@ -78,7 +78,7 @@ def schema_plans():
                 "history": {
                     "type": "array",
                     "items": {
-                        "type": "string",
+                        "type": "objectId",
                         "description": "The states of this plan in history. First item is the latest state.",
                     },
                 },
@@ -226,7 +226,7 @@ def schema_links():
                     "description": "Shortlink",
                 },
                 "plan": {
-                    "type": "string",
+                    "type": "objectId",
                     "description": "OID of the plan the link is for",
                 },
                 "active": {
@@ -251,7 +251,7 @@ def schema_stats():
                     "type": "object",
                     "properties": {
                         "plan": {
-                            "type": "string",
+                            "type": "objectId",
                             "description": "OID of the plan accessed",
                         },
                         "link": {
@@ -264,16 +264,8 @@ def schema_stats():
                 "views": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "user": {
-                                "type": "string",
-                                "description": "ID of the user who viewed the plan, if logged in.",
-                            },
-                            "at": {
-                                "type": "string",
-                                "description": "Datetime when plan was accessed, in ISO format",
-                            },
+                            "type": "string",
+                            "description": "Datetime when plan was accessed, in ISO format",
                         },
                         "required": ["at"],
                     },
