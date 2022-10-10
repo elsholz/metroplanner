@@ -269,11 +269,11 @@ def schema_stats():
                     },
                 },
             },
+            "required": [
+                "_id",
+                "views",
+            ],
         },
-        "required": [
-            "_id",
-            "views",
-        ],
     }
     with open("stats.schema.jsonc", "w") as fout:
         fout.write(dumps(schema, indent=4, ensure_ascii=False))
