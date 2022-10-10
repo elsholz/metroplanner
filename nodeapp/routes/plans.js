@@ -12,67 +12,63 @@ const mongodb = require('mongodb')
 const dbo = require("../db/conn");
 
 // Returns a plan given a shortlink. This will not publish the plan ID to the user.
-recordRoutes.route(["/api/p/:shortlink", "/api/plan/:planid"]).get(async function (req, res) {
+recordRoutes.route(["/api/p/:shortlink"]).get(async function (req, res) {
   const dbConnection = dbo.getDb();
-
   let shortLink = req.params["shortlink"]
-  let planID = req.params["planid"]
 
-  function updateStatsAndGetPlanData(planID, link) {
-    dbConnection
-      .collection("stats")
-      .updateOne({
-        _id: {
-          "plan": findRes._id,
-          "link": link,
-        },
-      }, {
-        $push: {
-          views: {
-            // TODO
-            user: undefined,
-            at: (new Date()).toISOString()
-          }
-        }
-      }, (updateErr, updateRes) => {
-        if (updateErr) {
-          console.log(updateErr)
-          res.send("Error updating stats!");
-        } else {
-          dbConnection
-            .collection("plans")
-            .findOne({
-              _id: planID
-            }, (planErr, planRes) => {
-              if (planErr) {
-                console.log(planErr)
-                res.send("Error fetching plan data!");
-              } else {
-                res.send(JSON.stringify(findRes));
-              }
-            })
-        }
-      })
-  }
-  if (planID) {
-    updateStatsAndGetPlanData(planID, planID)
-  } else {
-    dbConnection
-      .collection("links")
-      .findOne({
-        "_id": shortLink,
-      }, (findErr, findRes) => {
-        if (findErr) {
-          console.log(findErr)
-          res.send("Error getting shortlink!");
-        } else {
-          planID = findRes._id
-          updateStatsAndGetPlanData(planID, shortLink)
-        }
-      });
-  }
+  console.log("GET for /api/p/" + shortLink)
 
+  dbConnection
+    .collection("links")
+    .findOne({
+      "_id": shortLink,
+    }, (findLinkErr, findLinkRes) => {
+      if (findLinkErr) {
+        console.log(findLinkErr)
+        res.send("Error getting shortlink!");
+      } else {
+        console.log(findLinkRes)
 
+        let planID = new mongodb.ObjectId(findLinkRes._id)
+        dbConnection
+          .collection("stats")
+          .updateOne({
+            _id: {
+              "plan": planID,
+              "link": shortLink,
+            },
+          }, {
+            $push: {
+              views: (new Date()).toISOString()
+            }
+          }, (updateStatsErr, updateStatsRes) => {
+            if (updateStatsErr) {
+              console.log(updateStatsErr)
+              res.send("Error updating stats!");
+            } else {
+              dbConnection
+                .collection("plans")
+                .findOne({
+                  _id: planID
+                }, (findPlanErr, findPlanRes) => {
+                  if (findPlanErr) {
+                    console.log(findPlanErr)
+                    res.send("Error fetching plan data!");
+                  } else {
+                    let latestStateID = new mongodb.ObjectId(findPlanRes.history[-1])
+                    dbConnection
+                      .collection("planStates")
+                      .findOne({
+                        "_id": latestStateID
+                      }, (findPlanStateErr, findPlanStateRes) => {
+                        res.send(JSON.stringify(findPlanStateRes));
+                      })
+                  }
+                })
+            }
+          })
+      }
+    });
 });
 
 module.exports = recordRoutes;

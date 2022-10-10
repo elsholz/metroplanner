@@ -8,9 +8,6 @@ const http = require('http')
 const fs = require('fs')
 const mongodb = require('mongodb')
 
-const viewer = require("../js/viewer")
-
-
 // This will help us connect to the database
 const dbo = require("../db/conn");
 const dbConnection = dbo.getDb();

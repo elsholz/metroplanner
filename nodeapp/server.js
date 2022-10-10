@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Routes:
 app.use(require("./routes/stats"));
-app.use(require("./routes/links"));
+app.use(require("./routes/plans"));
 app.use(require("./routes/colorThemes"));
 
 // Global error handling
