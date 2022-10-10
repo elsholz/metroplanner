@@ -7,7 +7,7 @@
                 "type": "object",
                 "properties": {
                     "plan": {
-                        "type": "objectId",
+                        "bsonType": "objectId",
                         "description": "OID of the plan accessed"
                     },
                     "link": {

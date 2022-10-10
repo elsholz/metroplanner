@@ -12,7 +12,7 @@
                 "description": "Whether this color theme is public and can be forked."
             },
             "forkedFrom": {
-                "type": "objectId",
+                "bsonType": "objectId",
                 "description": "ID of the color theme this one has been forked from"
             },
             "ownedBy": {

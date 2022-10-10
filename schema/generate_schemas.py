@@ -17,7 +17,7 @@ def schema_color_themes():
                     "description": "Whether this color theme is public and can be forked.",
                 },
                 "forkedFrom": {
-                    "type": "objectId",
+                    "bsonType": "objectId",
                     "description": "ID of the color theme this one has been forked from",
                 },
                 "ownedBy": {
@@ -78,7 +78,7 @@ def schema_plans():
                 "history": {
                     "type": "array",
                     "items": {
-                        "type": "objectId",
+                        "bsonType": "objectId",
                         "description": "The states of this plan in history. First item is the latest state.",
                     },
                 },
@@ -226,7 +226,7 @@ def schema_links():
                     "description": "Shortlink",
                 },
                 "plan": {
-                    "type": "objectId",
+                    "bsonType": "objectId",
                     "description": "OID of the plan the link is for",
                 },
                 "active": {
@@ -251,7 +251,7 @@ def schema_stats():
                     "type": "object",
                     "properties": {
                         "plan": {
-                            "type": "objectId",
+                            "bsonType": "objectId",
                             "description": "OID of the plan accessed",
                         },
                         "link": {
