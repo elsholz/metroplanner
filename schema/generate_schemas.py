@@ -197,7 +197,7 @@ def schema_plan_history_state():
                     "additionalProperties": label_basics,
                 },
             },
-            "required": ["planName", "colorTheme", "nodes", "lines"],
+            "required": ["nodes", "lines", "additionalLabels"],
         }
     }
 
