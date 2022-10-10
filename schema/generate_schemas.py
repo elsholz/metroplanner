@@ -267,7 +267,6 @@ def schema_stats():
                         "type": "string",
                         "description": "Datetime when plan was accessed, in ISO format",
                     },
-                    "required": ["at"],
                 },
             },
         },
