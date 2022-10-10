@@ -7,7 +7,7 @@
                 "type": "object",
                 "properties": {
                     "plan": {
-                        "type": "string",
+                        "type": "objectId",
                         "description": "OID of the plan accessed"
                     },
                     "link": {
@@ -23,26 +23,17 @@
             "views": {
                 "type": "array",
                 "items": {
-                    "type": "object",
-                    "properties": {
-                        "user": {
-                            "type": "string",
-                            "description": "ID of the user who viewed the plan, if logged in."
-                        },
-                        "at": {
-                            "type": "string",
-                            "description": "Datetime when plan was accessed, in ISO format"
-                        }
-                    },
-                    "required": [
-                        "at"
-                    ]
-                }
+                    "type": "string",
+                    "description": "Datetime when plan was accessed, in ISO format"
+                },
+                "required": [
+                    "at"
+                ]
             }
-        },
-        "required": [
-            "_id",
-            "views"
-        ]
-    }
+        }
+    },
+    "required": [
+        "_id",
+        "views"
+    ]
 }

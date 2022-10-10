@@ -8,7 +8,7 @@
                 "description": "Shortlink"
             },
             "plan": {
-                "type": "string",
+                "type": "objectId",
                 "description": "OID of the plan the link is for"
             },
             "active": {

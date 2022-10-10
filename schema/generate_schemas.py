@@ -264,18 +264,17 @@ def schema_stats():
                 "views": {
                     "type": "array",
                     "items": {
-                            "type": "string",
-                            "description": "Datetime when plan was accessed, in ISO format",
-                        },
-                        "required": ["at"],
+                        "type": "string",
+                        "description": "Datetime when plan was accessed, in ISO format",
                     },
+                    "required": ["at"],
                 },
             },
-            "required": [
-                "_id",
-                "views",
-            ],
-        }
+        },
+        "required": [
+            "_id",
+            "views",
+        ],
     }
     with open("stats.schema.jsonc", "w") as fout:
         fout.write(dumps(schema, indent=4, ensure_ascii=False))

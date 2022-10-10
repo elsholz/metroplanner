@@ -259,10 +259,9 @@
             }
         },
         "required": [
-            "planName",
-            "colorTheme",
             "nodes",
-            "lines"
+            "lines",
+            "additionalLabels"
         ]
     }
 }
