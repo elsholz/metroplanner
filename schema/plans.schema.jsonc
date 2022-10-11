@@ -1,14 +1,14 @@
 {
     "$jsonSchema": {
         "bsonType": "object",
-        "description": "Document describing a metro plan",
+        "description": "Document containing a metro plans basic information, excluding state info.",
         "properties": {
             "forkedFrom": {
                 "type": "string",
                 "description": "Public link of the plan this one has been forked from."
             },
             "ownedBy": {
-                "type": "string",
+                "bsonType": "objectId",
                 "description": "User who owns this plan."
             },
             "planName": {

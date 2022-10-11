@@ -1,0 +1,31 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document containing some user settings.",
+        "properties": {
+            "_id": {
+                "bsonType": "objectId",
+                "description": "ID by which this user is publicly identified. Differs from the username."
+            },
+            "username": {
+                "type": "string",
+                "description": "User this profile is for. Not publicly accessible."
+            },
+            "public": {
+                "type": "boolean",
+                "description": "Whether this profile will be publicly visible or hidden."
+            },
+            "displayName": {
+                "type": "string",
+                "description": "If profile is public, this is the user's display name."
+            },
+            "mailto": {
+                "type": "string",
+                "description": "If profile is public, email address that users can view. May be empty."
+            }
+        },
+        "required": [
+            "username"
+        ]
+    }
+}

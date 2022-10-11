@@ -1,7 +1,7 @@
 {
     "$jsonSchema": {
         "bsonType": "object",
-        "description": "Document describing a metro plan",
+        "description": "Document mapping shortlinks to plan ids. Used to access plan-related data publicly (read-only).",
         "properties": {
             "_id": {
                 "type": "string",
@@ -13,7 +13,7 @@
             },
             "active": {
                 "type": "boolean",
-                "description": "Whether link is active or inactive"
+                "description": "Whether link is active (publicly) or inactive"
             }
         },
         "required": [

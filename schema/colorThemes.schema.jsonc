@@ -1,7 +1,7 @@
 {
     "$jsonSchema": {
         "bsonType": "object",
-        "description": "Document describing a metro plan",
+        "description": "Document describing a color theme for a metro map.",
         "properties": {
             "themeName": {
                 "type": "string",
@@ -16,7 +16,7 @@
                 "description": "ID of the color theme this one has been forked from"
             },
             "ownedBy": {
-                "type": "string",
+                "bsonType": "objectId",
                 "description": "User who owns this colortheme. Empty if available by default"
             },
             "themeData": {

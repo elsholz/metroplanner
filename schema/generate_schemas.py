@@ -6,7 +6,7 @@ def schema_color_themes():
     schema = {
         "$jsonSchema": {
             "bsonType": "object",
-            "description": "Document describing a metro plan",
+            "description": "Document describing a color theme for a metro map.",
             "properties": {
                 "themeName": {
                     "type": "string",
@@ -21,7 +21,7 @@ def schema_color_themes():
                     "description": "ID of the color theme this one has been forked from",
                 },
                 "ownedBy": {
-                    "type": "string",
+                    "bsonType": "objectId",
                     "description": "User who owns this colortheme. Empty if available by default",
                 },
                 "themeData": {
@@ -57,14 +57,14 @@ def schema_plans():
     schema = {
         "$jsonSchema": {
             "bsonType": "object",
-            "description": "Document describing a metro plan",
+            "description": "Document containing a metro plans basic information, excluding state info.",
             "properties": {
                 "forkedFrom": {
                     "type": "string",
                     "description": "Public link of the plan this one has been forked from.",
                 },
                 "ownedBy": {
-                    "type": "string",
+                    "bsonType": "objectId",
                     "description": "User who owns this plan.",
                 },
                 "planName": {
@@ -100,6 +100,42 @@ def schema_plans():
     }
 
     with open("plans.schema.jsonc", "w") as fout:
+        fout.write(dumps(schema, indent=4, ensure_ascii=False))
+
+
+def schema_users():
+    schema = {
+        "$jsonSchema": {
+            "bsonType": "object",
+            "description": "Document containing some user settings.",
+            "properties": {
+                "_id": {
+                    "bsonType": "objectId",
+                    "description": "ID by which this user is publicly identified. Differs from the username.",
+                },
+                "username": {
+                    "type": "string",
+                    "description": "User this profile is for. Not publicly accessible.",
+                },
+                "public": {
+                    "type": "boolean",
+                    "description": "Whether this profile will be publicly visible or hidden.",
+                },
+                "displayName": {
+                    "type": "string",
+                    "description": "If profile is public, this is the user's display name.",
+                },
+                "mailto": {
+                    "type": "string",
+                    "description": "If profile is public, email address that users can view. May be empty.",
+                },
+            },
+            "required": [
+                "username",
+            ],
+        }
+    }
+    with open("users.schema.jsonc", "w") as fout:
         fout.write(dumps(schema, indent=4, ensure_ascii=False))
 
 
@@ -235,7 +271,7 @@ def schema_links():
     schema = {
         "$jsonSchema": {
             "bsonType": "object",
-            "description": "Document describing a metro plan",
+            "description": "Document mapping shortlinks to plan ids. Used to access plan-related data publicly (read-only).",
             "properties": {
                 "_id": {
                     "type": "string",
@@ -247,7 +283,7 @@ def schema_links():
                 },
                 "active": {
                     "type": "boolean",
-                    "description": "Whether link is active or inactive",
+                    "description": "Whether link is active (publicly) or inactive",
                 },
             },
             "required": ["_id", "plan", "active"],
@@ -261,7 +297,7 @@ def schema_stats():
     schema = {
         "$jsonSchema": {
             "bsonType": "object",
-            "description": "Document describing a metro plan",
+            "description": "Document for counting map views via a specified shortlink.",
             "properties": {
                 "_id": {
                     "type": "object",
@@ -300,3 +336,4 @@ schema_plans()
 schema_plan_history_state()
 schema_links()
 schema_stats()
+schema_users()

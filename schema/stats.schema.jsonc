@@ -1,7 +1,7 @@
 {
     "$jsonSchema": {
         "bsonType": "object",
-        "description": "Document describing a metro plan",
+        "description": "Document for counting map views via a specified shortlink.",
         "properties": {
             "_id": {
                 "type": "object",
@@ -27,10 +27,10 @@
                     "description": "View counts mapped to datetime when plan was accessed up to hour, in ISO format"
                 }
             }
-        }
-    },
-    "required": [
-        "_id",
-        "views"
-    ]
+        },
+        "required": [
+            "_id",
+            "views"
+        ]
+    }
 }
