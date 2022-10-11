@@ -1,5 +1,4 @@
 // Loads the configuration from config.env to process.env
-require("dotenv").config({ path: "./config.env" });
 
 const express = require("express");
 const cors = require("cors");
@@ -9,6 +8,8 @@ const dbo = require("./db/conn");
 const PORT = 3000;
 const app = express();
 
+const utils = require("./utils")
+
 app.use(cors());
 app.use(express.json());
 
@@ -16,12 +17,6 @@ app.use(express.json());
 app.use(require("./routes/stats"));
 app.use(require("./routes/plans"));
 app.use(require("./routes/colorThemes"));
-
-// Global error handling
-app.use(function (err, _req, res) {
-  console.error(err.stack);
-  res.send('Something broke!');
-});
 
 // perform a database connection when the server starts
 dbo.connectToServer(function (err) {

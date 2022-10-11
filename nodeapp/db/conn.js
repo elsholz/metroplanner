@@ -1,6 +1,7 @@
+require("dotenv").config({ path: "config.env" });
 
 const { MongoClient } = require("mongodb");
-const connectionString = "mongodb://localhost:27017"
+const connectionString = `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PW}@${process.env.MONGO_HOST}/test`
 const client = new MongoClient(connectionString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -17,7 +18,7 @@ module.exports = {
       }
 
       dbConnection = db.db("metroplanner");
-      console.log("Successfully connected to MongoDB.");
+      console.log(`Successfully connected to MongoDB with user ${process.env.MONGO_DB_USER}.`);
 
       return callback();
     });
