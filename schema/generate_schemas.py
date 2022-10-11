@@ -75,6 +75,18 @@ def schema_plans():
                     "type": "string",
                     "description": "ID of the plans color theme.",
                 },
+                "createdAt": {
+                    "type": "string",
+                    "description": "Datetime when this plan was first created.",
+                },
+                "lastModified": {
+                    "type": "string",
+                    "description": "Datetime when this plan was last modified",
+                },
+                "currentState": {
+                    "bsonType": "objectId",
+                    "description": "The current state that is to be displayed for this plan",
+                },
                 "history": {
                     "type": "array",
                     "items": {
@@ -83,7 +95,7 @@ def schema_plans():
                     },
                 },
             },
-            "required": ["planName", "colorTheme", "history"],
+            "required": ["planName", "colorTheme", "history", "currentState"],
         }
     }
 
@@ -138,6 +150,10 @@ def schema_plan_history_state():
         "$jsonSchema": {
             "bsonType": "object",
             "description": "Document describing the state of a metro plan in its history",
+            "createdAt": {
+                "type": "string",
+                "description": "Datetime when this plan state was created.",
+            },
             "properties": {
                 "nodes": {
                     "type": "object",
@@ -262,10 +278,10 @@ def schema_stats():
                     "required": ["plan", "link"],
                 },
                 "views": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "description": "Datetime when plan was accessed, in ISO format",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "number",
+                        "description": "View counts mapped to datetime when plan was accessed up to hour, in ISO format",
                     },
                 },
             },

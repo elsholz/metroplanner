@@ -2,6 +2,10 @@
     "$jsonSchema": {
         "bsonType": "object",
         "description": "Document describing the state of a metro plan in its history",
+        "createdAt": {
+            "type": "string",
+            "description": "Datetime when this plan state was created."
+        },
         "properties": {
             "nodes": {
                 "type": "object",
