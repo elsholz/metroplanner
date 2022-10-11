@@ -41,9 +41,15 @@ planRoutes.route(["/api/plan/:shortlink"]).get(async function (req, res) {
               .findOne({
                 _id: planID
               }, {
-                currentState: 0,
-                '_id': 0,
-                history: 0,
+                projection: {
+                  _id: 0,
+                  planName: 1,
+                  colorTheme: 1,
+                  createdAt: 1,
+                  lastModified: 1,
+                  ownedBy: 1,
+                  forkedFrom: 1,
+                }
               }, (findPlanErr, findPlanRes) => {
                 if (findPlanErr) {
                   console.log("Error finding plan.", findPlanErr)
@@ -123,7 +129,9 @@ planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
                   .findOne({
                     _id: planID
                   }, {
-                    currentState: 1
+                    projection: {
+                      currentState: 1,
+                    }
                   }, (findPlanErr, findPlanRes) => {
                     if (findPlanErr) {
                       console.log("Error finding plan.", findPlanErr)

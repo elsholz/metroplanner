@@ -48,7 +48,9 @@ statsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
                     res.send(JSON.stringify(findStatsRes.views));
                   } else {
                     // return all views
-                    res.send(JSON.stringify(Object.values(findStatsRes.views).reduce((a,b) => a+b, 0)));
+                    res.send(JSON.stringify({
+                      totalViewCount: Object.values(findStatsRes.views).reduce((a, b) => a + b, 0)
+                    }));
                   }
                 } else {
                   console.log(findStatsRes)
