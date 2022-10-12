@@ -3,13 +3,13 @@ const express = require("express");
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /listings.
-const statsRoutes = express.Router();
+const publicStatsRoutes = express.Router();
 
 // This will help us connect to the database
 const dbo = require("../db/conn");
 
 // Get stats for a plan (all shortlinks included)
-statsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
+publicStatsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
   let shortLink = req.params["shortlink"]
   console.log(`Stats for shortlink >${shortLink}< requested.`)
   let allViews = !(req.query.allViews === undefined)
@@ -68,4 +68,4 @@ statsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
     })
 });
 
-module.exports = statsRoutes;
+module.exports = publicStatsRoutes;

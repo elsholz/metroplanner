@@ -1,7 +1,7 @@
 // Loads the configuration from config.env to process.env
 
 const express = require("express");
-const cors = require("cors");
+// const cors = require("cors");
 // get MongoDB driver connection
 const dbo = require("./db/conn");
 
@@ -10,13 +10,17 @@ const app = express();
 
 const utils = require("./utils")
 
-app.use(cors());
+//app.use(cors());
 app.use(express.json());
 
+
 // Routes:
-app.use(require("./routes/stats"));
-app.use(require("./routes/plans"));
-app.use(require("./routes/colorThemes"));
+app.use(require("./routes/statsPublic"));
+app.use(require("./routes/plansPublic"));
+app.use(require("./routes/colorThemesPublic"));
+app.use(require("./routes/usersPublic"));
+app.use(require("./routes/_plans"));
+app.use(require("./routes/_users"));
 
 // perform a database connection when the server starts
 dbo.connectToServer(function (err) {

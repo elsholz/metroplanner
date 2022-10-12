@@ -9,14 +9,14 @@ const planRoutes = express.Router();
 const dbo = require("../db/conn");
 
 // Get List of currently popular plans shortlinks
-planRoutes.route(["/api/popularplans"]).get(async function (req, res) {
+planRoutes.route("/api/popularplans").get(async function (req, res) {
   const dbConnection = dbo.getDb();
   res.status(501)
   res.send("Not Implemented")
 })
 
 // Returns all public information about a plan, excluding its latest state, identified by its shortlink
-planRoutes.route(["/api/plan/:shortlink"]).get(async function (req, res) {
+planRoutes.route("/api/plan/:shortlink").get(async function (req, res) {
   const dbConnection = dbo.getDb();
   let shortLink = req.params["shortlink"]
   console.log("GET for /api/plan/" + shortLink)
@@ -122,7 +122,7 @@ planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
                 if (updateStatsErr) {
                   console.log("Error updating stats.", updateStatsErr)
                 } else {
-                  console.log("Updated stats.",)// updateStatsRes)
+                  console.log("Updated stats.")
                 }
                 dbConnection
                   .collection("plans")
@@ -139,13 +139,17 @@ planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
                       res.send("Error fetching plan data!");
                     } else {
                       if (findPlanRes) {
-                        let latestStateID = findPlanRes.currentState//findPlanRes.history[findPlanRes.history.length - 1]
+                        let latestStateID = findPlanRes.currentState
                         console.log("Found plan.", findPlanRes)
                         console.log("latest state id:", latestStateID)
                         dbConnection
                           .collection("planStates")
                           .findOne({
                             "_id": latestStateID
+                          }, {
+                            projection: {
+                              _id: 0,
+                            }
                           }, (findPlanStateErr, findPlanStateRes) => {
                             if (findPlanStateErr) {
                               console.log(`Error getting plan state ${latestStateID}`)
@@ -155,6 +159,7 @@ planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
                               if (findPlanStateRes) {
                                 console.log(`Found plan state ${latestStateID}`)
                                 res.status(200)
+                                findPlanStateRes.shortlink = shortLink
                                 res.send(JSON.stringify(findPlanStateRes));
                               } else {
                                 console.log(`No error but didn't find plan state ${latestStateID}`)
@@ -172,10 +177,10 @@ planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
                   })
               })
           } else {
+            // won't return this in the public api, even if user is authorized
             console.log(`Link ${shortLink} found, but inactive.`)
-            // Requires authentication and authorization, which isn't currently implemented.
-            res.status(501)
-            res.send("Not Implemented")
+            res.status(404)
+            res.send("Not Found")
           }
         } else {
           console.log(`No Error, but didn't find link ${shortLink}.`)

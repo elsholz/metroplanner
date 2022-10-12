@@ -9,8 +9,7 @@ const mongodb = require('mongodb')
 // This will help us connect to the database
 const dbo = require("../db/conn");
 
-
-colorThemeRoutes.route("/api/themes/:colorThemeID").get(async function (req, res) {
+colorThemeRoutes.route("/api/theme/:colorThemeID").get(async function (req, res) {
   const dbConnection = dbo.getDb();
   // Get records
   let themeID = new mongodb.ObjectId(req.params["colorThemeID"])
@@ -30,9 +29,8 @@ colorThemeRoutes.route("/api/themes/:colorThemeID").get(async function (req, res
             res.send(JSON.stringify(findThemeRes));
           } else {
             console.log(`Found theme, but it isn't public, for id ${themeID}`)
-            // TODO: Authentication and authorization
-            res.status(403)
-            res.send("Forbidden")
+            res.status(404)
+            res.send("Not Found")
           }
         } else {
           console.log(`No error, but didn't find theme for id ${themeID}`)
