@@ -1,3 +1,4 @@
+const { response } = require("express");
 const express = require("express");
 
 // recordRoutes is an instance of the express router.
@@ -35,7 +36,8 @@ publicUsersRoutes.route("/api/user/:userid").get(async function (req, res) {
             res.status(200)
             res.send(JSON.stringify(findUserRes))
           } else {
-            res.get
+            res.status(404)
+            res.send("Not Found")
           }
         } else {
           console.log(`No error occurred, nut nothing was found for shortlink ${shortLink}`)

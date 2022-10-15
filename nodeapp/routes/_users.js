@@ -5,8 +5,6 @@ const express = require("express");
 // The router will be added as a middleware and will take control of requests starting with path /listings.
 const _userRoutes = express.Router();
 const { checkJwt } = require("../utils")
-const { requiredScopes, claimIncludes, claimEquals } = require('express-oauth2-jwt-bearer')
-const checkScopes = requiredScopes('read:messages')
 
 // This will help us connect to the database
 const dbo = require("../db/conn");
@@ -15,12 +13,17 @@ _userRoutes.get("/api/_user", checkJwt, (req, res) => {
   const username = req.auth.payload.sub
   const dbConnection = dbo.getDb();
   console.log(`User ${username} requested their profile information.`)
+  console.log(req.auth)
+  let includePlanData = !(req.query.includePlanData === undefined)
+  let includeColorThemeData = !(req.query.includeColorThemeData === undefined)
+
+  console.log("Query Params:", req.query )
 
   if (username) {
     dbConnection
       .collection("users")
       .findOne({
-        _id: username,
+        username: username,
       }, (findUserErr, findUserRes) => {
         if (findUserErr) {
           console.log(`Error finding user ${username}`, findUserErr)
@@ -35,35 +38,38 @@ _userRoutes.get("/api/_user", checkJwt, (req, res) => {
               .find({
                 ownedBy: userID,
               }, {
-                projection: {
-                  _id: 1
+                projection: includePlanData ? {} : {
+                  _id: 1,
                 }
-              }, (findUserPlansErr, findUserPlansRes) => {
+              }, async (findUserPlansErr, findUserPlansRes) => {
                 if (findUserPlansErr) {
                   console.log(`Error finding plans for user ${username}`, findUserPlansErr)
                   res.status(404)
                   res.send("Not Found")
                 } else {
                   if (findUserPlansRes) {
-                    console.log(`Found plans for user ${username}:`, findUserPlansRes)
-                    findUserRes.plans = findUserPlansRes
+                    let plans = await findUserPlansRes.toArray()
+                    console.log(`Found plans for user ${username}:`, plans)
+                    findUserRes.plans = plans
+                    console.log("User plans:", findUserRes.plans)
                     dbConnection
                       .collection("plans")
                       .find({
                         ownedBy: userID,
                       }, {
-                        projection: {
+                        projection: includeColorThemeData ? {planName: 1} : {
                           _id: 1
                         }
-                      }, (findUserColorThemesErr, findUserColorThemesRes) => {
+                      }, async (findUserColorThemesErr, findUserColorThemesRes) => {
                         if (findUserColorThemesErr) {
                           console.log(`Error finding color themes for user ${username}`, findUserColorThemesErr)
                           res.status(404)
                           res.send("Not Found")
                         } else {
                           if (findUserColorThemesRes) {
-                            console.log(`Found color themes for user ${username}:`, findUserColorThemesRes)
-                            findUserRes.colorThemes = findUserColorThemesRes
+                            let themes = await findUserColorThemesRes.toArray()
+                            console.log(`Found color themes for user ${username}:`, themes)
+                            findUserRes.colorThemes = themes
                             res.status(200)
                             res.send(JSON.stringify(findUserRes))
                           } else {
