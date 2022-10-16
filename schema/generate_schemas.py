@@ -87,6 +87,14 @@ def schema_plans():
                     "bsonType": "objectId",
                     "description": "The current state that is to be displayed for this plan",
                 },
+                "numberOfNodes": {
+                    "type": "number",
+                    "description": "The number of nodes in the current state."
+                },
+                "numberOfLines": {
+                    "type": "number",
+                    "description": "The number of lines in the current state."
+                },
                 "history": {
                     "type": "array",
                     "items": {
