@@ -22,6 +22,10 @@
             "mailto": {
                 "type": "string",
                 "description": "If profile is public, email address that users can view. May be empty."
+            },
+            "profileViews": {
+                "type": "number",
+                "description": "Number of views on this profile, while it was publicly accessible."
             }
         },
         "required": [

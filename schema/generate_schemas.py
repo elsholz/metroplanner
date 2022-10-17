@@ -89,11 +89,11 @@ def schema_plans():
                 },
                 "numberOfNodes": {
                     "type": "number",
-                    "description": "The number of nodes in the current state."
+                    "description": "The number of nodes in the current state.",
                 },
                 "numberOfLines": {
                     "type": "number",
-                    "description": "The number of lines in the current state."
+                    "description": "The number of lines in the current state.",
                 },
                 "history": {
                     "type": "array",
@@ -136,6 +136,10 @@ def schema_users():
                 "mailto": {
                     "type": "string",
                     "description": "If profile is public, email address that users can view. May be empty.",
+                },
+                "profileViews": {
+                    "type": "number",
+                    "description": "Number of views on this profile, while it was publicly accessible.",
                 },
             },
             "required": [
@@ -194,11 +198,11 @@ def schema_plan_history_state():
         "$jsonSchema": {
             "bsonType": "object",
             "description": "Document describing the state of a metro plan in its history",
-            "createdAt": {
-                "type": "string",
-                "description": "Datetime when this plan state was created.",
-            },
             "properties": {
+                "createdAt": {
+                    "type": "string",
+                    "description": "Datetime when this plan state was created.",
+                },
                 "nodes": {
                     "type": "object",
                     "additionalProperties": {
