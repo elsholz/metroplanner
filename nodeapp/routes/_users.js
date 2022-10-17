@@ -53,7 +53,7 @@ _userRoutes.get("/api/_user", checkJwt, (req, res) => {
                     findUserRes.plans = plans
                     console.log("User plans:", findUserRes.plans)
                     dbConnection
-                      .collection("plans")
+                      .collection("colorThemes")
                       .find({
                         ownedBy: userID,
                       }, {
