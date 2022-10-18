@@ -143,7 +143,7 @@ planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
                         console.log("Found plan.", findPlanRes)
                         console.log("latest state id:", latestStateID)
                         dbConnection
-                          .collection("planStates")
+                          .collection("plan_states")
                           .findOne({
                             "_id": latestStateID
                           }, {
