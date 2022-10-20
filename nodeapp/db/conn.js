@@ -1,7 +1,7 @@
 require("dotenv").config({ path: "config.env" });
 
 const { MongoClient } = require("mongodb");
-const connectionString = `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PW}@${process.env.MONGO_HOST}/test`
+const connectionString = `mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PW}@${process.env.MONGO_HOST}/metroplanner`
 const client = new MongoClient(connectionString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -18,14 +18,15 @@ const mongoose = require("mongoose");
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Get the default connection
-const db = mongoose.connection;
+const mdb = mongoose.connection;
 
 // Bind connection to error event (to get notification of connection errors)
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
+mdb.on("error", console.error.bind(console, "MongoDB connection error:"));
+
 
 
 module.exports = {
-  db: db,
+  db: mdb,
   connectToServer: function (callback) {
     // Implement Database connection
     client.connect(function (err, db) {

@@ -105,9 +105,15 @@ _plansRoutes.post("/api/_plans", checkJwt, async (req, res) => {
   })
 
   const [_plan, _planstate, _link] = await Promise.all([
-    planstate.save(),
-    plan.save(),
-    common.createLink(plan._id, false)
+    planstate.save(async (err, res) => {
+
+    }),
+    plan.save(async (err, res) => {
+
+    }),
+    common.createLink(plan._id, false, async (err, res) => {
+
+    }, undefined)
   ])
 
   res.status(201).json({

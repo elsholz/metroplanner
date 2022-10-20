@@ -1,4 +1,5 @@
 const express = require("express");
+const { default: mongoose } = require("mongoose");
 
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
@@ -7,12 +8,38 @@ const publicStatsRoutes = express.Router();
 
 // This will help us connect to the database
 const dbo = require("../db/conn");
+const { Link } = require("../models/link");
+const { Stats } = require("../models/stat");
 
 // Get stats for a plan (all shortlinks included)
 publicStatsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
   let shortLink = req.params["shortlink"]
   console.log(`Stats for shortlink >${shortLink}< requested.`)
   let allViews = !(req.query.allViews === undefined)
+
+  // console.log(Link.findOne((res, req) => {console.log(null, req)}))
+
+
+  let link = await Link.findById(shortLink, //(err, res) => {
+    //console.log("Res::", err, res)
+  )
+
+  if (link.active) {
+    let stats = await Stats.findById({
+      plan: link.plan,
+      link: shortLink,
+    })
+    res.status(200).json(stats.views)
+  } else {
+    res.status(404).send('Not Found')
+  }
+
+
+
+  return
+
+
+
 
   await new Promise(resolve => setTimeout(resolve, 1000));
 
