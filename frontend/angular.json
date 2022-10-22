@@ -111,6 +111,9 @@
               "node_modules/bootstrap/dist/js/bootstrap.js"
             ]
           }
+        },
+        "deploy": {
+          "builder": "@jefiozie/ngx-aws-deploy:deploy"
         }
       }
     }
