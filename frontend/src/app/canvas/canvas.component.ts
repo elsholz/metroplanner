@@ -8,6 +8,8 @@ import { Component, Input, OnInit } from '@angular/core';
 export class CanvasComponent implements OnInit {
   @Input()
   public scrollable: boolean = true;
+  @Input()
+  public planData: object | undefined;
 
   constructor() { }
 

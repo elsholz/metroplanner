@@ -18,6 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthHttpInterceptor } from '@auth0/auth0-angular';
+import { ImpressumComponent } from './impressum/impressum.component';
+import { RoadmapComponent } from './roadmap/roadmap.component';
 
 
 @NgModule({
@@ -33,6 +35,8 @@ import { AuthHttpInterceptor } from '@auth0/auth0-angular';
     CanvasComponent,
     ProfileComponent,
     FooterComponent,
+    ImpressumComponent,
+    RoadmapComponent,
   ],
   imports: [
     BrowserModule,

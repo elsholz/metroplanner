@@ -19,22 +19,30 @@ const config = {
 export class ApiService {
   constructor(private http: HttpClient) { }
 
-//  ping$(): Observable<any> {
-//    console.log(config.apiUri);
-//    let res = this.http.get(`${config.apiUri}/api/_user`);
-//    console.log("This is the API Resukt:", res)
-//
-//    return res
-//  }
+  //  ping$(): Observable<any> {
+  //    console.log(config.apiUri);
+  //    let res = this.http.get(`${config.apiUri}/api/_user`);
+  //    console.log("This is the API Resukt:", res)
+  //
+  //    return res
+  //  }
 
   getCurrentUserProfile$(includePlanData: boolean, includeColorThemeData: boolean): Observable<any> {
     console.log(config.apiUri);
     let res = this.http.get(
-      `${config.apiUri}/api/_user${includeColorThemeData || includePlanData ? '?' : ''}`+
-      `${includePlanData ? 'includePlanData' : ''}${includePlanData&&includeColorThemeData ? '&' : ''}${includeColorThemeData ? 'includeColorThemeData' : ''}`
-      );
+      `${config.apiUri}/api/_user${includeColorThemeData || includePlanData ? '?' : ''}` +
+      `${includePlanData ? 'includePlanData' : ''}${includePlanData && includeColorThemeData ? '&' : ''}${includeColorThemeData ? 'includeColorThemeData' : ''}`
+    );
     console.log("This is the API Resukt:", res)
 
     return res
   }
+  getPlanData$(shortlink: string | undefined): Observable<any> {
+    let res = this.http.get(
+      `${config.apiUri}/api/plandata/${shortlink}`
+    );
+
+    return res
+  }
+
 }
