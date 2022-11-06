@@ -7,7 +7,7 @@ const dbo = require("./db/conn");
 const { shortLinkAlphabet } = require("./utils")
 
 const { Link } = require("./models/link")
-
+const { Stats } = require("./models/stat")
 
 async function createLink(forplan, active, fun, shortlink) {
   if (!shortlink) {
@@ -32,21 +32,6 @@ async function createLink(forplan, active, fun, shortlink) {
   })
 
   return await link.save(fun)
-
-  /*const dbConnection = dbo.getDb();
-  dbConnection
-    .collection("links")
-    .insertOne({
-      _id: shortlink,
-      plan: forplan,
-      active: active === true
-    }, (err, res) => {
-      if (err) {
-
-      } else {
-        return res
-      }
-    })*/
 }
 
 
