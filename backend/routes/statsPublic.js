@@ -1,9 +1,13 @@
+// DEPRECATED, only return stats when shortlink is accessed.
+
+
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /listings.
+
 const publicStatsRoutes = express.Router();
 
 // This will help us connect to the database
@@ -29,10 +33,12 @@ publicStatsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
       plan: link.plan,
       link: shortLink,
     })
+    if (stats)
     res.status(200).json(stats.views)
   } else {
     res.status(404).send('Not Found')
   }
+
 
 
 
