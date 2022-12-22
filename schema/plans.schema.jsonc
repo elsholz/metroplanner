@@ -1,0 +1,57 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document containing a metro plans basic information, excluding state info.",
+        "properties": {
+            "forkedFrom": {
+                "type": "string",
+                "description": "Public link of the plan this one has been forked from."
+            },
+            "ownedBy": {
+                "bsonType": "objectId",
+                "description": "User who owns this plan."
+            },
+            "planName": {
+                "type": "string",
+                "description": "Display name of this plan."
+            },
+            "colorTheme": {
+                "type": "string",
+                "description": "ID of the plans color theme."
+            },
+            "createdAt": {
+                "type": "string",
+                "description": "Datetime when this plan was first created."
+            },
+            "lastModified": {
+                "type": "string",
+                "description": "Datetime when this plan was last modified"
+            },
+            "currentState": {
+                "bsonType": "objectId",
+                "description": "The current state that is to be displayed for this plan"
+            },
+            "numberOfNodes": {
+                "type": "number",
+                "description": "The number of nodes in the current state."
+            },
+            "numberOfLines": {
+                "type": "number",
+                "description": "The number of lines in the current state."
+            },
+            "history": {
+                "type": "array",
+                "items": {
+                    "bsonType": "objectId",
+                    "description": "The states of this plan in history. First item is the latest state."
+                }
+            }
+        },
+        "required": [
+            "planName",
+            "colorTheme",
+            "history",
+            "currentState"
+        ]
+    }
+}

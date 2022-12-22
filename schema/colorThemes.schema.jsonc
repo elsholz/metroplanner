@@ -1,0 +1,58 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document describing a color theme for a metro map.",
+        "properties": {
+            "themeName": {
+                "type": "string",
+                "description": "Display name of the color theme."
+            },
+            "public": {
+                "type": "boolean",
+                "description": "Whether this color theme is public and can be forked."
+            },
+            "forkedFrom": {
+                "bsonType": "objectId",
+                "description": "ID of the color theme this one has been forked from"
+            },
+            "ownedBy": {
+                "bsonType": "objectId",
+                "description": "User who owns this colortheme. Empty if available by default"
+            },
+            "themeData": {
+                "type": "object",
+                "properties": {
+                    "backgroundColor": {
+                        "type": "string"
+                    },
+                    "fontColor": {
+                        "type": "string"
+                    },
+                    "lineColors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "landscape": {
+                        "type": "object",
+                        "properties": {
+                            "river": {
+                                "type": "string"
+                            },
+                            "border": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "required": [
+            "themeName",
+            "public",
+            "ownedBy",
+            "themeData"
+        ]
+    }
+}

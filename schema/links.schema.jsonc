@@ -1,0 +1,25 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document mapping shortlinks to plan ids. Used to access plan-related data publicly (read-only).",
+        "properties": {
+            "_id": {
+                "type": "string",
+                "description": "Shortlink"
+            },
+            "plan": {
+                "bsonType": "objectId",
+                "description": "OID of the plan the link is for"
+            },
+            "active": {
+                "type": "boolean",
+                "description": "Whether link is active (publicly) or inactive"
+            }
+        },
+        "required": [
+            "_id",
+            "plan",
+            "active"
+        ]
+    }
+}

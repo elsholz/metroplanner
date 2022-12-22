@@ -1,0 +1,36 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document for counting map views via a specified shortlink.",
+        "properties": {
+            "_id": {
+                "type": "object",
+                "properties": {
+                    "plan": {
+                        "bsonType": "objectId",
+                        "description": "OID of the plan accessed"
+                    },
+                    "link": {
+                        "type": "string",
+                        "description": "Link that's been used to access the plan"
+                    }
+                },
+                "required": [
+                    "plan",
+                    "link"
+                ]
+            },
+            "views": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "number",
+                    "description": "View counts mapped to datetime when plan was accessed up to hour, in ISO format"
+                }
+            }
+        },
+        "required": [
+            "_id",
+            "views"
+        ]
+    }
+}
