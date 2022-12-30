@@ -95,12 +95,33 @@ def schema_plans():
                     "type": "number",
                     "description": "The number of lines in the current state.",
                 },
+                "numberOfEdges": {
+                    "type": "number",
+                    "description": "The number of edges between nodes in the current state.",
+                },
+                "likeCount": {
+                    "type": "number",
+                    "description": "The number of users who've liked this plan.",
+                },
                 "history": {
                     "type": "array",
                     "items": {
                         "bsonType": "objectId",
                         "description": "The states of this plan in history. First item is the latest state.",
                     },
+                },
+                "deleted": {
+                    "description": "Wheter this plan has been marked for deletion. If so, the date of deletion is saved.",
+                    "oneOf": [
+                        {
+                            "type": "bool",
+                            "const": False,
+                        },
+                        {
+                            "type": "string",
+                            "description": "Datetime of the deletion.",
+                        },
+                    ],
                 },
             },
             "required": ["planName", "colorTheme", "history", "currentState"],
@@ -140,6 +161,14 @@ def schema_users():
                 "profileViews": {
                     "type": "number",
                     "description": "Number of views on this profile, while it was publicly accessible.",
+                },
+                "likesGiven": {
+                    "type": "array",
+                    "description": "Number of views on this profile, while it was publicly accessible.",
+                    "items": {
+                        "bsonType": "objectId",
+                        "description": "ID of a plan that has been liked by the user.",
+                    },
                 },
             },
             "required": [
@@ -223,7 +252,10 @@ def schema_plan_history_state():
                                     "rotation": {"type": "number"},
                                 },
                             },
-                            "label": label_basics,
+                            "label": {
+                                "bsonType": "string",
+                                "description": "UUID of the node's label.",
+                            },
                         },
                         "required": ["location"],
                     },
@@ -255,7 +287,7 @@ def schema_plan_history_state():
                         "required": ["symbol", "name", "color", "connections"],
                     },
                 },
-                "additionalLabels": {
+                "labels": {
                     # label objects mapped by a unique id that is randomly generated at creation
                     "type": "object",
                     "additionalProperties": label_basics,

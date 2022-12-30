@@ -39,12 +39,33 @@
                 "type": "number",
                 "description": "The number of lines in the current state."
             },
+            "numberOfEdges": {
+                "type": "number",
+                "description": "The number of edges between nodes in the current state."
+            },
+            "likeCount": {
+                "type": "number",
+                "description": "The number of users who've liked this plan."
+            },
             "history": {
                 "type": "array",
                 "items": {
                     "bsonType": "objectId",
                     "description": "The states of this plan in history. First item is the latest state."
                 }
+            },
+            "deleted": {
+                "description": "Wheter this plan has been marked for deletion. If so, the date of deletion is saved.",
+                "oneOf": [
+                    {
+                        "type": "bool",
+                        "const": false
+                    },
+                    {
+                        "type": "string",
+                        "description": "Datetime of the deletion."
+                    }
+                ]
             }
         },
         "required": [
