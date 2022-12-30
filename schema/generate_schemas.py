@@ -293,7 +293,7 @@ def schema_plan_history_state():
                     "additionalProperties": label_basics,
                 },
             },
-            "required": ["nodes", "lines", "additionalLabels"],
+            "required": ["nodes", "lines", "labels"],
         }
     }
 
