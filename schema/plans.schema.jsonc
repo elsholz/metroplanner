@@ -4,8 +4,15 @@
         "description": "Document containing a metro plans basic information, excluding state info.",
         "properties": {
             "forkedFrom": {
-                "type": "string",
-                "description": "Public link of the plan this one has been forked from."
+                "description": "UUID of the plan this one has been forked from. If not forked from another plan, this value is set to null.",
+                "oneOf": [
+                    {
+                        "type": "null"
+                    },
+                    {
+                        "bsonType": "objectId"
+                    }
+                ]
             },
             "ownedBy": {
                 "bsonType": "objectId",
@@ -16,14 +23,14 @@
                 "description": "Display name of this plan."
             },
             "colorTheme": {
-                "type": "string",
-                "description": "ID of the plans color theme."
+                "bsonType": "objectId",
+                "description": "ID of the plan's color theme."
             },
             "createdAt": {
                 "type": "string",
                 "description": "Datetime when this plan was first created."
             },
-            "lastModified": {
+            "lastModifiedAt": {
                 "type": "string",
                 "description": "Datetime when this plan was last modified"
             },
@@ -58,8 +65,8 @@
                 "description": "Wheter this plan has been marked for deletion. If so, the date of deletion is saved.",
                 "oneOf": [
                     {
-                        "type": "bool",
-                        "const": false
+                        "type": "null",
+                        "description": "Plan not marked for deletion."
                     },
                     {
                         "type": "string",

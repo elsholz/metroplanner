@@ -12,12 +12,26 @@
                 "description": "Whether this color theme is public and can be forked."
             },
             "forkedFrom": {
-                "bsonType": "objectId",
-                "description": "ID of the color theme this one has been forked from"
+                "description": "ID of the color theme this one has been forked from. Empty if built-in color theme or created from scratch.",
+                "oneOf": [
+                    {
+                        "bsonType": "objectId"
+                    },
+                    {
+                        "type": "null"
+                    }
+                ]
             },
             "ownedBy": {
-                "bsonType": "objectId",
-                "description": "User who owns this colortheme. Empty if available by default"
+                "description": "User who owns this colortheme. Empty if available by default",
+                "oneOf": [
+                    {
+                        "bsonType": "objectId"
+                    },
+                    {
+                        "type": "null"
+                    }
+                ]
             },
             "themeData": {
                 "type": "object",

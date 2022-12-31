@@ -34,6 +34,17 @@
                     "bsonType": "objectId",
                     "description": "ID of a plan that has been liked by the user."
                 }
+            },
+            "profilePicture": {
+                "description": "Address of profile picture for user.",
+                "oneOf": [
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "null"
+                    }
+                ]
             }
         },
         "required": [

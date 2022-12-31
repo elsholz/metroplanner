@@ -1,3 +1,4 @@
+/*
 // DEPRECATED, only return stats when shortlink is accessed.
 
 
@@ -19,7 +20,7 @@ const { Stats } = require("../models/stat");
 publicStatsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
   let shortLink = req.params["shortlink"]
   console.log(`Stats for shortlink >${shortLink}< requested.`)
-  let allViews = !(req.query.allViews === undefined)
+  let detail = !(req.query.detail === undefined)
 
   // console.log(Link.findOne((res, req) => {console.log(null, req)}))
 
@@ -102,3 +103,4 @@ publicStatsRoutes.route("/api/stats/:shortlink").get(async function (req, res) {
 });
 
 module.exports = publicStatsRoutes;
+*/

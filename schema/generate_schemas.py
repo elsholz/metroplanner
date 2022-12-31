@@ -17,12 +17,26 @@ def schema_color_themes():
                     "description": "Whether this color theme is public and can be forked.",
                 },
                 "forkedFrom": {
-                    "bsonType": "objectId",
-                    "description": "ID of the color theme this one has been forked from",
+                    "description": "ID of the color theme this one has been forked from. Empty if built-in color theme or created from scratch.",
+                    "oneOf": [
+                        {
+                            "bsonType": "objectId",
+                        },
+                        {
+                            "type": "null",
+                        },
+                    ],
                 },
                 "ownedBy": {
-                    "bsonType": "objectId",
                     "description": "User who owns this colortheme. Empty if available by default",
+                    "oneOf": [
+                        {
+                            "bsonType": "objectId",
+                        },
+                        {
+                            "type": "null",
+                        },
+                    ],
                 },
                 "themeData": {
                     "type": "object",
@@ -49,7 +63,7 @@ def schema_color_themes():
         }
     }
 
-    with open("colorThemes.schema.jsonc", "w") as fout:
+    with open("color_themes.schema.jsonc", "w") as fout:
         fout.write(dumps(schema, indent=4, ensure_ascii=False))
 
 
@@ -60,8 +74,15 @@ def schema_plans():
             "description": "Document containing a metro plans basic information, excluding state info.",
             "properties": {
                 "forkedFrom": {
-                    "type": "string",
-                    "description": "Public link of the plan this one has been forked from.",
+                    "description": "UUID of the plan this one has been forked from. If not forked from another plan, this value is set to null.",
+                    "oneOf": [
+                        {
+                            "type": "null",
+                        },
+                        {
+                            "bsonType": "objectId",
+                        },
+                    ],
                 },
                 "ownedBy": {
                     "bsonType": "objectId",
@@ -72,14 +93,14 @@ def schema_plans():
                     "description": "Display name of this plan.",
                 },
                 "colorTheme": {
-                    "type": "string",
-                    "description": "ID of the plans color theme.",
+                    "bsonType": "objectId",
+                    "description": "ID of the plan's color theme.",
                 },
                 "createdAt": {
                     "type": "string",
                     "description": "Datetime when this plan was first created.",
                 },
-                "lastModified": {
+                "lastModifiedAt": {
                     "type": "string",
                     "description": "Datetime when this plan was last modified",
                 },
@@ -114,8 +135,8 @@ def schema_plans():
                     "description": "Wheter this plan has been marked for deletion. If so, the date of deletion is saved.",
                     "oneOf": [
                         {
-                            "type": "bool",
-                            "const": False,
+                            "type": "null",
+                            "description": "Plan not marked for deletion.",
                         },
                         {
                             "type": "string",
@@ -169,6 +190,17 @@ def schema_users():
                         "bsonType": "objectId",
                         "description": "ID of a plan that has been liked by the user.",
                     },
+                },
+                "profilePicture": {
+                    "description": "Address of profile picture for user.",
+                    "oneOf": [
+                        {
+                            "type": "string",
+                        },
+                        {
+                            "type": "null",
+                        },
+                    ],
                 },
             },
             "required": [
@@ -363,6 +395,10 @@ def schema_stats():
                         "type": "number",
                         "description": "View counts mapped to datetime when plan was accessed up to hour, in ISO format",
                     },
+                },
+                "totalCount": {
+                    "type": "number",
+                    "description": "Total number of views to date.",
                 },
             },
             "required": [

@@ -4,14 +4,19 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Plan = new Schema({
-    forkedFrom: Schema.ObjectId,
+    forkedFrom: Object,
     ownedBy: Schema.ObjectId,
     planName: String,
     colorTheme: Schema.ObjectId,
     createdAt: String,
-    lastModified: String,
+    lastModifiedAt: String,
     currentState: Schema.ObjectId,
+    numberOfNodes: Number,
+    numberOfLines: Number,
+    numberOfEdges: Number,
+    likeCount: Number,
     history: [Schema.ObjectId],
+    deleted: Object,
 });
 
 module.exports = {

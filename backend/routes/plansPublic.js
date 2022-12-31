@@ -1,24 +1,54 @@
 const express = require("express");
+const { mongoose } = require("mongoose");
+const { Link } = require("../models/link");
+const { Plan } = require("../models/plan");
+const { PlanState } = require("../models/planstate");
+const { Stats } = require("../models/stat");
+const { User } = require("../models/user");
+const { HTTP403, HTTP404, HTTP400 } = require("../utils")
 
 // recordRoutes is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /listings.
 const planRoutes = express.Router();
 
-// This will help us connect to the database
-const dbo = require("../db/conn");
-
 // Get List of currently popular plans shortlinks
-planRoutes.route("/api/popularplans").get(async function (req, res) {
-  const dbConnection = dbo.getDb();
-  res.status(501)
-  res.send("Not Implemented")
-})
+// planRoutes.route("/api/popularplans").get(async function (req, res) {
+//   const dbConnection = dbo.getDb();
+//   res.status(501)
+//   res.send("Not Implemented")
+// })
 
 // Returns all public information about a plan, excluding its latest state, identified by its shortlink
 planRoutes.route("/api/plan/:shortlink").get(async function (req, res) {
-  const dbConnection = dbo.getDb();
-  let shortLink = req.params["shortlink"]
+  const shortLink = req.params["shortlink"]
+  const link = await Link.findById({
+    _id: shortLink
+  })
+
+  if (link && link.active) {
+    let plan = await Plan.findById({
+      _id: link.plan
+    })
+
+    if (plan) {
+      const stats = await Stats.findById({
+        plan: link.plan,
+        link: shortLink,
+      }, {
+        totalCount: 1,
+      })
+
+      res.status(200).json({
+        plan: plan,
+        stats: stats
+      })
+    } else HTTP404(res)
+
+  } else HTTP404(res)
+
+
+  /* const dbConnection = dbo.getDb();
   console.log("GET for /api/plan/" + shortLink)
 
   dbConnection
@@ -80,14 +110,49 @@ planRoutes.route("/api/plan/:shortlink").get(async function (req, res) {
         }
       }
     });
+    */
 })
 
 // Returns only the latest state of a plan identified by a public shortlink
-planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
+planRoutes.route(["/api/planstate/:shortlink"]).get(async function (req, res) {
+  const shortLink = req.params["shortlink"]
+  const timeToHour = (new Date()).toISOString().slice(0, 13)
+
+  const link = await Link.findById({
+    _id: shortLink
+  })
+
+  if (link && link.active) {
+    const plan = await Plan.findById({
+      _id: link.plan
+    })
+
+    if (plan) {
+      const latestStateID = plan.currentState
+      const planState = await PlanState.findById({
+        _id: latestStateID
+      })
+
+      if (planState) {
+        res.status(200).json(planState)
+
+        await Stats.findByIdAndUpdate({
+          plan: link.plan,
+          link: shortLink,
+        }, {
+          $inc: {
+            "totalCount": 1,
+            ["views." + timeToHour]: 1
+          },
+        })
+      } else HTTP404(res)
+    } else HTTP404(res)
+  } else HTTP404(res)
+
+
+  /*
   const dbConnection = dbo.getDb();
-  let shortLink = req.params["shortlink"]
   console.log("GET for /api/plandata/" + shortLink)
-  let timeToHour = (new Date()).toISOString().slice(0, 13)
 
   dbConnection
     .collection("links")
@@ -188,7 +253,7 @@ planRoutes.route(["/api/plandata/:shortlink"]).get(async function (req, res) {
           res.send("Not Found")
         }
       }
-    });
+    }); */
 });
 
 module.exports = planRoutes;

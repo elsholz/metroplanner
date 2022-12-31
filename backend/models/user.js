@@ -8,7 +8,9 @@ const User = new Schema({
     public: Boolean,
     displayName: String,
     mailto: String,
+    profilePicture: Object,
     profileViews: Number,
+    likesGiven: Array,
 });
 
 module.exports = {

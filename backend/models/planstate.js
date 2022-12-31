@@ -1,17 +1,14 @@
 const mongoose = require("mongoose");
 
-// Define a schema
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
-const Planstate = new Schema({
+const PlanState = new Schema({
     createdAt: String,
     nodes: Object,
     lines: Object,
-    additionalLabels: Object,
-    numberOfNodes: Number,
-    numberOfLines: Number,
-});
+    labels: Object,
+})
 
 module.exports = {
-    Planstate: mongoose.model('plan_state', Planstate)
+    PlanState: mongoose.model('plan_state', PlanState)
 }

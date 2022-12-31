@@ -9,6 +9,7 @@ const Stats = new Schema({
         link: String,
     },
     views: Object,
+    totalCount: Number,
 });
 
 module.exports = {
