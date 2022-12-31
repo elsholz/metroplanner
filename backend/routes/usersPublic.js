@@ -14,7 +14,7 @@ const publicUsersRoutes = express.Router()
 // })
 
 // Returns user profile, iff profile is set to be publicly visible
-publicUsersRoutes.get("/api/users/:userid", async (req, res) => {
+publicUsersRoutes.get("/api/user/:userid", async (req, res) => {
     console.log("req::", req.params)
     const userID = new mongoose.Types.ObjectId(req.params.userid)
     let detail = !(req.query.detail === undefined)
@@ -46,16 +46,16 @@ publicUsersRoutes.get("/api/users/:userid", async (req, res) => {
                 displayName: user.displayName,
                 likesGiven: user.likesGiven,
                 mailto: user.mailto,
-                profileViews: user.profileViews,
+                profileViews: user.profileViews + 1,
                 profilePicture: user.profilePicture,
                 userPlans: userPlans,
             })
         } else {
             res.status(200).json({
-                pic: user.profilePicture,
                 _id: user._id,
                 public: user.public,
                 displayName: user.displayName,
+                profilePicture: user.profilePicture,
             })
         }
     } else HTTP404(res)
