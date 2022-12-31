@@ -9,12 +9,12 @@ const { User } = require("../models/user");
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /listings.
 const _linksRoutes = express.Router();
-const { checkJwt, HTTP403, HTTP404 } = require("../utils")
+const { checkJwt, HTTP403, HTTP404, HTTP400 } = require("../utils")
 
-_linksRoutes.get("/api/_links/forplan/:planid", checkJwt, async (req, res) => {
+_linksRoutes.get("/api/_links/:planid", checkJwt, async (req, res) => {
     // -> return all links for a plan, including stats
     let userAuthId = req.auth.payload.sub
-    const planID = new mongoose.Types.ObjectId(req.params.planid)
+    const planID = new Mongoose.Types.ObjectId(req.params.planid)
 
     if (userAuthId) {
         let user = await User.findOne({
@@ -29,7 +29,7 @@ _linksRoutes.get("/api/_links/forplan/:planid", checkJwt, async (req, res) => {
                     })
                     let result = []
                     if (planShortlinks) {
-                        planShortlinks.forEach(async (link) => {
+                        await planShortlinks.forEach(async (link) => {
                             let linkstats = await Stats.findById({
                                 plan: plan._id,
                                 link: link._id

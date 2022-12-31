@@ -15,7 +15,6 @@ app.use(express.json());
 
 
 // Routes:
-app.use(require("./routes/statsPublic"));
 app.use(require("./routes/plansPublic"));
 app.use(require("./routes/colorThemesPublic"));
 app.use(require("./routes/usersPublic"));
