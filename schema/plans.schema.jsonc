@@ -81,7 +81,6 @@
         },
         "required": [
             "planName",
-            "colorTheme",
             "history",
             "currentState"
         ]

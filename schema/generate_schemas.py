@@ -149,7 +149,7 @@ def schema_plans():
                     ],
                 },
             },
-            "required": ["planName", "colorTheme", "history", "currentState"],
+            "required": ["planName", "history", "currentState"],
         }
     }
 
