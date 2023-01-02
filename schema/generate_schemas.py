@@ -92,10 +92,6 @@ def schema_plans():
                     "type": "string",
                     "description": "Display name of this plan.",
                 },
-                "colorTheme": {
-                    "bsonType": "objectId",
-                    "description": "ID of the plan's color theme.",
-                },
                 "createdAt": {
                     "type": "string",
                     "description": "Datetime when this plan was first created.",
@@ -107,6 +103,10 @@ def schema_plans():
                 "currentState": {
                     "bsonType": "objectId",
                     "description": "The current state that is to be displayed for this plan",
+                },
+                "numberOfLabels": {
+                    "type": "number",
+                    "description": "The number of nodes in the current state.",
                 },
                 "numberOfNodes": {
                     "type": "number",
@@ -215,6 +215,7 @@ def schema_users():
 def schema_plan_history_state():
     styling = {"type": "object", "properties": {"fontSize": {"type": "number"}}}
 
+
     point = {
         "type": "array",
         "items": {"type": "number"},
@@ -263,6 +264,26 @@ def schema_plan_history_state():
                 "createdAt": {
                     "type": "string",
                     "description": "Datetime when this plan state was created.",
+                },
+                "colorTheme": {
+                    "bsonType": "objectId",
+                    "description": "ID of the plan's color theme.",
+                },
+                "numberOfLabels": {
+                    "type": "number",
+                    "description": "The number of nodes in this state.",
+                },
+                "numberOfNodes": {
+                    "type": "number",
+                    "description": "The number of nodes in this state.",
+                },
+                "numberOfLines": {
+                    "type": "number",
+                    "description": "The number of lines in this state.",
+                },
+                "numberOfEdges": {
+                    "type": "number",
+                    "description": "The number of edges between nodes in this state.",
                 },
                 "nodes": {
                     "type": "object",

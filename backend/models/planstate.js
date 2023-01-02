@@ -4,6 +4,11 @@ const Schema = mongoose.Schema
 
 const PlanState = new Schema({
     createdAt: String,
+    numberOfNodes: Number,
+    numberOfLines: Number,
+    colorTheme: Schema.ObjectId,
+    numberOfEdges: Number,
+    numberOfLabels: Number,
     nodes: Object,
     lines: Object,
     labels: Object,

@@ -7,6 +7,26 @@
                 "type": "string",
                 "description": "Datetime when this plan state was created."
             },
+            "colorTheme": {
+                "bsonType": "objectId",
+                "description": "ID of the plan's color theme."
+            },
+            "numberOfLabels": {
+                "type": "number",
+                "description": "The number of nodes in this state."
+            },
+            "numberOfNodes": {
+                "type": "number",
+                "description": "The number of nodes in this state."
+            },
+            "numberOfLines": {
+                "type": "number",
+                "description": "The number of lines in this state."
+            },
+            "numberOfEdges": {
+                "type": "number",
+                "description": "The number of edges between nodes in this state."
+            },
             "nodes": {
                 "type": "object",
                 "additionalProperties": {
