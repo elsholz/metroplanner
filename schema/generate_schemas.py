@@ -104,21 +104,25 @@ def schema_plans():
                     "bsonType": "objectId",
                     "description": "The current state that is to be displayed for this plan",
                 },
-                "numberOfLabels": {
+                "currentNumberOfLabels": {
                     "type": "number",
                     "description": "The number of nodes in the current state.",
                 },
-                "numberOfNodes": {
+                "currentNumberOfNodes": {
                     "type": "number",
                     "description": "The number of nodes in the current state.",
                 },
-                "numberOfLines": {
+                "currentNumberOfLines": {
                     "type": "number",
                     "description": "The number of lines in the current state.",
                 },
-                "numberOfEdges": {
+                "currentNumberOfEdges": {
                     "type": "number",
                     "description": "The number of edges between nodes in the current state.",
+                },
+                "currentColorTheme": {
+                    "bsonType": "objectId",
+                    "description": "ID of the plan's color theme.",
                 },
                 "likeCount": {
                     "type": "number",
