@@ -1,0 +1,457 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/elsholz/metroplanner/1.0.0
+info:
+  version: "1.0.0"
+  title: metroplanner-api
+  description: API for the Metroplanner project
+paths:
+  # PUBLIC API
+  /plan/{shortlink}:
+    get:
+      tags:
+        - Public API
+      description: Get basic plan data of a metroplan identified by its shortlink
+      parameters:
+        - in: path
+          name: shortlink
+          schema:
+            type: string
+          required: true
+          description: Public shortlink of the plan
+      responses:
+        '200':
+          description: OK
+          content:
+            text/json:
+              schema:
+                $ref: '#/components/schemas/publicGetPlan'
+  /api/plandata/{shortlink}:
+    get:
+      tags:
+        - Public API
+      description: Get latest state of a metroplan identified by its shortlink
+      parameters:
+        - in: path
+          name: shortlink
+          schema:
+            type: string
+          required: true
+          description: Public shortlink of the plan
+      responses:
+        '200':
+          description: OK
+          content:
+            text/json:
+              schema:
+                $ref: '#/components/schemas/publicGetPlanData'
+  /user/{userID}:
+    get:
+      tags:
+        - Public API
+      description: Get user profile, if publicly accessible
+      parameters:
+        - in: path
+          name: userID
+          schema:
+            type: string
+          required: true
+          description: ID of the user to get
+      responses:
+        '200':
+          description: OK
+          content:
+            text/json:
+              schema:
+                $ref: '#/components/schemas/publicGetUser'
+  /theme/{colorThemeID}:
+    get:
+      tags:
+        - Public API
+      description: Get color theme, if publicly available
+      parameters:
+        - in: path
+          name: colorThemeID
+          schema:
+            type: string
+          required: true
+          description: ID of the color theme
+      responses:
+        '200':
+          description: OK
+          content:
+            text/json:
+              schema:
+                $ref: '#/components/schemas/publicGetTheme'
+  /stats/{shortlink}:
+    get:
+      tags:
+        - Public API
+      description: Get stats for a publicly available plan given its shortlink
+      parameters:
+        - in: path
+          name: shortlink
+          schema:
+            type: string
+          required: true
+          description: Plan shortlink for which to get stats
+      responses:
+        '200':
+          description: OK
+          content:
+            text/json:
+              schema:
+                $ref: '#/components/schemas/publicGetStats'
+  # PRIVATE API
+  /_user:
+    get:
+      tags:
+        - Private API
+      description: Get stats for a publicly available plan given its shortlink
+      responses:
+        '200':
+          description: OK
+          # content:
+            # text/json:
+              # schema:
+  /_plans:
+    post:
+      tags:
+        - Private API
+      description: Get stats for a publicly available plan given its shortlink
+      responses:
+        '200':
+          description: OK
+          # content:
+            # text/json:
+              # schema:
+  /_plans/{planid}:
+    get:
+      tags:
+        - Private API
+      description: Get stats for a publicly available plan given its shortlink
+      parameters:
+        - in: path
+          name: planid
+          schema:
+            type: string
+          required: true
+          description: Plan UUID
+      responses:
+        '200':
+          description: OK
+          # content:
+            # text/json:
+              # schema:
+    patch:
+      tags:
+        - Private API
+      description: Get stats for a publicly available plan given its shortlink
+      parameters:
+        - in: path
+          name: planid
+          schema:
+            type: string
+          required: true
+          description: Plan UUID
+      responses:
+        '200':
+          description: OK
+          # content:
+            # text/json:
+              # schema:
+  /_links/{planid}:
+    get:
+      tags:
+        - Private API
+      description: Get stats for a publicly available plan given its shortlink
+      parameters:
+        - in: path
+          name: planid
+          schema:
+            type: string
+          required: true
+          description: Plan UUID
+      responses:
+        '200':
+          description: OK
+          # content:
+            # text/json:
+              # schema:
+  /_links/:
+    post:
+      tags:
+        - Private API
+      description: Get stats for a publicly available plan given its shortlink
+      responses:
+        '200':
+          description: OK
+          #content:
+           # text/json:
+            #  schema:
+  /_links/{shortlink}:
+    patch:
+      tags:
+        - Private API
+      description: Get stats for a publicly available plan given its shortlink
+      parameters:
+        - in: path
+          name: shortlink
+          schema:
+            type: string
+          required: true
+          description: Plan UUID
+      responses:
+        '200':
+          description: OK
+          #content:
+            #text/json:
+              # schema:
+                
+components:
+  schemas:
+    publicGetUser:
+      type: object
+      description: Document containing some user settings.
+      properties:
+        _id:
+          type: string
+          description: ID by which this user is publicly identified. Differs from the username.
+        username:
+          type: string
+          description: User this profile is for. Not publicly accessible.
+        displayName:
+          type: string
+          description: If profile is public, this is the user's display name.
+        mailto:
+          type: string
+          description: If profile is public, email address that users can view. May be empty.
+        profileViews:
+          type: number
+          description: Number of views on this profile, while it was publicly accessible.
+    publicGetTheme:
+      type: object
+      description: Document describing a color theme for a metro map.
+      properties:
+        themeName:
+          type: string
+          description: Display name of the color theme.
+        forkedFrom:
+          type: string
+          description: ID of the color theme this one has been forked from
+        ownedBy:
+          type: string
+          description: User who owns this colortheme. Empty if available by default
+        themeData:
+          type: object
+          properties:
+            backgroundColor:
+              type: string
+            fontColor:
+              type: string
+            lineColors:
+              type: array
+              items:
+                type: string
+            landscape:
+              type: object
+              properties:
+                river:
+                  type: string
+                border:
+                  type: string
+    publicGetStats: 
+      type: object
+      properties:
+        views:
+          type: integer
+          description: Number of views for shortlink in requested time frame.
+    publicGetPlan:
+      type: object
+      properties:
+        forkedFrom:
+          type: string
+          description: Public link of the plan this one has been forked from.
+        ownedBy:
+          type: string
+          description: User who owns this plan.
+        planName:
+          type: string
+          description: Display name of this plan.
+        colorTheme:
+          type: string
+          description: ID of the plans color theme.
+        createdAt:
+          type: string
+          description: Datetime when this plan was first created.
+        lastModified:
+          type: string
+          description: Datetime when this plan was last modified
+        numberOfNodes:
+          type: number
+          description: The number of nodes in the current state.
+        numberOfLines:
+          type: number
+          description: The number of lines in the current state.
+    publicGetPlanData:
+      type: object
+      description: Document describing the state of a metro plan in its history
+      properties:
+        createdAt:
+          type: string
+          description: Datetime when this plan state was created.
+        nodes:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              location:
+                type: array
+                items:
+                  type: number
+                minItems: 2
+                maxItems: 2
+              marker:
+                type: object
+                properties:
+                  width:
+                    type: number
+                  height:
+                    type: number
+                  sizeFactor:
+                    oneOf:
+                      - type: number
+                      - type: string
+                        enum:
+                          - sqrt2
+                  rotation:
+                    type: number
+              label:
+                type: object
+                properties:
+                  class:
+                    type: string
+                    enum:
+                      - centered
+                      - left_ascending
+                      - right_ascending
+                      - left_descending
+                      - right_descending
+                      - left
+                      - right
+                  text:
+                    type: string
+                  anchor:
+                    type: object
+                    properties:
+                      node:
+                        oneOf:
+                          - type: array
+                            items:
+                              type: number
+                            minItems: 2
+                            maxItems: 2
+                          - type: string
+                      xShift:
+                        type: number
+                      yShift:
+                        type: number
+                      width:
+                        type: number
+                      height:
+                        type: number
+                  styling:
+                    type: object
+                    properties:
+                      fontSize:
+                        type: number
+                required:
+                  - class
+                  - text
+                  - anchor
+        lines:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              name:
+                type: string
+              color:
+                type: string
+              borderWidth:
+                type: number
+              borderStyle:
+                type: string
+              borderColor:
+                type: string
+              width:
+                type: number
+              connections:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    nodes:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          node:
+                            oneOf:
+                              - type: array
+                                items:
+                                  type: number
+                                minItems: 2
+                                maxItems: 2
+                              - type: string
+                          xShift:
+                            type: number
+                          yShift:
+                            type: number
+                          width:
+                            type: number
+                          height:
+                            type: number
+        additionalLabels:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              class:
+                type: string
+                enum:
+                  - centered
+                  - left_ascending
+                  - right_ascending
+                  - left_descending
+                  - right_descending
+                  - left
+                  - right
+              text:
+                type: string
+              anchor:
+                type: object
+                properties:
+                  node:
+                    oneOf:
+                      - type: array
+                        items:
+                          type: number
+                        minItems: 2
+                        maxItems: 2
+                      - type: string
+                  xShift:
+                    type: number
+                  yShift:
+                    type: number
+                  width:
+                    type: number
+                  height:
+                    type: number
+              styling:
+                type: object
+                properties:
+                  fontSize:
+                    type: number
