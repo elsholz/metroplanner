@@ -508,26 +508,26 @@ Resources:
                         type: object
                         properties:
                           node:
-                    oneOf:
-                      - type: array
-                        items:
-                          type: number
-                        minItems: 2
-                        maxItems: 2
-                      - type: string
-                  xShift:
-                    type: number
-                  yShift:
-                    type: number
-                  width:
-                    type: number
-                  height:
-                    type: number
-              styling:
-                type: object
-                properties:
-                  fontSize:
-                    type: number
+                            oneOf:
+                              - type: array
+                                items:
+                                  type: number
+                                minItems: 2
+                                maxItems: 2
+                              - type: string
+                          xShift:
+                            type: number
+                          yShift:
+                            type: number
+                          width:
+                            type: number
+                          height:
+                            type: number
+                      styling:
+                        type: object
+                        properties:
+                          fontSize:
+                            type: number
       Domain:
         DomainName: !FindInMap [EnvMap, !Ref env, Domain]
         CertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
