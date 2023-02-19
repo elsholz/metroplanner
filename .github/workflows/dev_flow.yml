@@ -20,7 +20,7 @@ jobs:
           aws-region: eu-central-1
       - run: sam build
         working-directory: api
-      - run: sam deploy --parameter-overrides env=dev --no-confirm-changeset --no-fail-on-empty-changeset --stack-name just-in-time-api-dev --s3-bucket conf-bucket-jit --capabilities CAPABILITY_IAM --region eu-central-1
+      - run: sam deploy --parameter-overrides env=dev --no-confirm-changeset --no-fail-on-empty-changeset --stack-name metroplanner-api-dev --s3-bucket conf-bucket-metroplanner --capabilities CAPABILITY_IAM --region eu-central-1
         working-directory: api
 
 #   deploy_dev_frontend:
@@ -53,9 +53,9 @@ jobs:
 #         run: sam build
 #         working-directory: q-frontend
 #       - name: Create S3 Bucket
-#         run: sam deploy --parameter-overrides env=dev --no-confirm-changeset --no-fail-on-empty-changeset --stack-name just-in-time-frontend-dev --s3-bucket conf-bucket-jit --capabilities CAPABILITY_IAM --region eu-central-1
+#         run: sam deploy --parameter-overrides env=dev --no-confirm-changeset --no-fail-on-empty-changeset --stack-name metroplanner-frontend-dev --s3-bucket conf-bucket-metroplanner --capabilities CAPABILITY_IAM --region eu-central-1
 #         working-directory: q-frontend
 #       - name: Print Files
 #         run: ls q-frontend/dist/spa
 #       - name: Sync Files to Bucket
-#         run: aws s3 sync "q-frontend/dist/spa" "s3://jit-frontend-dev"
+#         run: aws s3 sync "q-frontend/dist/spa" "s3://metroplanner-frontend-dev"
