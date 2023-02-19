@@ -11,12 +11,12 @@ Globals:
 Mappings:
   EnvMap:
     prod:
-      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/1552d28f-f059-4af0-942e-c2b5022dc828"
+      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/dffae670-858c-4638-97ae-98e66515f6c3"
       Domain: "api.ich-hab-plan.de"
       FunctionName: "MetroplannerFuncProd"
       ApiName: "MetroplannerApiProd"
     dev:
-      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/dde08a63-1bf1-49fa-8e12-c55df088cce2"
+      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/749741b5-d1e3-41f0-b379-3398c66ef8f1"
       Domain: "api.dev.ich-hab-plan.de"
       FunctionName: "MetroplannerFuncDev"
       ApiName: "MetroplannerApiDev"
