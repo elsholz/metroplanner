@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy_prod:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: "3.9"
+      - uses: aws-actions/setup-sam@v1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - run: sam build
+        working-directory: lambda
+      - run: sam deploy --parameter-overrides env=prod --no-confirm-changeset --no-fail-on-empty-changeset --stack-name just-in-time-api-prod --s3-bucket conf-bucket-jit --capabilities CAPABILITY_IAM --region eu-central-1
+        working-directory: lambda

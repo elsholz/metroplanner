@@ -1,0 +1,61 @@
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  deploy_dev_api:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: "3.9"
+      - uses: aws-actions/setup-sam@v1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - run: sam build
+        working-directory: lambda
+      - run: sam deploy --parameter-overrides env=dev --no-confirm-changeset --no-fail-on-empty-changeset --stack-name just-in-time-api-dev --s3-bucket conf-bucket-jit --capabilities CAPABILITY_IAM --region eu-central-1
+        working-directory: lambda
+
+  deploy_dev_frontend:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Install NPM Dependencies
+        run: npm i
+        working-directory: q-frontend
+      - name: Install Quasar
+        run: npm i -g @quasar/cli
+      - name: Build Quasar SPA
+        run: npx quasar build
+        working-directory: q-frontend
+      - name: Setup Python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: "3.9"
+      - uses: aws-actions/setup-sam@v1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - name: Build SAM Template
+        run: sam build
+        working-directory: q-frontend
+      - name: Create S3 Bucket
+        run: sam deploy --parameter-overrides env=dev --no-confirm-changeset --no-fail-on-empty-changeset --stack-name just-in-time-frontend-dev --s3-bucket conf-bucket-jit --capabilities CAPABILITY_IAM --region eu-central-1
+        working-directory: q-frontend
+      - name: Print Files
+        run: ls q-frontend/dist/spa
+      - name: Sync Files to Bucket
+        run: aws s3 sync "q-frontend/dist/spa" "s3://jit-frontend-dev"

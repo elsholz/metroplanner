@@ -1,0 +1,5 @@
+GET = 'get'
+POST = 'post'
+PATCH = 'patch'
+DELETE = 'delete'
+UPDATE = 'update'
