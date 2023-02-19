@@ -2,7 +2,7 @@ const express = require("express")
 const { mongoose } = require("mongoose")
 const { Plan } = require("../models/plan")
 const { User } = require("../models/user")
-const { HTTP404 } = require("../utils")
+const { HTTP404, JSON200 } = require("../utils")
 
 const publicUsersRoutes = express.Router()
 
@@ -40,7 +40,7 @@ publicUsersRoutes.get("/api/user/:userid", async (req, res) => {
 
     if (user) {
         if (user.public && detail) {
-            res.status(200).json({
+            JSON200(res, {
                 _id: user._id,
                 public: user.public,
                 displayName: user.displayName,
@@ -49,14 +49,14 @@ publicUsersRoutes.get("/api/user/:userid", async (req, res) => {
                 profileViews: user.profileViews + 1,
                 profilePicture: user.profilePicture,
                 userPlans: userPlans,
-            })
+            }, 500)
         } else {
-            res.status(200).json({
+            JSON200(res, {
                 _id: user._id,
                 public: user.public,
                 displayName: user.displayName,
                 profilePicture: user.profilePicture,
-            })
+            }, 500)
         }
     } else HTTP404(res)
 })

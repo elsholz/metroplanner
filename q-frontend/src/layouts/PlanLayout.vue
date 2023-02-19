@@ -1,18 +1,16 @@
 <template>
   <q-layout view="lHh lpR lFf">
-    <q-header elevated class="bg-primary text-white">
+    <q-header elevated class="bg-dark text-white" dark style="box-shadow: 0 0 5px 3px white;">
       <q-toolbar>
-        <q-btn dense flat icon="menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title>
-          Metroplanner
-        </q-toolbar-title>
-        <q-btn label="Login" color="green-6" class="q-pa-sm q-px-md text-body1" icon="person" />
+        <q-btn dense flat icon="menu" @click="toggleLeftDrawer" class="q-mr-sm" />
+        <HeaderLogo> </HeaderLogo>
+        <LoginContextButton> </LoginContextButton>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" behavior="mobile" bordered :width="400" class="text-body1">
-      <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
+    <q-drawer v-if="planData.planName && planOwner._id && planStats.totalCount" v-model="leftDrawerOpen" side="left"
+      behavior="mobile" bordered :width="400" class="text-body1" dark style="box-shadow: 0 0 10px 5px gray;">
+      <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; ">
         <q-list padding>
           <q-item>
             <q-item-section>
@@ -22,7 +20,7 @@
             </q-item-section>
           </q-item>
 
-          <q-separator class="q-my-lg" />
+          <q-separator class="q-my-lg" dark />
 
           <q-item>
             <q-item-section avatar class="q-ml-md">
@@ -34,7 +32,7 @@
             </q-item-section>
 
             <q-item-section>
-              {{ planData.numberOfLines || 0 }}
+              {{ planData.currentNumberOfLines || 0 }}
             </q-item-section>
           </q-item>
 
@@ -48,7 +46,7 @@
             </q-item-section>
 
             <q-item-section>
-              {{ planData.numberOfNodes || 0 }}
+              {{ planData.currentNumberOfNodes || 0 }}
             </q-item-section>
           </q-item>
 
@@ -62,11 +60,11 @@
             </q-item-section>
 
             <q-item-section>
-              {{ planData.numberOfEdges || 0 }}
+              {{ planData.currentNumberOfEdges || 0 }}
             </q-item-section>
           </q-item>
 
-          <q-separator class="q-my-lg" />
+          <q-separator class="q-my-lg" dark />
 
           <q-item>
             <q-item-section>
@@ -103,8 +101,8 @@
         </q-list>
       </q-scroll-area>
 
-      <q-img class="absolute-top" style="height: 150px">
-        <div class="absolute-bottom bg-primary">
+      <q-img class="absolute-top" style="height: 150px; border-bottom: 2px solid gray;">
+        <div class="absolute-bottom">
           <div class="row q-pt-md">
             <div class="col-xs-6">
               Plan erstellt von:
@@ -115,7 +113,8 @@
             <div class="col-shrink">
               <q-btn flat round :to="'/users/' + planOwner._id">
                 <q-avatar size="72px" class="q-mb-sm">
-                  <img :src="planOwner.profilePicture || 'https://source.boringavatars.com/pixel/72/' + planOwner._id + '?colors=66f873,5a3dcf,99848a'">
+                  <img
+                    :src="planOwner.profilePicture || 'https://source.boringavatars.com/pixel/72/' + planOwner._id + '?colors=66f873,5a3dcf,99848a'">
                 </q-avatar>
               </q-btn>
             </div>
@@ -142,17 +141,11 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
-    </q-page-container>
+      <!---<router-view  hello="world"/>-->
+      <PlanViewer :planName="planName"></PlanViewer>
 
-    <!--
-    <q-footer class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          Metroplanner
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>-->
+      <!--import PlanViewer from 'pages/PlanViewer.vue'-->
+    </q-page-container>
 
   </q-layout>
 </template>
@@ -160,11 +153,13 @@
 <script>
 import { toRaw, ref } from 'vue'
 import axios from 'axios'
+import PlanViewer from 'src/pages/PlanViewer.vue'
+import HeaderLogo from 'src/components/HeaderLogo.vue'
+import LoginContextButton from 'src/components/LoginContextButton.vue'
 
 export default {
   setup () {
     const leftDrawerOpen = ref(false)
-
     return {
       leftDrawerOpen,
       toggleLeftDrawer () {
@@ -176,26 +171,28 @@ export default {
     return {
       planData: {},
       planOwner: {},
-      planStats: {}
+      planStats: {},
+      planName: null
     }
   },
   created () {
     axios.get('/api/plan/' + this.$route.params.shortlink).then(response => {
       const rawData = toRaw(response.data)
+      console.log(rawData)
       this.planData = rawData.plan
       this.planStats = rawData.stats
       this.planData.createdAt = rawData.plan.createdAt.slice(0, 10)
       this.planData.lastModifiedAt = rawData.plan.lastModifiedAt.slice(0, 10)
+      this.planName = this.planData.planName
       // console.log('raw, plan data, plan owner, planstats::', rawData, this.planData, this.planOwner, this.planStats)
       // console.log('planData.planName', this.planData.planName)
-
       axios.get('/api/user/' + this.planData.ownedBy).then(response => {
         this.planOwner = response.data
-        console.log('plan data, plan owner, planstats::', this.planData, this.planOwner, this.planStats)
       })
     })
   },
   mounted () {
-  }
+  },
+  components: { PlanViewer, HeaderLogo, LoginContextButton }
 }
 </script>

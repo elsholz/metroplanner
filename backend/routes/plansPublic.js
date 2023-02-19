@@ -3,7 +3,7 @@ const { Link } = require("../models/link")
 const { Plan } = require("../models/plan")
 const { PlanState } = require("../models/planstate")
 const { Stats } = require("../models/stat")
-const { HTTP404 } = require("../utils")
+const { HTTP404, JSON200 } = require("../utils")
 
 const planRoutes = express.Router()
 
@@ -34,10 +34,10 @@ planRoutes.route("/api/plan/:shortlink").get(async function (req, res) {
         totalCount: 1,
       })
 
-      res.status(200).json({
+      JSON200(res, {
         plan: plan,
         stats: stats
-      })
+      }, 0)
     } else HTTP404(res)
 
   } else HTTP404(res)
@@ -64,7 +64,7 @@ planRoutes.route(["/api/planstate/:shortlink"]).get(async function (req, res) {
       })
 
       if (planState) {
-        res.status(200).json(planState)
+        JSON200(res, planState, 0)
 
         await Stats.findByIdAndUpdate({
           plan: link.plan,

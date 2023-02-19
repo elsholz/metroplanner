@@ -1,4 +1,3 @@
-import PlanViewer from 'pages/PlanViewer.vue'
 
 const routes = [
   {
@@ -10,10 +9,10 @@ const routes = [
   },
   {
     path: '/p/:shortlink',
-    component: () => import('layouts/PlanLayout.vue'),
-    children: [
-      { path: '', component: () => PlanViewer }
-    ]
+    component: () => import('layouts/PlanLayout.vue')//,
+    // children: [
+    //   { path: '', component: () => PlanViewer }
+    // ]
   },
 
   // Always leave this as last one,

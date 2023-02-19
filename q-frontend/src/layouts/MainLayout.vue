@@ -1,14 +1,9 @@
 <template>
   <q-layout view="hHh lpR fff">
-
-    <q-header elevated class="bg-primary text-white">
+    <q-header elevated class="bg-dark text-white" dark style="box-shadow: 0 0 5px 3px white;">
       <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-          </q-avatar>
-          Metroplanner
-        </q-toolbar-title>
+        <HeaderLogo> </HeaderLogo>
+        <LoginContextButton> </LoginContextButton>
       </q-toolbar>
     </q-header>
 
@@ -16,32 +11,22 @@
       <router-view />
     </q-page-container>
 
-    <q-footer class="bg-grey-8 text-white">
-      <q-toolbar>
-        <q-toolbar-title>
-          <!--<q-avatar>
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-          </q-avatar>-->
-          <div>Title</div>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>
-
+    <PageFooter></PageFooter>
   </q-layout>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
+import HeaderLogo from 'src/components/HeaderLogo.vue'
+import LoginContextButton from 'src/components/LoginContextButton.vue'
+import PageFooter from 'src/components/PageFooter.vue'
 
 export default defineComponent({
   name: 'MainLayout',
-
-  components: {
-  },
-
   setup () {
     return {
     }
-  }
+  },
+  components: { HeaderLogo, LoginContextButton, PageFooter }
 })
 </script>
