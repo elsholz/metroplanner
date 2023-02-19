@@ -46,7 +46,13 @@ Resources:
                 - secretsmanager:DescribeSecret
                 - secretsmanager:ListSecretVersionIds
               Resource: "arn:aws:secretsmanager:eu-central-1:891666753558:secret:MetroplannerKeys-xR1Pb5"
-      # Events: {}
+      Events: 
+        GetPlan:
+          Type: HttpApi
+          Properties:
+            Path: /plan/{shortlink}
+            Method: get
+            ApiId: !Ref MetroplannerApi
         # GetPlan:
         #   Type: HttpApi
         #   Properties:
