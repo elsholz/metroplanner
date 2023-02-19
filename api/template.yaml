@@ -50,7 +50,7 @@ Resources:
         GetPlan:
           Type: HttpApi
           Properties:
-            Path: /plan/{shortlink}
+            Path: /*
             Method: get
             ApiId: !Ref MetroplannerApi
         # GetPlan:
