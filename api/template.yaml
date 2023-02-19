@@ -47,30 +47,24 @@ Resources:
                 - secretsmanager:ListSecretVersionIds
               Resource: "arn:aws:secretsmanager:eu-central-1:891666753558:secret:MetroplannerKeys-xR1Pb5"
       Events: 
-        GetPlan:
+        PublicGetPlan:
           Type: HttpApi
           Properties:
-            Path: /*
+            Path: /plan/{shortlink}
             Method: get
             ApiId: !Ref MetroplannerApi
-        # GetPlan:
-        #   Type: HttpApi
-        #   Properties:
-        #     Path: /plan/{shortlink}
-        #     Method: get
-        #     ApiId: !Ref MetroplannerApi
-        # PatchUserdata:
-        #   Type: HttpApi
-        #   Properties:
-        #     Path: /
-        #     Method: patch
-        #     ApiId: !Ref MetroplannerApi
-        # DeleteUserdata:
-        #   Type: HttpApi
-        #   Properties:
-        #     Path: /
-        #     Method: delete
-        #     ApiId: !Ref MetroplannerApi
+        PublicGetPlanstate:
+          Type: HttpApi
+          Properties:
+            Path: /planstate/{shortlink}
+            Method: get
+            ApiId: !Ref MetroplannerApi
+        PublicGetUser:
+          Type: HttpApi
+          Properties:
+            Path: /user/{userID}
+            Method: get
+            ApiId: !Ref MetroplannerApi
       Tags:
         App: metroplanner
         Environment: !Ref env
@@ -107,7 +101,7 @@ Resources:
                     text/json:
                       schema:
                         $ref: '#/components/schemas/publicGetPlan'
-          /api/plandata/{shortlink}:
+          /plandata/{shortlink}:
             get:
               tags:
                 - Public API
@@ -145,44 +139,44 @@ Resources:
                     text/json:
                       schema:
                         $ref: '#/components/schemas/publicGetUser'
-          /theme/{colorThemeID}:
-            get:
-              tags:
-                - Public API
-              description: Get color theme, if publicly available
-              parameters:
-                - in: path
-                  name: colorThemeID
-                  schema:
-                    type: string
-                  required: true
-                  description: ID of the color theme
-              responses:
-                '200':
-                  description: OK
-                  content:
-                    text/json:
-                      schema:
-                        $ref: '#/components/schemas/publicGetTheme'
-          /stats/{shortlink}:
-            get:
-              tags:
-                - Public API
-              description: Get stats for a publicly available plan given its shortlink
-              parameters:
-                - in: path
-                  name: shortlink
-                  schema:
-                    type: string
-                  required: true
-                  description: Plan shortlink for which to get stats
-              responses:
-                '200':
-                  description: OK
-                  content:
-                    text/json:
-                      schema:
-                        $ref: '#/components/schemas/publicGetStats'
+          # /theme/{colorThemeID}:
+          #   get:
+          #     tags:
+          #       - Public API
+          #     description: Get color theme, if publicly available
+          #     parameters:
+          #       - in: path
+          #         name: colorThemeID
+          #         schema:
+          #           type: string
+          #         required: true
+          #         description: ID of the color theme
+          #     responses:
+          #       '200':
+          #         description: OK
+          #         content:
+          #           text/json:
+          #             schema:
+          #               $ref: '#/components/schemas/publicGetTheme'
+          # /stats/{shortlink}:
+          #   get:
+          #     tags:
+          #       - Public API
+          #     description: Get stats for a publicly available plan given its shortlink
+          #     parameters:
+          #       - in: path
+          #         name: shortlink
+          #         schema:
+          #           type: string
+          #         required: true
+          #         description: Plan shortlink for which to get stats
+          #     responses:
+          #       '200':
+          #         description: OK
+          #         content:
+          #           text/json:
+          #             schema:
+          #               $ref: '#/components/schemas/publicGetStats'
           # PRIVATE API
           /_user:
             get:
