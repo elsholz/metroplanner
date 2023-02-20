@@ -20,6 +20,9 @@ Parameters:
     Type: String
     Description: Environment of the deployment (Lowercase)
 
+Conditions:
+  IsStaging: !Equals [!Ref env, prod]
+
 Resources:
   MetroplannerCfDistro:
     Type: AWS::CloudFront::Distribution
@@ -27,7 +30,7 @@ Resources:
       DistributionConfig:
         Aliases:
           - "ich-hab-plan.de"
-        Staging: !If [!Equals [!Ref env, prod], false, true]
+        Staging: !If [IsStaging, false, true]
         PriceClass: PriceClass_100
   #       CacheBehaviors:
   #         - CacheBehavior
