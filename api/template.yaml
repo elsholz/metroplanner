@@ -15,11 +15,15 @@ Mappings:
       Domain: "api.ich-hab-plan.de"
       FunctionName: "MetroplannerFuncProd"
       ApiName: "MetroplannerApiProd"
+      QueueName: "MetroplannerQueueProd"
+      LogFunctionName: "MetroplannerLogFuncProd"
     dev:
       CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/749741b5-d1e3-41f0-b379-3398c66ef8f1"
       Domain: "api.dev.ich-hab-plan.de"
       FunctionName: "MetroplannerFuncDev"
       ApiName: "MetroplannerApiDev"
+      QueueName: "MetroplannerQueueDev"
+      LogFunctionName: "MetroplannerLogFuncDev"
 
 Parameters:
   env:
@@ -27,6 +31,30 @@ Parameters:
     Description: Environment of the deployment (Lowercase)
 
 Resources:
+  LogFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !FindInMap [EnvMap, !Ref env, LogFunctionName]
+      CodeUri: log_func/
+      Handler: log_func.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Policies:
+        - Statement:
+            - Sid: MetroplannerReadFromLogQueue
+              Effect: Allow
+              Action:
+                - sqs:ReceiveMessage
+              Resource: !GetAtt LogQueue.Arn
+      Events:
+        ScheduledFunctionInvocation:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: "cron(30 9,13 * * *)"
+      Tags:
+        App: metroplanner
+        Environment: !Ref env
   MetroplannerFunc:
     Type: AWS::Serverless::Function
     Properties:
@@ -46,6 +74,12 @@ Resources:
                 - secretsmanager:DescribeSecret
                 - secretsmanager:ListSecretVersionIds
               Resource: "arn:aws:secretsmanager:eu-central-1:891666753558:secret:MetroplannerKeys-xR1Pb5"
+        - Statement:
+            - Sid: MetroplannerWriteToLogQueue
+              Effect: Allow
+              Action:
+                - sqs:SendMessage
+              Resource: !GetAtt LogQueue.Arn
       Events: 
         PublicGetPlan:
           Type: HttpApi
@@ -66,6 +100,15 @@ Resources:
             Method: get
             ApiId: !Ref MetroplannerApi
       Tags:
+        App: metroplanner
+        Environment: !Ref env
+  LogQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: !FindInMap [EnvMap, !Ref env, QueueName]
+      FifoQueue: false
+      ContentBasedDeduplication: false
+      Tags: 
         App: metroplanner
         Environment: !Ref env
   MetroplannerApi:
@@ -547,4 +590,12 @@ Outputs:
   MetroplannerFuncIamRole:
     Description: "Implicit IAM Role created for Metroplanner function"
     Value: !GetAtt MetroplannerFuncRole.Arn
+  LogFunc:
+    Description: "Function for collection statistics from the logs from SQS"
+    Value: !GetAtt LogFunc.Arn
+  LogFuncIamRole:
+    Description: "Implicit IAM Role created for Log function"
+    Value: !GetAtt LogFuncRole.Arn
+
+
 
