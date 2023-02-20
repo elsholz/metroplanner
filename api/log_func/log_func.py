@@ -40,7 +40,8 @@ def lambda_handler(event, context):
     response_codes = {}
     for m in messages:
         data = json.loads(m)
-        x = response_codes[data['code']] = response_codes.get(data['code'], [])
+        code = str(data['statusCode'])
+        x = response_codes[code] = response_codes.get(code, [])
         x.append(data)
 
     print(response_codes)
