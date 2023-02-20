@@ -17,6 +17,7 @@ Mappings:
       ApiName: "MetroplannerApiProd"
       QueueName: "MetroplannerQueueProd"
       LogFunctionName: "MetroplannerLogFuncProd"
+      SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:PROD_Metroplanner"
     dev:
       CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/749741b5-d1e3-41f0-b379-3398c66ef8f1"
       Domain: "api.dev.ich-hab-plan.de"
@@ -24,6 +25,7 @@ Mappings:
       ApiName: "MetroplannerApiDev"
       QueueName: "MetroplannerQueueDev"
       LogFunctionName: "MetroplannerLogFuncDev"
+      SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:DEV_Metroplanner"
 
 Parameters:
   env:
@@ -47,6 +49,12 @@ Resources:
               Action:
                 - sqs:ReceiveMessage
               Resource: !GetAtt LogQueue.Arn
+        - Statement:
+            - Sid: MetroplannerPushToSNSTopic
+              Effect: Allow
+              Action: 
+                - sns:publish
+              Resource: !FindInMap [EnvMap, !Ref env, SnsTopicArn]
       Events:
         ScheduledFunctionInvocation:
           Type: ScheduleV2

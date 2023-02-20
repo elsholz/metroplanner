@@ -27,14 +27,16 @@ def lambda_handler(event, context):
             "successful": None,
             "clienterror": None,
             "servererror": None,
-            "detailed": json.dumps({}, indent=4, ensure_ascii=False)
+            "detailed": json.dumps({}, indent=4, ensure_ascii=False),
         }
     )
 
     print(report)
 
     response = sns_client.publish(
-        TopicArn='arn:aws:sns:eu-central-1:891666753558:PROD_Metroplanner' if env == 'prod' else "arn:aws:sns:eu-central-1:891666753558:DEV_Metroplanner",
+        TopicArn="arn:aws:sns:eu-central-1:891666753558:PROD_Metroplanner"
+        if env == "prod"
+        else "arn:aws:sns:eu-central-1:891666753558:DEV_Metroplanner",
         Message=report,
         Subject=f"Metroplanner {env.upper()} - Statistics Report {now.isoformat()}",
     )
