@@ -99,7 +99,7 @@ Resources:
       Type: A
       AliasTarget:
         HostedZoneId: "Z21DNDUVLTQW6Q"
-        DNSName: !Join [ '.', [ !Ref MetroplannerCfDistro, "cloudfront.net" ] ]
+        DNSName: !Join [ '.', [ !Ref MetroplannerCfDistro, "cloudfront.net." ] ]
 
 Outputs:
   WebsiteURL:
