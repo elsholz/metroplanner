@@ -9,11 +9,13 @@ Mappings:
       Domain: "ich-hab-plan.de"
       CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/21b68b38-9184-4f8e-a51b-b0c4482e1e72"
       OriginId: prod-bucket
+      Comment: PROD Metroplanner Distro
     dev:
       BucketName: "metroplanner-frontend-dev"
       Domain: "dev.ich-hab-plan.de"
       CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/c1ebfcc3-a24c-4e9c-943e-cb66bb52ed97"
       OriginId: dev-bucket
+      Comment: Metroplanner Distro DEV
 
 Parameters:
   env:
@@ -30,6 +32,7 @@ Resources:
       DistributionConfig:
         Aliases:
           - !FindInMap [EnvMap, !Ref env, Domain]
+        Comment: !FindInMap [EnvMap, !Ref env, Comment]
         # Staging: !If [IsStaging, false, true]
         PriceClass: PriceClass_100
         Enabled: true
