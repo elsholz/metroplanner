@@ -46,12 +46,12 @@ Resources:
             # RealtimeLogConfigArn: String
             # ResponseHeadersPolicyId: String
             # SmoothStreaming: Boolean
-            # TargetOriginId: String
+            TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
             # TrustedKeyGroups:
             #   - String
             # TrustedSigners:
             #   - String
-            # ViewerProtocolPolicy: String
+            ViewerProtocolPolicy: redirect-to-https
 
   #       CacheBehaviors:
   #         - CacheBehavior
