@@ -49,6 +49,11 @@ Resources:
               OriginProtocolPolicy: "https-only"
             DomainName: !GetAtt MetroplannerBucket.DomainName
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
+        ViewerCertificate:
+          AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
+          CloudFrontDefaultCertificate: false
+          MinimumProtocolVersion: TLSv1
+          SslSupportMethod: sni-only
       Tags:
         - Key: App
           Value: metroplanner
