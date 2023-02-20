@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: S3 bucket for Frontend Deployment
+
+Mappings:
+  EnvMap:
+    prod:
+      BucketName: "metroplanner-frontend-prod"
+      Domain: "ich-hab-plan.de"
+    dev:
+      BucketName: "metroplanner-frontend-dev"
+      Domain: "dev.ich-hab-plan.de"
+
+Parameters:
+  env:
+    Type: String
+    Description: Environment of the deployment (Lowercase)
+
+Resources:
+  MetroplannerCfDistro:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - String
+        CacheBehaviors:
+          - CacheBehavior
+        CNAMEs:
+          - String
+        Comment: String
+        ContinuousDeploymentPolicyId: String
+        CustomErrorResponses:
+          - CustomErrorResponse
+        CustomOrigin:
+          LegacyCustomOrigin
+        DefaultCacheBehavior:
+          DefaultCacheBehavior
+        DefaultRootObject: String
+        Enabled: Boolean
+        HttpVersion: String
+        IPV6Enabled: Boolean
+        Logging:
+          Logging
+        OriginGroups:
+          OriginGroups
+        Origins:
+          - Origin
+        PriceClass: String
+        Restrictions:
+          Restrictions
+        S3Origin:
+          LegacyS3Origin
+        Staging: Boolean
+        ViewerCertificate:
+          ViewerCertificate
+        WebACLId: String
+      Tags:
+        - Key: App
+          Value: metroplanner
+        - Key: Environment
+          Value: !Ref env
+
+  MetroplannerBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !FindInMap [EnvMap, !Ref env, BucketName]
+      # PublicAccessBlockConfiguration:
+      #   BlockPublicAcls: false
+      #   BlockPublicPolicy: false
+      #   IgnorePublicAcls: false
+      #   RestrictPublicBuckets: false
+      Tags:
+        - Key: App
+          Value: metroplanner
+        - Key: Environment
+          Value: !Ref env
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      PolicyDocument:
+        Id: metroplannerPublicReadPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref MetroplannerBucket
+                - /*
+      Bucket: !Ref MetroplannerBucket
+
+  # metroplannerDNSEntry:
+  #   Type: AWS::Route53::RecordSetGroup
+  #   Properties:
+  #     HostedZoneName: "ich-hab-plan.de."
+  #     Comment: Zone apex alias.
+  #     RecordSets:
+  #       - Name: !FindInMap [EnvMap, !Ref env, Domain]
+  #         Type: A
+  #         AliasTarget:
+  #           HostedZoneId: "Z21DNDUVLTQW6Q"
+  #           DNSName: !Sub
+  #             - "${BucketName}.s3-website-eu-central-1.amazonaws.com"
+  #             - BucketName: !FindInMap [EnvMap, !Ref env, BucketName]
+  #       # - Name: !Sub
+  #       #     - www.${Do}
+  #       #     - Do: !FindInMap [EnvMap, !Ref env, Domain]
+  #       #   Type: CNAME
+  #       #   TTL: 900
+  #       #   ResourceRecords:
+  #       #     - !GetAtt MetroplannerBucket.DomainName
+
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt MetroplannerBucket.WebsiteURL
+    Description: URL for website hosted on S3
