@@ -12,7 +12,7 @@ Mappings:
     dev:
       BucketName: "metroplanner-frontend-dev"
       Domain: "dev.ich-hab-plan.de"
-      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/060320fc-3f6c-4ff2-9644-b35926ed571f"
+      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/c1ebfcc3-a24c-4e9c-943e-cb66bb52ed97"
       OriginId: dev-bucket
 
 Parameters:
