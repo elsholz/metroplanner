@@ -33,7 +33,7 @@ class Environment:
         session = boto3.session.Session()
         client = session.client(
             service_name="secretsmanager",
-            region_name=globals.REGION,
+            region_name=REGION,
         )
 
         secret_value = json.loads(
