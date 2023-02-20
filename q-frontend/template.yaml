@@ -54,7 +54,7 @@ Resources:
           - CustomOriginConfig:
               OriginSSLProtocols:
                 - !FindInMap [EnvMap, !Ref env, CertificateArn]
-            DomainName: !Ref WebsiteURL
+            DomainName: !GetAtt MetroplannerBucket.WebsiteURL
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
             # OriginAccessControlId: String
             # OriginCustomHeaders:
