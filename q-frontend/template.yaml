@@ -29,7 +29,7 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases:
-          - "ich-hab-plan.de"
+          - !FindInMap [EnvMap, !Ref env, Domain]
         # Staging: !If [IsStaging, false, true]
         PriceClass: PriceClass_100
         Enabled: true
@@ -51,7 +51,6 @@ Resources:
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
         ViewerCertificate:
           AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
-          CloudFrontDefaultCertificate: false
           MinimumProtocolVersion: TLSv1
           SslSupportMethod: sni-only
       Tags:
