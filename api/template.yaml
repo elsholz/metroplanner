@@ -109,8 +109,10 @@ Resources:
       FifoQueue: false
       ContentBasedDeduplication: false
       Tags: 
-        App: metroplanner
-        Environment: !Ref env
+        - Key: App
+          Value: metroplanner
+        - Key: Environment
+          Value: !Ref env
   MetroplannerApi:
     Type: AWS::Serverless::HttpApi
     Properties:
