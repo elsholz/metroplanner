@@ -4,7 +4,7 @@
 <ul>
     <li>Total: $total</li>
     <li>Successful (2xx): $successful</li>
-    <li>Client Ereor (4xx): $clienterrror</li>
+    <li>Client Error (4xx): $clienterror</li>
     <li>Server Error (5xx): $servererror</li>
 </ul>
 
