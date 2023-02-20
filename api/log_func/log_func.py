@@ -21,10 +21,10 @@ def lambda_handler(event, context):
 
     report = Template(open("report.template").read()).substitute(
         {
-            "app": None,
+            "app": "Metroplanner",
             "env": env.upper(),
             "total": None,
-            "successfull": None,
+            "successful": None,
             "clienterror": None,
             "servererror": None,
             "detailed": json.dumps({}, indent=4, ensure_ascii=False)
