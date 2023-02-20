@@ -1,11 +1,11 @@
 import json
-import database
 from jsonschema import validate, ValidationError
 import schemas
 import base64
 import endpoints
 import responses
 import environment
+from datetime import datetime
 
 ENV = environment.Environment(env='dev')
 
@@ -51,7 +51,11 @@ def lambda_handler(event, context):
      
     
     try:
-        ENV.send_log_message(json.dumps(res, indent=4, ensure_ascii=False))
+        ENV.send_log_message(json.dumps(res | {
+            "timestamp": datetime.now().isoformat(),
+            "event": event,
+            "context": context
+        }, indent=4, ensure_ascii=False))
     except Exception as e:
         print('Error sending Log Message:')
         print(e, res)

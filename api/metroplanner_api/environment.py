@@ -9,12 +9,10 @@ from pymongo import MongoClient
 import json
 import boto3
 from botocore.exceptions import ClientError
-from json import dumps
 from auth0.authentication.token_verifier import (
     TokenVerifier,
     AsymmetricSignatureVerifier,
 )
-import responses
 
 
 class BadRequestError(Exception):
