@@ -106,8 +106,6 @@ Resources:
     Type: AWS::SQS::Queue
     Properties: 
       QueueName: !FindInMap [EnvMap, !Ref env, QueueName]
-      FifoQueue: false
-      ContentBasedDeduplication: false
       Tags: 
         - Key: App
           Value: metroplanner
