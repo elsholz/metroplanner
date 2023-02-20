@@ -50,7 +50,7 @@ Resources:
         Origins:
           - CustomOriginConfig:
               OriginProtocolPolicy: "https-only"
-            DomainName: !GetAtt MetroplannerBucket.DomainName
+            DomainName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
         ViewerCertificate:
           AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
