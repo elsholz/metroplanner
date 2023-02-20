@@ -20,8 +20,8 @@ Parameters:
     Type: String
     Description: Environment of the deployment (Lowercase)
 
-Conditions:
-  IsStaging: !Equals [!Ref env, prod]
+# Conditions:
+#   IsStaging: !Equals [!Ref env, prod]
 
 Resources:
   MetroplannerCfDistro:
@@ -30,7 +30,7 @@ Resources:
       DistributionConfig:
         Aliases:
           - "ich-hab-plan.de"
-        Staging: !If [IsStaging, false, true]
+        # Staging: !If [IsStaging, false, true]
         PriceClass: PriceClass_100
         Enabled: true
         DefaultCacheBehavior:
@@ -42,48 +42,13 @@ Resources:
             - HEAD
           CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
           Compress: true
-          # OriginRequestPolicyId: String
-          # RealtimeLogConfigArn: String
-          # ResponseHeadersPolicyId: String
-          # SmoothStreaming: Boolean
           TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
-          # TrustedKeyGroups:
-          #   - String
-          # TrustedSigners:
-          #   - String
           ViewerProtocolPolicy: redirect-to-https
-
-#       CacheBehaviors:
-  #         - CacheBehavior
-  #       CNAMEs:
-  #         - String
-  #       Comment: String
-  #       ContinuousDeploymentPolicyId: String
-  #       CustomErrorResponses:
-  #         - CustomErrorResponse
-  #       DefaultRootObject: String
-  #       HttpVersion: String
-  #       IPV6Enabled: Boolean
-  #       Logging:
-  #         Logging
-  #       OriginGroups:
-  #         OriginGroups
         Origins:
           - CustomOriginConfig:
               OriginProtocolPolicy: "https-only"
             DomainName: !GetAtt MetroplannerBucket.WebsiteURL
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
-            # OriginAccessControlId: String
-            # OriginCustomHeaders:
-            #   - OriginCustomHeader
-            # OriginPath: String
-            # OriginShield:
-            # OriginShield
-  #       Restrictions:
-  #         Restrictions
-  #       ViewerCertificate:
-  #         ViewerCertificate
-  #       WebACLId: String
       Tags:
         - Key: App
           Value: metroplanner
@@ -94,11 +59,6 @@ Resources:
     Properties:
       AccessControl: PublicRead
       BucketName: !FindInMap [EnvMap, !Ref env, BucketName]
-      # PublicAccessBlockConfiguration:
-      #   BlockPublicAcls: false
-      #   BlockPublicPolicy: false
-      #   IgnorePublicAcls: false
-      #   RestrictPublicBuckets: false
       Tags:
         - Key: App
           Value: metroplanner
