@@ -70,8 +70,6 @@ Resources:
   #         OriginGroups
         Origins:
           - CustomOriginConfig:
-              OriginSSLProtocols:
-                - !FindInMap [EnvMap, !Ref env, CertificateArn]
               OriginProtocolPolicy: "https-only"
             DomainName: !GetAtt MetroplannerBucket.WebsiteURL
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
