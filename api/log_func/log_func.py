@@ -51,7 +51,7 @@ def lambda_handler(event, context):
         for code in response_codes:
             if code.startswith(x):
                 res.extend(response_codes[code])
-        return res
+        return len(res)
 
     report = Template(open("report.template").read()).substitute(
         {
