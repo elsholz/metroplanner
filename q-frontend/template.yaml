@@ -32,6 +32,7 @@ Resources:
           - "ich-hab-plan.de"
         Staging: !If [IsStaging, false, true]
         PriceClass: PriceClass_100
+        Enabled: true
   #       CacheBehaviors:
   #         - CacheBehavior
   #       CNAMEs:
@@ -43,7 +44,6 @@ Resources:
   #       DefaultCacheBehavior:
   #         DefaultCacheBehavior
   #       DefaultRootObject: String
-  #       Enabled: Boolean
   #       HttpVersion: String
   #       IPV6Enabled: Boolean
   #       Logging:
