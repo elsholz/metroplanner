@@ -98,7 +98,7 @@ Resources:
       Name: !FindInMap [EnvMap, !Ref env, Domain]
       Type: A
       AliasTarget:
-        HostedZoneId: "Z21DNDUVLTQW6Q"
+        HostedZoneId: "Z2FDTNDATAQYW2"
         DNSName: !Join [ '.', [ !Ref MetroplannerCfDistro, "cloudfront.net." ] ]
 
 Outputs:
