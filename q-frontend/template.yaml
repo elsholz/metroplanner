@@ -92,26 +92,23 @@ Resources:
                 - /*
       Bucket: !Ref MetroplannerBucket
 
-  # metroplannerDNSEntry:
-  #   Type: AWS::Route53::RecordSetGroup
-  #   Properties:
-  #     HostedZoneName: "ich-hab-plan.de."
-  #     Comment: Zone apex alias.
-  #     RecordSets:
-  #       - Name: !FindInMap [EnvMap, !Ref env, Domain]
-  #         Type: A
-  #         AliasTarget:
-  #           HostedZoneId: "Z21DNDUVLTQW6Q"
-  #           DNSName: !Sub
-  #             - "${BucketName}.s3-website-eu-central-1.amazonaws.com"
-  #             - BucketName: !FindInMap [EnvMap, !Ref env, BucketName]
-  #       # - Name: !Sub
-  #       #     - www.${Do}
-  #       #     - Do: !FindInMap [EnvMap, !Ref env, Domain]
-  #       #   Type: CNAME
-  #       #   TTL: 900
-  #       #   ResourceRecords:
-  #       #     - !GetAtt MetroplannerBucket.DomainName
+  MetroplannerDNSEntry:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: "ich-hab-plan.de."
+      Comment: Alias for CF Distro
+      Name: !FindInMap [EnvMap, !Ref env, Domain]
+      Type: CName
+      AliasTarget:
+        HostedZoneId: "Z21DNDUVLTQW6Q"
+        DNSName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
+        # - Name: !Sub
+        #     - www.${Do}
+        #     - Do: !FindInMap [EnvMap, !Ref env, Domain]
+        #   Type: CNAME
+        #   TTL: 900
+        #   ResourceRecords:
+        #     - !GetAtt MetroplannerBucket.DomainName
 
 Outputs:
   WebsiteURL:
