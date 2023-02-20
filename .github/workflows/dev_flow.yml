@@ -58,4 +58,4 @@ jobs:
       - name: Print Files
         run: ls q-frontend/dist/spa
       - name: Sync Files to Bucket
-        run: aws s3 sync "q-frontend/dist/spa" "s3://metroplanner-frontend-dev"
+        run: aws s3 sync "q-frontend/dist/spa" "s3://dev.ich-hab-plan.de"
