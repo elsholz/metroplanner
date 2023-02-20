@@ -17,48 +17,48 @@ Parameters:
     Description: Environment of the deployment (Lowercase)
 
 Resources:
-  MetroplannerCfDistro:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        Aliases:
-          - String
-        CacheBehaviors:
-          - CacheBehavior
-        CNAMEs:
-          - String
-        Comment: String
-        ContinuousDeploymentPolicyId: String
-        CustomErrorResponses:
-          - CustomErrorResponse
-        CustomOrigin:
-          LegacyCustomOrigin
-        DefaultCacheBehavior:
-          DefaultCacheBehavior
-        DefaultRootObject: String
-        Enabled: Boolean
-        HttpVersion: String
-        IPV6Enabled: Boolean
-        Logging:
-          Logging
-        OriginGroups:
-          OriginGroups
-        Origins:
-          - Origin
-        PriceClass: String
-        Restrictions:
-          Restrictions
-        S3Origin:
-          LegacyS3Origin
-        Staging: Boolean
-        ViewerCertificate:
-          ViewerCertificate
-        WebACLId: String
-      Tags:
-        - Key: App
-          Value: metroplanner
-        - Key: Environment
-          Value: !Ref env
+  # MetroplannerCfDistro:
+  #   Type: AWS::CloudFront::Distribution
+  #   Properties:
+  #     DistributionConfig:
+  #       Aliases:
+  #         - String
+  #       CacheBehaviors:
+  #         - CacheBehavior
+  #       CNAMEs:
+  #         - String
+  #       Comment: String
+  #       ContinuousDeploymentPolicyId: String
+  #       CustomErrorResponses:
+  #         - CustomErrorResponse
+  #       CustomOrigin:
+  #         LegacyCustomOrigin
+  #       DefaultCacheBehavior:
+  #         DefaultCacheBehavior
+  #       DefaultRootObject: String
+  #       Enabled: Boolean
+  #       HttpVersion: String
+  #       IPV6Enabled: Boolean
+  #       Logging:
+  #         Logging
+  #       OriginGroups:
+  #         OriginGroups
+  #       Origins:
+  #         - Origin
+  #       PriceClass: String
+  #       Restrictions:
+  #         Restrictions
+  #       S3Origin:
+  #         LegacyS3Origin
+  #       Staging: Boolean
+  #       ViewerCertificate:
+  #         ViewerCertificate
+  #       WebACLId: String
+  #     Tags:
+  #       - Key: App
+  #         Value: metroplanner
+  #       - Key: Environment
+  #         Value: !Ref env
 
   MetroplannerBucket:
     Type: AWS::S3::Bucket
