@@ -51,7 +51,7 @@ class Environment:
         self.__API_AUDIENCE = secret_value[f"AUTH0_AUDIENCE_{env.upper()}"]
 
         client = MongoClient(
-            f"mongodb+srv://{self.__DB_USER}:{self.__DB_PASSWORD}@" \ 
+            f"mongodb+srv://{self.__DB_USER}:{self.__DB_PASSWORD}@"
             f"{self.__DB_ADDRESS}/{self.__DB_NAME}?retryWrites=true&w=majority"
         )
 
@@ -66,6 +66,12 @@ class Environment:
         self.__verifier = TokenVerifier(
             signature_verifier=sv, issuer=issuer, audience=self.__API_AUDIENCE
         )
+
+        self.sqs_client = boto3.client("sqs")
+        self.__SQS_URL = {
+            "dev": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueDev",
+            "prod": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueProd",
+        }[env]
 
     def get_database(self):
         return self.__database
@@ -99,6 +105,12 @@ class Environment:
         except Exception as e:
             print("Error in check_auth:", e)
             raise e
+
+    def send_log_message(self, msg):
+        response = self.sqs_client.send_message(
+            QueueUrl=self.__SQS_URL,
+            MessageBody=msg,
+        )
 
 
 environments = {}

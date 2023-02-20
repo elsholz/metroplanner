@@ -19,15 +19,48 @@ def lambda_handler(event, context):
 
     print("Environment: ", env)
 
+    messages = []
+
+    while True:
+        try:
+            res = sqs_client.receive_message(
+                QueueUrl={
+                    "dev": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueDev",
+                    "prod": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueProd",
+                }[env]
+            )
+            msg = res['Messages']
+            print(msg)
+            if not msg: break
+            for m in msg:
+                messages.append(m['Body'])
+        except Exception as e:
+            break
+
+    response_codes = {}
+    for m in messages:
+        data = json.loads(m)
+        x = response_codes[data['code']] = response_codes.get(data['code'], [])
+        x.append(data)
+
+    print(response_codes)
+
+    def get_codes_starting_with(x):
+        res = []
+        for code in response_codes:
+            if code.startswith(x):
+                res.extend(response_codes[code])
+        return res
+
     report = Template(open("report.template").read()).substitute(
         {
             "app": "Metroplanner",
             "env": env.upper(),
-            "total": None,
-            "successful": None,
-            "clienterror": None,
-            "servererror": None,
-            "detailed": json.dumps({}, indent=4, ensure_ascii=False),
+            "total": len(x for l in response_codes.values() for x in l),
+            "successful": get_codes_starting_with('2'),
+            "clienterror": get_codes_starting_with('4'),
+            "servererror": get_codes_starting_with('5'),
+            "detailed": json.dumps(response_codes, indent=4, ensure_ascii=False),
         }
     )
 

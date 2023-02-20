@@ -114,6 +114,7 @@ Resources:
     Type: AWS::SQS::Queue
     Properties: 
       QueueName: !FindInMap [EnvMap, !Ref env, QueueName]
+      MessageRetentionPeriod: 86400
       Tags: 
         - Key: App
           Value: metroplanner

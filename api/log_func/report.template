@@ -1,17 +1,13 @@
-<h4>Report for $app in the $env environment.</h4>
+Report for $app in the $env environment.
 
-<b>Requests in the last 24h:</b>
-<ul>
-    <li>Total: $total</li>
-    <li>Successful (2xx): $successful</li>
-    <li>Client Error (4xx): $clienterror</li>
-    <li>Server Error (5xx): $servererror</li>
-</ul>
+Requests in the last 24h:
+    Total: $total
+    Successful (2xx): $successful
+    Client Error (4xx): $clienterror
+    Server Error (5xx): $servererror
 
-<b>Detailed Response Codes:</b> <br>
-<pre>
+Detailed Response Codes:
 $detailed
-</pre>
 
 
 Beste Grüße

@@ -1,14 +1,13 @@
 import json
-import auth
 import database
 from jsonschema import validate, ValidationError
 import schemas
 import base64
-import globals
 import endpoints
 import responses
 import environment
 
+ENV = environment.Environment(env='dev')
 
 def private_handler(event, context):
     try:
@@ -44,11 +43,19 @@ def public_handler(event, context):
 def lambda_handler(event, context):
     try:
         if False:
-            return private_handler(event, context)
+            res = private_handler(event, context)
         else:
-            return public_handler(event, context)
+            res = public_handler(event, context)
     except Exception as e:
-        return responses.internal_server_error_500()
+        res = responses.internal_server_error_500()
+     
+    
+    try:
+        ENV.send_log_message(json.dumps(res, indent=4, ensure_ascii=False))
+    except Exception as e:
+        print('Error sending Log Message:')
+        print(e, res)
+    return res
 
 
 
