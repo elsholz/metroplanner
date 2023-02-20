@@ -7,9 +7,13 @@ Mappings:
     prod:
       BucketName: "metroplanner-frontend-prod"
       Domain: "ich-hab-plan.de"
+      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/8e107838-0e72-47c5-bd60-39b4ffee4dc3"
+      OriginId: prod-bucket
     dev:
       BucketName: "metroplanner-frontend-dev"
       Domain: "dev.ich-hab-plan.de"
+      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/db85db90-10c6-4f2d-9144-f55a2ec33031"
+      OriginId: dev-bucket
 
 Parameters:
   env:
@@ -17,12 +21,14 @@ Parameters:
     Description: Environment of the deployment (Lowercase)
 
 Resources:
-  # MetroplannerCfDistro:
-  #   Type: AWS::CloudFront::Distribution
-  #   Properties:
-  #     DistributionConfig:
-  #       Aliases:
-  #         - String
+  MetroplannerCfDistro:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - "ich-hab-plan.de"
+        Staging: !If [!Equals [!Ref env, prod], false, true]
+        PriceClass: PriceClass_100
   #       CacheBehaviors:
   #         - CacheBehavior
   #       CNAMEs:
@@ -31,8 +37,6 @@ Resources:
   #       ContinuousDeploymentPolicyId: String
   #       CustomErrorResponses:
   #         - CustomErrorResponse
-  #       CustomOrigin:
-  #         LegacyCustomOrigin
   #       DefaultCacheBehavior:
   #         DefaultCacheBehavior
   #       DefaultRootObject: String
@@ -43,23 +47,28 @@ Resources:
   #         Logging
   #       OriginGroups:
   #         OriginGroups
-  #       Origins:
-  #         - Origin
-  #       PriceClass: String
+        Origins:
+          - CustomOriginConfig:
+              OriginSSLProtocols:
+                - !FindInMap [EnvMap, !Ref env, CertificateArn]
+            DomainName: !Ref WebsiteURL
+            Id: !FindInMap [EnvMap, !Ref env, OriginId]
+            # OriginAccessControlId: String
+            # OriginCustomHeaders:
+            #   - OriginCustomHeader
+            # OriginPath: String
+            # OriginShield:
+            # OriginShield
   #       Restrictions:
   #         Restrictions
-  #       S3Origin:
-  #         LegacyS3Origin
-  #       Staging: Boolean
   #       ViewerCertificate:
   #         ViewerCertificate
   #       WebACLId: String
-  #     Tags:
-  #       - Key: App
-  #         Value: metroplanner
-  #       - Key: Environment
-  #         Value: !Ref env
-
+      Tags:
+        - Key: App
+          Value: metroplanner
+        - Key: Environment
+          Value: !Ref env
   MetroplannerBucket:
     Type: AWS::S3::Bucket
     Properties:
