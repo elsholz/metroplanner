@@ -99,7 +99,7 @@ Resources:
       Type: A
       AliasTarget:
         HostedZoneId: "Z2FDTNDATAQYW2"
-        DNSName: !GetAtt MetroplannerCfDistro.DomainName
+        DNSName: !Join ['cloudfront.net', !Split ['cloudfront.net.', !GetAtt MetroplannerCfDistro.DomainName]]
 
 Outputs:
   WebsiteURL:
