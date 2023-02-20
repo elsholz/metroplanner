@@ -98,7 +98,7 @@ Resources:
       HostedZoneName: "ich-hab-plan.de."
       Comment: Alias for CF Distro
       Name: !FindInMap [EnvMap, !Ref env, Domain]
-      Type: CName
+      Type: CNAME
       AliasTarget:
         HostedZoneId: "Z21DNDUVLTQW6Q"
         DNSName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
