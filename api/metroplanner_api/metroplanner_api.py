@@ -7,7 +7,8 @@ import responses
 import environment
 from datetime import datetime
 
-ENV = environment.Environment(env='dev')
+ENV = environment.Environment(env="dev")
+
 
 def private_handler(event, context):
     try:
@@ -48,20 +49,27 @@ def lambda_handler(event, context):
             res = public_handler(event, context)
     except Exception as e:
         res = responses.internal_server_error_500()
-     
-    
+
     try:
-        ENV.send_log_message(json.dumps(res | {
-            "timestamp": datetime.now().isoformat(),
-            "event": event,
-            "context": context
-        }, indent=4, ensure_ascii=False))
+        ENV.send_log_message(
+            json.dumps(
+                res
+                | {
+                    "timestamp": datetime.now().isoformat(),
+                    # "event": event,
+                    # "context": context
+                },
+                indent=4,
+                ensure_ascii=False,
+            )
+        )
+        print("Event:", event)
+        print("Context:", context)
     except Exception as e:
-        print('Error sending Log Message:')
+        print("Error sending Log Message:")
         print(e, res)
+
     return res
-
-
 
     try:
         stage = event["requestContext"]["stage"]
