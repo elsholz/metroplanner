@@ -34,26 +34,26 @@ Resources:
         PriceClass: PriceClass_100
         Enabled: true
         DefaultCacheBehavior:
-          - AllowedMethods:
-              - GET
-              - HEAD
-            CachedMethods:
-              - GET
-              - HEAD
-            CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
-            Compress: true
-            # OriginRequestPolicyId: String
-            # RealtimeLogConfigArn: String
-            # ResponseHeadersPolicyId: String
-            # SmoothStreaming: Boolean
-            TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
-            # TrustedKeyGroups:
-            #   - String
-            # TrustedSigners:
-            #   - String
-            ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+          Compress: true
+          # OriginRequestPolicyId: String
+          # RealtimeLogConfigArn: String
+          # ResponseHeadersPolicyId: String
+          # SmoothStreaming: Boolean
+          TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
+          # TrustedKeyGroups:
+          #   - String
+          # TrustedSigners:
+          #   - String
+          ViewerProtocolPolicy: redirect-to-https
 
-  #       CacheBehaviors:
+#       CacheBehaviors:
   #         - CacheBehavior
   #       CNAMEs:
   #         - String
