@@ -56,7 +56,7 @@ def lambda_handler(event, context):
         {
             "app": "Metroplanner",
             "env": env.upper(),
-            "total": len(x for l in response_codes.values() for x in l),
+            "total": len(list(x for l in response_codes.values() for x in l)),
             "successful": get_codes_starting_with('2'),
             "clienterror": get_codes_starting_with('4'),
             "servererror": get_codes_starting_with('5'),
