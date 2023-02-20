@@ -47,7 +47,7 @@ Resources:
         Origins:
           - CustomOriginConfig:
               OriginProtocolPolicy: "https-only"
-            DomainName: !GetAtt MetroplannerBucket.WebsiteURL
+            DomainName: !GetAtt MetroplannerBucket.DomainName
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
       Tags:
         - Key: App
