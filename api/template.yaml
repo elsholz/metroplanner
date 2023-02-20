@@ -51,7 +51,7 @@ Resources:
         ScheduledFunctionInvocation:
           Type: ScheduleV2
           Properties:
-            ScheduleExpression: "cron(30 9,13 * * *)"
+            ScheduleExpression: "cron(30 9,13 * * ? *)"
       Tags:
         App: metroplanner
         Environment: !Ref env
