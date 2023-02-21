@@ -47,7 +47,7 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
         Origins:
           - CustomOriginConfig:
-              OriginProtocolPolicy: "https-only"
+              OriginProtocolPolicy: "http-only"
             DomainName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
         ViewerCertificate:
