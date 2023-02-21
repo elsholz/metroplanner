@@ -50,7 +50,9 @@ class PublicEndpoint(Endpoint):
                     print("Link result:", link_result)
                     if link_result:
                         if link_result["active"]:
+                            print('Link is active')
                             plan_id = link_result["plan"]
+                            print('Plan ID is:', plan_id)
                             plan_result = plans_collection.find_one(
                                 {"_id": plan_id},
                                 {
@@ -69,14 +71,16 @@ class PublicEndpoint(Endpoint):
                                     "currentNumberOfNodes": 1,
                                 },
                             )
+                            print('Plan result:', plan_result)
                             if plan_result:
-                                if plan_result["deleted"]:
+                                if plan_result.get("deleted", None):
                                     print(
                                         f"Error: Plan with ID {plan_id} for "
                                         f"Shortlink {shortlink} has been deleted."
                                     )
                                     return responses.not_found_404()
                                 else:
+                                    print("Plan found and not deleted, getting stats")
                                     stats_result = stats_collection.find_one(
                                         {
                                             "_id": {
@@ -88,8 +92,9 @@ class PublicEndpoint(Endpoint):
                                             "totalCound": 1,
                                             "_id": 0,
                                         },
-                                    )
-                                    plan_result['totalViewCound'] = stats_result['totalCount']
+                                    ) or {}
+                                    print('Stats found:')
+                                    plan_result['totalViewCound'] = stats_result.get('totalCount', 0)
                                     for k,v in plan_result.items():
                                         if isinstance(v, ObjectId):
                                             k[v] = str(v)
@@ -101,8 +106,10 @@ class PublicEndpoint(Endpoint):
                                 )
                                 return responses.not_found_404()
                         else:
+                            print("Link is inactive")
                             return responses.not_found_404()
                     else:
+                        print("Link not found")
                         return responses.not_found_404()
                     return responses.ok_200(link_result)
 
