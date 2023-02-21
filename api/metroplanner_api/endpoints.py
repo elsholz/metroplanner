@@ -65,6 +65,15 @@ class PublicEndpoint(Endpoint):
                                     return responses.not_found_404()
                                 else:
                                     print("Plan found and not deleted, getting stats")
+                                    print(
+                                        "Key:",
+                                        {
+                                            "_id": {
+                                                "plan": plan_id,
+                                                "link": shortlink,
+                                            }
+                                        },
+                                    )
                                     stats_result = (
                                         db.stats.find_one(
                                             {
@@ -205,7 +214,7 @@ class PublicEndpoint(Endpoint):
                                                     f"views.{time_to_hour}": 1,
                                                 }
                                             },
-                                            upsert=True
+                                            upsert=True,
                                         )
                                         print(update_stats_result)
                                     except Exception as e:
