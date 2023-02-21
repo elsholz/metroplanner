@@ -94,11 +94,10 @@ class PublicEndpoint(Endpoint):
                                         },
                                     ) or {}
                                     print('Stats found:', stats_result)
-                                    print("type of plan:", type(plan_result))
                                     plan_result['totalViewCount'] = stats_result.get('totalCount', 0)
                                     for k,v in plan_result.items():
                                         if isinstance(v, ObjectId):
-                                            k[v] = str(v)
+                                            plan_result[k] = str(v)
                                     return responses.ok_200(plan_result)
                             else:
                                 print(
