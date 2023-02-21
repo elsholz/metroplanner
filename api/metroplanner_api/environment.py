@@ -33,6 +33,7 @@ class Environment:
         self.is_initialized = False
 
     def initialize_environment(self, env: str) -> None:
+        print("Getting Secrets from Secrets Manager")
         self.is_initialized = True
         session = boto3.session.Session()
         client = session.client(
@@ -49,8 +50,12 @@ class Environment:
         self.__DB_ADDRESS = secret_value[f"DB_INSTANCE_URL_{env.upper()}"]
         self.__DB_NAME = secret_value[f"DB_NAME_{env.upper()}"]
 
+        print("Secrets received, DB Name:", self.__DB_NAME)
+
         self.__AUTH0_DOMAIN = secret_value[f"AUTH0_DOMAIN_{env.upper()}"]
         self.__API_AUDIENCE = secret_value[f"AUTH0_AUDIENCE_{env.upper()}"]
+
+        print("Connecting to MongoDB")
 
         client = MongoClient(
             f"mongodb+srv://{self.__DB_USER}:{self.__DB_PASSWORD}@"
@@ -69,11 +74,13 @@ class Environment:
             signature_verifier=sv, issuer=issuer, audience=self.__API_AUDIENCE
         )
 
+        print("Connecting to SQS")
         self.sqs_client = boto3.client("sqs")
         self.__SQS_URL = {
             "dev": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueDev",
             "prod": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueProd",
         }[env]
+        print("Finished Connecting to services")
 
     def get_database(self):
         return self.__database
