@@ -23,7 +23,8 @@ def public_handler(route, method, event, context, env):
         try:
             endpoint_method: endpoints.EndpointMethod = endpoint.children[method]
             try:
-                endpoint_method(event, context, env)
+                action = endpoint_method(event, context, env)
+                return action()
             except Exception as e:
                 print('Exception calling endpoint method:', e)
                 return responses.internal_server_error_500()

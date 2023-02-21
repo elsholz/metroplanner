@@ -32,13 +32,17 @@ class PublicEndpoint(Endpoint):
             """
 
             def __init__(self, event, context, env: environment.Environment) -> None:
-                path_parameters = event["pathParameters"]
+                self.event = event
+                self.context = context
+                self.env = env
+
+            def __call__(self) -> Dict:
+                path_parameters = self.event["pathParameters"]
                 shortlink = path_parameters["shortlink"]
                 print(f"GET Request for plan for shortlink {shortlink}")
-
                 try:
-                    links_collection = env.get_database().links
-                    plans_collection = env.get_database().plans
+                    links_collection = self.env.get_database().links
+                    plans_collection = self.env.get_database().plans
 
                     link_result = links_collection.find_one({"_id": shortlink})
                     print('Link result:', link_result)
