@@ -144,14 +144,18 @@ class PublicEndpoint(Endpoint):
             in the future to allow for better compression.
             """
 
-            def __init__(self, event, context) -> None:
-                path_parameters = event["pathParameters"]
+            def __init__(self, event, context, env: environment.Environment) -> None:
+                self.event = event
+                self.context=context
+                self.env = env
+
+            def __call__(self) -> Dict:
+                path_parameters = self.event["pathParameters"]
                 shortlink = path_parameters["shortlink"]
                 print(f"GET Request for planstate for shortlink {shortlink}")
 
                 try:
                     db = self.env.get_database()
-
                     link_result = db.links.find_one({"_id": shortlink})
                     print("Link result:", link_result)
                     if link_result:
