@@ -187,7 +187,7 @@ class PublicEndpoint(Endpoint):
                                     )
 
                                     try:
-                                        db.stats.find_one_and_update(
+                                        db.stats.update_one(
                                             {
                                                 "_id": {
                                                     "plan": plan_id,
