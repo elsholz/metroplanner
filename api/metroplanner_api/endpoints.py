@@ -65,29 +65,17 @@ class PublicEndpoint(Endpoint):
                                     return responses.not_found_404()
                                 else:
                                     print("Plan found and not deleted, getting stats")
-                                    print(
-                                        "Key:",
+                                    stats_result = db.stats.find_one(
                                         {
                                             "_id": {
-                                                "plan": plan_id,
+                                                "plan": ObjectId(plan_id),
                                                 "link": shortlink,
                                             }
                                         },
-                                    )
-                                    stats_result = (
-                                        db.stats.find_one(
-                                            {
-                                                "_id": {
-                                                    "plan": plan_id,
-                                                    "link": shortlink,
-                                                }
-                                            },
-                                            {
-                                                "totalCound": 1,
-                                                "_id": 0,
-                                            },
-                                        )
-                                        or {}
+                                        {
+                                            "totalCound": 1,
+                                            "_id": 0,
+                                        },
                                     )
                                     print("Stats found:", stats_result)
                                     plan_result["totalViewCount"] = stats_result.get(
