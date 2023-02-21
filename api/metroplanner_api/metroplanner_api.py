@@ -53,6 +53,7 @@ def lambda_handler(event, context):
             request_id = request_context["requestId"]
         except Exception as e:
             print(e)
+
         print('Method:', method)
         print('RoutePath:', route_path)
 
@@ -61,12 +62,16 @@ def lambda_handler(event, context):
             ENV.initialize_environment(request_context["stage"])
 
         if route_path[1] == "_":
+            print('Calling private handler')
             res = private_handler(route_path, method, event, context, ENV)
         else:
+            print('Calling public handler')
             res = public_handler(route_path, method, event, context, ENV)
     except Exception as e:
-        print(e)
+        print("Exception handling request:", e)
         res = responses.internal_server_error_500()
+
+    print('Result to be returned:', res)
 
     try:
         ENV.send_log_message(
