@@ -191,7 +191,8 @@ class PublicEndpoint(Endpoint):
                                     )
 
                                     try:
-                                        db.stats.update_one(
+                                        print("Updating stats")
+                                        update_stats_result = db.stats.update_one(
                                             {
                                                 "_id": {
                                                     "plan": plan_id,
@@ -205,6 +206,7 @@ class PublicEndpoint(Endpoint):
                                                 }
                                             },
                                         )
+                                        print(update_stats_result)
                                     except Exception as e:
                                         print("Error updating statistics:", e)
 
