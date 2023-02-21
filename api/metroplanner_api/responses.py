@@ -1,3 +1,15 @@
+from json import dumps
+
+def ok_200(body="OK"):
+    if isinstance(body, str):
+        return {"statusCode": 200, "body": "OK"}
+    else:
+        return {"statusCode": 200, "body": dumps(body, indent=4)}
+def created_201():
+    return {"statusCode": 201, "body": "Created"}
+def no_content_204():
+    return {"statusCode": 204, "body": "No Content"}
+
 def bad_request_400():
     return {"statusCode": 400, "body": "Bad Request"}
 def unauthorized_401():

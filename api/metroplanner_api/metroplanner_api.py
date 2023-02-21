@@ -7,28 +7,23 @@ import responses
 import environment
 from datetime import datetime
 
-ENV = environment.Environment(env="dev")
+ENV = environment.Environment()
 
 
-def private_handler(event, context):
+def private_handler(route, method, event, context, env):
     try:
         pass
     except Exception as e:
         return responses.unauthorized_401()
 
 
-def public_handler(event, context):
-    api_path = "plans"
-    method = "get"
-
+def public_handler(route, method, event, context, env):
     try:
-        endpoint_collection: endpoints.Endpoint = (
-            endpoints.PublicEndpoint.method_mapping[api_path]
-        )
+        endpoint: endpoints.Endpoint = endpoints.PublicEndpoint.children[route]
         try:
-            endpoint = endpoint_collection.method_mapping[method]
+            endpoint_method: endpoints.EndpointMethod = endpoint.method_mapping[method]
             try:
-                endpoint(event, context)
+                endpoint_method(event, context, env)
             except Exception as e:
                 return responses.internal_server_error_500()
         except KeyError as e:
@@ -43,28 +38,46 @@ def public_handler(event, context):
 
 def lambda_handler(event, context):
     try:
-        if False:
-            res = private_handler(event, context)
+        route_key = event["routeKey"]
+        method, route_path = route_key.split(" ")
+        path_parameters = event["pathParameters"]
+        request_context = event["requestContext"]
+        headers = event["headers"]
+        authentication_provided = headers.get("authentication", None) is not None
+        http = request_context["http"]
+        source_ip = http["sourceIp"]
+        user_agent = http["userAgent"]
+        request_id = request_context["requestId"]
+
+        if not ENV.is_initialized:
+            ENV.initialize_environment(request_context["stage"])
+
+        if route_path[1] == "_":
+            res = private_handler(route_path, method, event, context, ENV)
         else:
-            res = public_handler(event, context)
+            res = public_handler(route_path, method, event, context, ENV)
     except Exception as e:
+        print(e)
         res = responses.internal_server_error_500()
 
     try:
         ENV.send_log_message(
             json.dumps(
-                res
+                {"code": str(res["statusCode"])}
                 | {
                     "timestamp": datetime.now().isoformat(),
-                    # "event": event,
-                    # "context": context
+                    "route_key": route_key,
+                    "source_ip": source_ip,
+                    "user_agent": user_agent,
+                    "request_id": request_id,
+                    "authentication_provided": authentication_provided,
+                    "path_parameters": path_parameters,
+                    "remaining_time_millis": context.get_remaining_time_in_millis(),
                 },
                 indent=4,
                 ensure_ascii=False,
             )
         )
-        print("Event:", event)
-        print("Context:", context)
     except Exception as e:
         print("Error sending Log Message:")
         print(e, res)

@@ -29,7 +29,11 @@ REGION = "eu-central-1"
 
 
 class Environment:
-    def __init__(self, env: str) -> None:
+    def __init__(self) -> None:
+        self.is_initialized = False
+
+    def initialize_environment(self, env: str) -> None:
+        self.is_initialized = True
         session = boto3.session.Session()
         client = session.client(
             service_name="secretsmanager",
