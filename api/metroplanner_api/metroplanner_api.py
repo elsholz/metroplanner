@@ -38,18 +38,26 @@ def public_handler(route, method, event, context, env):
 
 def lambda_handler(event, context):
     try:
-        route_key = event["routeKey"]
-        method, route_path = route_key.split(" ")
-        path_parameters = event["pathParameters"]
-        request_context = event["requestContext"]
-        headers = event["headers"]
-        authentication_provided = headers.get("authentication", None) is not None
-        http = request_context["http"]
-        source_ip = http["sourceIp"]
-        user_agent = http["userAgent"]
-        request_id = request_context["requestId"]
+        print("Event:", event)
+
+        try:
+            route_key = event["routeKey"]
+            method, route_path = route_key.split(" ")
+            path_parameters = event["pathParameters"]
+            request_context = event["requestContext"]
+            headers = event["headers"]
+            authentication_provided = headers.get("authentication", None) is not None
+            http = request_context["http"]
+            source_ip = http["sourceIp"]
+            user_agent = http["userAgent"]
+            request_id = request_context["requestId"]
+        except Exception as e:
+            print(e)
+        print('Method:', method)
+        print('RoutePath:', route_path)
 
         if not ENV.is_initialized:
+            print('Initializing Environment')
             ENV.initialize_environment(request_context["stage"])
 
         if route_path[1] == "_":
