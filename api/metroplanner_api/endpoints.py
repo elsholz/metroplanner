@@ -205,6 +205,7 @@ class PublicEndpoint(Endpoint):
                                                     f"views.{time_to_hour}": 1,
                                                 }
                                             },
+                                            upsert=True
                                         )
                                         print(update_stats_result)
                                     except Exception as e:
