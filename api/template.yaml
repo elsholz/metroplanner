@@ -5,8 +5,8 @@ Description: Lambda Function and API Gateway for metroplanner.
 
 Globals:
   Function:
-    Timeout: 3
-    MemorySize: 128
+    Timeout: 10
+    MemorySize: 256
 
 Mappings:
   EnvMap:
