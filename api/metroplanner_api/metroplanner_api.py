@@ -21,18 +21,21 @@ def public_handler(route, method, event, context, env):
     try:
         endpoint: endpoints.Endpoint = endpoints.PublicEndpoint.children[route]
         try:
-            endpoint_method: endpoints.EndpointMethod = endpoint.method_mapping[method]
+            endpoint_method: endpoints.EndpointMethod = endpoint.children[method]
             try:
                 endpoint_method(event, context, env)
             except Exception as e:
+                print('Exception calling endpoint method:', e)
                 return responses.internal_server_error_500()
         except KeyError as e:
             return responses.method_not_allowed_405()
         except Exception as e:
+            print('Exception getting endpoint method:', e)
             return responses.internal_server_error_500()
     except KeyError as e:
         return responses.bad_request_400()
     except Exception as e:
+        print('Exception in public handler:', e)
         return responses.internal_server_error_500()
 
 
