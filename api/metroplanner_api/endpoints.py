@@ -146,7 +146,7 @@ class PublicEndpoint(Endpoint):
 
             def __init__(self, event, context, env: environment.Environment) -> None:
                 self.event = event
-                self.context=context
+                self.context = context
                 self.env = env
 
             def __call__(self) -> Dict:
@@ -209,7 +209,15 @@ class PublicEndpoint(Endpoint):
                                         print("Error updating statistics:", e)
 
                                     return responses.ok_200(latest_state)
-
+                            else:
+                                print(f"Plan with ID {plan_id} not found")
+                                return responses.not_found_404()
+                        else:
+                            print("Link is not active")
+                            return responses.not_found_404()
+                    else:
+                        print(f"Link {shortlink} not found")
+                        return responses.not_found_404()
                 except Exception as e:
                     print("Exception!!:", e)
                     return responses.ok_200(str(e))
