@@ -9,8 +9,10 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers')
+require('dotenv').config()
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx) {
+  console.log('Process env:', process.env)
   return {
     eslint: {
       // fix: true,

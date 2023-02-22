@@ -9,11 +9,13 @@ Mappings:
       CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/21b68b38-9184-4f8e-a51b-b0c4482e1e72"
       OriginId: prod-bucket
       Comment: PROD Metroplanner Distro
+      OriginAclName: OriginAccessControlProd
     dev:
       Domain: "dev.ich-hab-plan.de"
       CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/c1ebfcc3-a24c-4e9c-943e-cb66bb52ed97"
       OriginId: dev-bucket
       Comment: Metroplanner Distro DEV
+      OriginAclName: OriginAccessControlDev
 
 Parameters:
   env:
@@ -50,6 +52,7 @@ Resources:
               OriginProtocolPolicy: "http-only"
             DomainName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
+            # OriginAccessControlId: !GetAtt CfDistroOriginAccessControl.Id
         ViewerCertificate:
           AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
           MinimumProtocolVersion: TLSv1.2_2021
@@ -59,6 +62,15 @@ Resources:
           Value: metroplanner
         - Key: Environment
           Value: !Ref env
+  # CfDistroOriginAccessControl:
+  #   Type: AWS::CloudFront::OriginAccessControl
+  #   Properties:
+  #     OriginAccessControlConfig:
+  #       Description: "Restrict access to S3 Bucket to solely through the CF Distro"
+  #       Name: !FindInMap [EnvMap, !Ref env, OriginAclName]
+  #       OriginAccessControlOriginType: s3
+  #       SigningBehavior: always
+  #       SigningProtocol: sigv4
   MetroplannerBucket:
     Type: AWS::S3::Bucket
     Properties:

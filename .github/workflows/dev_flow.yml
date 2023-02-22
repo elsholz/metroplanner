@@ -36,6 +36,9 @@ jobs:
         working-directory: q-frontend
       - name: Install Quasar
         run: npm i -g @quasar/cli
+      - name: Setup Environment Variables
+        run: echo ${{ vars.ENVFILE }} > .env
+        working-directory: q-frontend
       - name: Build Quasar SPA
         run: npx quasar build
         working-directory: q-frontend
