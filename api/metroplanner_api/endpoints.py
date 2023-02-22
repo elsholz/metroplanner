@@ -228,8 +228,8 @@ class PublicEndpoint(Endpoint):
         children = {GET: GetPlanstate}
 
     children = {
-        "/plan/{shortlink}": PlanEndpoints,
-        "/planstate/{shortlink}": PlanstateEndpoints,
+        "/api/plan/{shortlink}": PlanEndpoints,
+        "/api/planstate/{shortlink}": PlanstateEndpoints,
     }
 
 
