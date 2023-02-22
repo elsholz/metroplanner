@@ -92,19 +92,19 @@ Resources:
         PublicGetPlan:
           Type: HttpApi
           Properties:
-            Path: /plan/{shortlink}
+            Path: /api/plan/{shortlink}
             Method: get
             ApiId: !Ref MetroplannerApi
         PublicGetPlanstate:
           Type: HttpApi
           Properties:
-            Path: /planstate/{shortlink}
+            Path: /api/planstate/{shortlink}
             Method: get
             ApiId: !Ref MetroplannerApi
         PublicGetUser:
           Type: HttpApi
           Properties:
-            Path: /user/{userID}
+            Path: /api/user/{userID}
             Method: get
             ApiId: !Ref MetroplannerApi
       Tags:
