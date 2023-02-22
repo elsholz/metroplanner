@@ -8,7 +8,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="planData.planName && planOwner._id && planStats.totalCount" v-model="leftDrawerOpen" side="left"
+    <q-drawer v-model="leftDrawerOpen" side="left"
       behavior="mobile" bordered :width="400" class="text-body1" dark style="box-shadow: 0 0 10px 5px gray;">
       <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; ">
         <q-list padding>
@@ -71,7 +71,7 @@
               <div class="row">
                 <div class="col-xs-6">
                   <q-icon name="visibility" size="sm" class="q-mx-md" />
-                  {{ planStats.totalCount || 0 }}
+                  {{ planStats.totalViewCount || 0 }}
                   <q-tooltip class="bg-accent text-body1">
                     Anzahl Aufrufe
                   </q-tooltip>
@@ -106,7 +106,7 @@
           <div class="row q-pt-md">
             <div class="col-xs-6">
               Plan erstellt von:
-              <div class="text-weight-bold text-h6">{{ planOwner.displayName }}</div>
+              <div class="text-weight-bold text-h6">{{ planOwner.displayName || 'unbekannt' }}</div>
             </div>
             <div class="col-xs-grow">
             </div>
@@ -163,7 +163,10 @@ export default {
     return {
       leftDrawerOpen,
       toggleLeftDrawer () {
+        console.log('Toggling left drawre open!')
+        console.log(leftDrawerOpen.value)
         leftDrawerOpen.value = !leftDrawerOpen.value
+        console.log(leftDrawerOpen.value)
       }
     }
   },
@@ -176,19 +179,23 @@ export default {
     }
   },
   created () {
+    console.log(this.$route.params.shortlink)
     axios.get('/api/plan/' + this.$route.params.shortlink).then(response => {
+      console.log(response)
       const rawData = toRaw(response.data)
       console.log(rawData)
-      this.planData = rawData.plan
-      this.planStats = rawData.stats
-      this.planData.createdAt = rawData.plan.createdAt.slice(0, 10)
-      this.planData.lastModifiedAt = rawData.plan.lastModifiedAt.slice(0, 10)
+      this.planData = rawData
+      this.planStats = { totalViewCount: rawData.totalViewCount }
+      this.planData.createdAt = rawData.createdAt.slice(0, 10)
+      this.planData.lastModifiedAt = rawData.lastModifiedAt.slice(0, 10)
       this.planName = this.planData.planName
       // console.log('raw, plan data, plan owner, planstats::', rawData, this.planData, this.planOwner, this.planStats)
       // console.log('planData.planName', this.planData.planName)
-      axios.get('/api/user/' + this.planData.ownedBy).then(response => {
+      /* axios.get('/api/user/' + this.planData.ownedBy).then(response => {
         this.planOwner = response.data
-      })
+      }).catch(function (error) {
+        console.log('Error fetching user profile: ', error)
+      }) */
     })
   },
   mounted () {

@@ -10,9 +10,13 @@ const routes = [
   {
     path: '/p/:shortlink',
     component: () => import('layouts/PlanLayout.vue')//,
-    // children: [
-    //   { path: '', component: () => PlanViewer }
-    // ]
+  },
+  {
+    path: '/impressum',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ImpressumPage.vue') }
+    ]
   },
 
   // Always leave this as last one,

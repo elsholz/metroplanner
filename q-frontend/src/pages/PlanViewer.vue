@@ -1,7 +1,7 @@
 <template>
   <q-page padding dark>
-    <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels && colorTheme.themeData"
-      :style="'background-color: ' + colorTheme.themeData.backgroundColor + '; '">
+    <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels"
+      :style="'background-color: ' + (colorTheme.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
       <div id="lines">
         <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
           <div v-for="(segment, segmentKey) in line.segments" v-bind:key="segmentKey"
@@ -63,19 +63,20 @@ export default {
         'Access-Control-Allow-Origin': '*'
       }
     }).then(response => {
+      console.log('Planstate response data:', response.data)
       axios.get('/api/theme/' + response.data.colorTheme, {
         'Access-Control-Allow-Origin': '*'
       }).then(response => {
         this.colorTheme = response.data
-        this.addCSS()
+      }).catch(function (error) {
+        console.log('Error fetching Color theme: ', error)
       })
       this.planState = response.data
+      this.addCSS()
 
-      for (const [key, line] of Object.entries(this.planState.lines)) {
+      for (const line of this.planState.lines) {
         line.segments = []
-        console.log(key)
-        for (const [index, connections] of Object.entries(line.connections)) {
-          console.log(index)
+        for (const connections of line.connections) {
           for (let i = 0; i < connections.nodes.length - 1; i++) {
             const outboundStation = connections.nodes[i]
             const inboundStation = connections.nodes[i + 1]
@@ -123,7 +124,6 @@ export default {
       `
     },
     getLabelStyle (nodeKey, node, labelKey, label) {
-      console.log(node)
       const conP = this.getConnectionPoint(this.planState.labels[node.label].anchor)
       const locX = conP[0]
       const locY = conP[1]
@@ -156,14 +156,18 @@ export default {
       }
     },
     addCSS: function () {
-      if (this.hasBeenMounted && this.colorTheme.themeData) {
-        const mapstyle = document.createElement('style')
+      if (this.hasBeenMounted && this.planState.lines) {
+        let mapstyle = document.getElementById('style')
+        if (mapstyle === null) {
+          console.log('Creating new mapstyle elment')
+          mapstyle = document.createElement('style')
+        }
         mapstyle.id = 'mapstyle'
 
         for (const [key, line] of Object.entries(this.planState.lines)) {
-          mapstyle.innerText += `
+          const text = `
             .line${key} {
-              background-color: ${line.color};
+              background-color: ${line.color || 'white'};
               border-radius: ${line.width * this.coordinateScalar / 2}px;
               box-shadow: 0px 0px 3px 1px ${line.color};
               border-width: ${2}px;
@@ -171,11 +175,11 @@ export default {
               border-color: ${line.borderColor || line.color};
             }
         `
+          mapstyle.innerText += text
         }
 
         for (const [lbl, style] of Object.entries(this.labelTypes)) {
           const stl = style.style
-          console.log(lbl, stl)
 
           mapstyle.innerText += `
           .${lbl} {

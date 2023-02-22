@@ -90,7 +90,7 @@ module.exports = configure(function (ctx) {
       open: true, // opens browser window automatically
       proxy: {
         '^/api': {
-          target: 'http://localhost:3000',
+          target: 'https://dev.ich-hab-plan.de/',
           changeOrigin: true
         }
       }
