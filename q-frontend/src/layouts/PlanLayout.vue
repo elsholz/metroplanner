@@ -186,7 +186,7 @@ export default {
       this.planName = this.planData.planName
       // console.log('raw, plan data, plan owner, planstats::', rawData, this.planData, this.planOwner, this.planStats)
       // console.log('planData.planName', this.planData.planName)
-      axios.get(process.env.Api + '/user/' + this.planData.ownedBy).then(response => {
+      axios.get('/api/user/' + this.planData.ownedBy).then(response => {
         this.planOwner = response.data
       })
     })

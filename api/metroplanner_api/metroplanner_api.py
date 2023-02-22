@@ -65,7 +65,7 @@ def lambda_handler(event, context):
             print('Initializing Environment')
             ENV.initialize_environment(request_context["stage"])
 
-        if route_path[1] == "_":
+        if route_path.startswith("/api/_"):
             print('Calling private handler')
             res = private_handler(route_path, method, event, context, ENV)
         else:
