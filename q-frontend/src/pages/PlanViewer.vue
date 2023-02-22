@@ -58,8 +58,8 @@ export default {
     }
   },
   created () {
-    axios.get('/api/planstate/' + this.$route.params.shortlink).then(response => {
-      axios.get('/api/theme/' + response.data.colorTheme).then(response => {
+    axios.get(process.env.Api + '/planstate/' + this.$route.params.shortlink).then(response => {
+      axios.get(process.env.Api + '/theme/' + response.data.colorTheme).then(response => {
         this.colorTheme = response.data
         this.addCSS()
       })
@@ -132,8 +132,8 @@ export default {
       } else if (['span'].includes(lbl.class)) {
         if (lbl.anchor.coords) {
           return `
-          top: ${this.getY(lbl.anchor.coords[1])}px; 
-          left: ${this.getX(lbl.anchor.coords[0])}px; 
+          top: ${this.getY(lbl.anchor.coords[1])}px;
+          left: ${this.getX(lbl.anchor.coords[0])}px;
           width: ${this.coordinateScalar * lbl.anchor.width}px;
           height: ${this.coordinateScalar * lbl.anchor.height}px;
           font-size: ${this.coordinateScalar * lbl.anchor.height}px;

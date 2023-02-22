@@ -57,6 +57,7 @@ Resources:
           AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
           MinimumProtocolVersion: TLSv1.2_2021
           SslSupportMethod: sni-only
+        DefaultRootObject: index.html
       Tags:
         - Key: App
           Value: metroplanner

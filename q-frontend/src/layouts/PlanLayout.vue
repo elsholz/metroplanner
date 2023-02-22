@@ -176,7 +176,7 @@ export default {
     }
   },
   created () {
-    axios.get('/api/plan/' + this.$route.params.shortlink).then(response => {
+    axios.get(process.env.Api + '/plan/' + this.$route.params.shortlink).then(response => {
       const rawData = toRaw(response.data)
       console.log(rawData)
       this.planData = rawData.plan
@@ -186,7 +186,7 @@ export default {
       this.planName = this.planData.planName
       // console.log('raw, plan data, plan owner, planstats::', rawData, this.planData, this.planOwner, this.planStats)
       // console.log('planData.planName', this.planData.planName)
-      axios.get('/api/user/' + this.planData.ownedBy).then(response => {
+      axios.get(process.env.Api + '/user/' + this.planData.ownedBy).then(response => {
         this.planOwner = response.data
       })
     })
