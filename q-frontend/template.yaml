@@ -10,12 +10,16 @@ Mappings:
       OriginId: prod-bucket
       Comment: PROD Metroplanner Distro
       OriginAclName: OriginAccessControlProd
+      ApiDomain: api.ich-hab-plan.de
+      ApiOriginId: dev-api
     dev:
       Domain: "dev.ich-hab-plan.de"
       CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/c1ebfcc3-a24c-4e9c-943e-cb66bb52ed97"
       OriginId: dev-bucket
       Comment: Metroplanner Distro DEV
       OriginAclName: OriginAccessControlDev
+      ApiDomain: api.dev.ich-hab-plan.de
+      ApiOriginId: dev-api
 
 Parameters:
   env:
@@ -47,12 +51,34 @@ Resources:
           Compress: true
           TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
           ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods: []
+            # disable caching for the api
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            # Compress: true
+            # OriginRequestPolicyId: String
+            PathPattern: "/api/*"
+            # SmoothStreaming: Boolean
+            TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
+            # TrustedKeyGroups:
+            #   - String
+            # TrustedSigners:
+            #   - String
+            ViewerProtocolPolicy: redirect-to-https
         Origins:
           - CustomOriginConfig:
               OriginProtocolPolicy: "http-only"
             DomainName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
             # OriginAccessControlId: !GetAtt CfDistroOriginAccessControl.Id
+          - CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+            DomainName: !FindInMap [EnvMap, !Ref env, ApiDomain]
+            Id: !FindInMap [EnvMap, !Ref env, ApiOriginId]
+            OriginPath: !Join [ '/', ['', !Ref env ] ]
         ViewerCertificate:
           AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
           MinimumProtocolVersion: TLSv1.2_2021
