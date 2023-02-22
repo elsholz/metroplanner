@@ -134,7 +134,7 @@ Resources:
           description: API for the Metroplanner project
         paths:
           # PUBLIC API
-          /plan/{shortlink}:
+          /api/plan/{shortlink}:
             get:
               tags:
                 - Public API
@@ -153,7 +153,7 @@ Resources:
                     text/json:
                       schema:
                         $ref: '#/components/schemas/publicGetPlan'
-          /plandata/{shortlink}:
+          /api/plandata/{shortlink}:
             get:
               tags:
                 - Public API
@@ -172,7 +172,7 @@ Resources:
                     text/json:
                       schema:
                         $ref: '#/components/schemas/publicGetPlanData'
-          /user/{userID}:
+          /api/user/{userID}:
             get:
               tags:
                 - Public API
