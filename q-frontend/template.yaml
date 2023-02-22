@@ -55,19 +55,20 @@ Resources:
           - AllowedMethods:
               - GET
               - HEAD
-            # CachedMethods: []
-            # disable caching for the api
+              - OPTIONS
+              - PUT
+              - POST
+              - PATCH
+              - DELETE
             CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-            # Compress: true
-            # OriginRequestPolicyId: String
             PathPattern: "/api/*"
-            # SmoothStreaming: Boolean
+            Compress: true
             TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
-            # TrustedKeyGroups:
-            #   - String
-            # TrustedSigners:
-            #   - String
             ViewerProtocolPolicy: redirect-to-https
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: index.html
         Origins:
           - CustomOriginConfig:
               OriginProtocolPolicy: "http-only"
@@ -78,7 +79,6 @@ Resources:
               OriginProtocolPolicy: https-only
             DomainName: !FindInMap [EnvMap, !Ref env, ApiDomain]
             Id: !FindInMap [EnvMap, !Ref env, ApiOriginId]
-            OriginPath: !Join [ '/', ['', !Ref env ] ]
         ViewerCertificate:
           AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
           MinimumProtocolVersion: TLSv1.2_2021
