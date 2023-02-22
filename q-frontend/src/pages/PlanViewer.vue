@@ -58,8 +58,14 @@ export default {
     }
   },
   created () {
-    axios.get(process.env.Api + '/planstate/' + this.$route.params.shortlink).then(response => {
-      axios.get(process.env.Api + '/theme/' + response.data.colorTheme).then(response => {
+    axios.get('/api/planstate/' + this.$route.params.shortlink, {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    }).then(response => {
+      axios.get('/api/theme/' + response.data.colorTheme, {
+        'Access-Control-Allow-Origin': '*'
+      }).then(response => {
         this.colorTheme = response.data
         this.addCSS()
       })

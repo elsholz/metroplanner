@@ -230,7 +230,7 @@ Resources:
           #             schema:
           #               $ref: '#/components/schemas/publicGetStats'
           # PRIVATE API
-          /_user:
+          /api/_user:
             get:
               tags:
                 - Private API
@@ -241,7 +241,7 @@ Resources:
                   # content:
                     # text/json:
                       # schema:
-          /_plans:
+          /api/_plans:
             post:
               tags:
                 - Private API
@@ -252,7 +252,7 @@ Resources:
                   # content:
                     # text/json:
                       # schema:
-          /_plans/{planid}:
+          /api/_plans/{planid}:
             get:
               tags:
                 - Private API
@@ -287,7 +287,7 @@ Resources:
                   # content:
                     # text/json:
                       # schema:
-          /_links/{planid}:
+          /api/_links/{planid}:
             get:
               tags:
                 - Private API
@@ -305,7 +305,7 @@ Resources:
                   # content:
                     # text/json:
                       # schema:
-          /_links/:
+          /api/_links/:
             post:
               tags:
                 - Private API
@@ -316,7 +316,7 @@ Resources:
                   #content:
                   # text/json:
                     #  schema:
-          /_links/{shortlink}:
+          /api/_links/{shortlink}:
             patch:
               tags:
                 - Private API

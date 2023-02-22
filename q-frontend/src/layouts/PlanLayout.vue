@@ -176,7 +176,7 @@ export default {
     }
   },
   created () {
-    axios.get(process.env.Api + '/plan/' + this.$route.params.shortlink).then(response => {
+    axios.get('/api/plan/' + this.$route.params.shortlink).then(response => {
       const rawData = toRaw(response.data)
       console.log(rawData)
       this.planData = rawData.plan
