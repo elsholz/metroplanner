@@ -9,11 +9,9 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 const { configure } = require('quasar/wrappers')
-require('dotenv').config()
 
 module.exports = configure(function (ctx) {
-  console.log('Process env:', process.env)
-  return {
+  const res = {
     eslint: {
       // fix: true,
       // include = [],
@@ -60,6 +58,7 @@ module.exports = configure(function (ctx) {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         node: 'node16'
       },
+      env: require('dotenv').config().parsed,
 
       vueRouterMode: 'history' // available values: 'hash', 'history'
       // vueRouterBase,
@@ -216,5 +215,8 @@ module.exports = configure(function (ctx) {
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
     }
+
   }
+  console.log('Environment::', res.build.env)
+  return res
 })
