@@ -48,14 +48,20 @@
         </div>
       </div>
 
+      <div class="row text-white q-my-lg">
+        <div class="col">
+          <div class="q-my-sm">Kontakt</div>
+          <q-btn outline icon="mail" label="hdk.lks@pm.me" style="font-family: monospace; font-size: larger;"></q-btn></div>
+      </div>
+
       <div class="row text-white">
-        <div class="col-12 q-mt-md">
+        <div class="col-12 q-mt-lg">
           <span class="">Umsatzsteueridentifikationsnummer</span>
           <div class="text-weight-thin">...</div>
         </div>
       </div>
 
-      <div class="row text-white q-mt-md">
+      <div class="row text-white q-mt-lg q-mb-xl">
         <div class="col-12">
           <span class="">Datenschutz und Privatsphäre</span>
           <div class="text-weight-thin">
@@ -66,11 +72,6 @@
         </div>
       </div>
 
-      <div class="row text-white q-my-xl">
-        <div class="col">
-          <div class="q-my-sm">Kontakt</div>
-          <q-btn outline icon="mail" label="hdk.lks@pm.me" style="font-family: monospace; font-size: larger;"></q-btn></div>
-      </div>
     </div>
   </q-page>
 </template>
