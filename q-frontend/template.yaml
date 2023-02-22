@@ -67,8 +67,8 @@ Resources:
             ViewerProtocolPolicy: redirect-to-https
         CustomErrorResponses:
           - ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: index.html
+            ResponseCode: "200"
+            ResponsePagePath: "/index.html"
         Origins:
           - CustomOriginConfig:
               OriginProtocolPolicy: "http-only"
