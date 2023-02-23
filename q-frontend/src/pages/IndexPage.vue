@@ -19,7 +19,7 @@
         Empfohlene Nahverkehrs-Pläne:
       </div>
 
-      <q-list bordered padding separator class="bg-grey-10 text-white" style="width: 100%;">
+      <q-list bordered padding separator class="text-white" style="width: 100%;">
         <PlanListItem v-for="plan in dummyPlans" :key="plan.planName" :planName="plan.planName" style="width: 100%;">
         </PlanListItem>
       </q-list>
@@ -70,7 +70,7 @@ export default defineComponent({
           shortLink: 'wesel',
           planName: 'Liniennetzplan Wesel',
           ownedBy: {
-            displayName: 'HendrikLankers'
+            displayName: 'Hendrik Lankers'
           },
           createdAt: '2022-12-30T21:03:03.444',
           lastModifiedAt: '2023-01-01T18:50:03.444',
@@ -79,63 +79,8 @@ export default defineComponent({
           currentNumberOfEdges: 385,
           currentNumberOfLabels: 232,
           currentNumberOfLines: 27,
-          currentNumberOfNodes: 232
-        }, {
-          shortLink: 'wesel',
-          planName: 'Liniennetzplan Wesel',
-          ownedBy: {
-            displayName: 'HendrikLankers'
-          },
-          createdAt: '2022-12-30T21:03:03.444',
-          lastModifiedAt: '2023-01-01T18:50:03.444',
-          likeCount: 0,
-          currentColorTheme: '634469a8ccfb6bf5a194fcca',
-          currentNumberOfEdges: 385,
-          currentNumberOfLabels: 232,
-          currentNumberOfLines: 27,
-          currentNumberOfNodes: 232
-        }, {
-          shortLink: 'wesel',
-          planName: 'Liniennetzplan Wesel',
-          ownedBy: {
-            displayName: 'HendrikLankers'
-          },
-          createdAt: '2022-12-30T21:03:03.444',
-          lastModifiedAt: '2023-01-01T18:50:03.444',
-          likeCount: 0,
-          currentColorTheme: '634469a8ccfb6bf5a194fcca',
-          currentNumberOfEdges: 385,
-          currentNumberOfLabels: 232,
-          currentNumberOfLines: 27,
-          currentNumberOfNodes: 232
-        }, {
-          shortLink: 'wesel',
-          planName: 'Liniennetzplan Wesel',
-          ownedBy: {
-            displayName: 'HendrikLankers'
-          },
-          createdAt: '2022-12-30T21:03:03.444',
-          lastModifiedAt: '2023-01-01T18:50:03.444',
-          likeCount: 0,
-          currentColorTheme: '634469a8ccfb6bf5a194fcca',
-          currentNumberOfEdges: 385,
-          currentNumberOfLabels: 232,
-          currentNumberOfLines: 27,
-          currentNumberOfNodes: 232
-        }, {
-          shortLink: 'wesel',
-          planName: 'Liniennetzplan Wesel',
-          ownedBy: {
-            displayName: 'HendrikLankers'
-          },
-          createdAt: '2022-12-30T21:03:03.444',
-          lastModifiedAt: '2023-01-01T18:50:03.444',
-          likeCount: 0,
-          currentColorTheme: '634469a8ccfb6bf5a194fcca',
-          currentNumberOfEdges: 385,
-          currentNumberOfLabels: 232,
-          currentNumberOfLines: 27,
-          currentNumberOfNodes: 232
+          currentNumberOfNodes: 232,
+          totalViewCount: 777
         }
       ]
     }

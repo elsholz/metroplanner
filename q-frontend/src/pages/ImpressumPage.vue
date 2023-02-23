@@ -61,7 +61,7 @@
         </div>
       </div>
 
-      <div class="row text-white q-mt-lg q-mb-xl">
+      <div class="row text-white q-mt-lg">
         <div class="col-12">
           <span class="">Datenschutz und Privatsphäre</span>
           <div class="text-weight-thin">
@@ -72,6 +72,15 @@
         </div>
       </div>
 
+      <div class="row text-white q-mt-lg q-mb-xl">
+        <div class="col-12">
+          <span class="">Haftungsausschluss für Nutzergenerierte Inhalte</span>
+          <div class="text-weight-thin">
+            Es wird keine Haftung für Drittanbieter-Inhalte übernommen, auf die (durch Nutzer) verlinkt wird.
+            Es wird keine Haftung für Nutzer-generierte Inhalte übernommen.
+          </div>
+        </div>
+      </div>
     </div>
   </q-page>
 </template>
