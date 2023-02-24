@@ -26,8 +26,9 @@ Parameters:
     Type: String
     Description: Environment of the deployment (Lowercase)
 
-# Conditions:
-#   IsStaging: !Equals [!Ref env, prod]
+Conditions:
+  # IsStaging: !Equals [!Ref env, dev]
+  IsProd: !Equals [!Ref env, prod]
 
 Resources:
   MetroplannerCfDistro:
@@ -47,7 +48,8 @@ Resources:
           CachedMethods:
             - GET
             - HEAD
-          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+          # Use no Caching in Dev Environment, Use Caching Optimized in Prod
+          CachePolicyId: !If [ IsProd, "658327ea-f89d-4fab-a63d-7e88639e58f6", "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"]
           Compress: true
           TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
           ViewerProtocolPolicy: redirect-to-https
