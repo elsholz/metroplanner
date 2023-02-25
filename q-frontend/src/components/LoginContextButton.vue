@@ -1,6 +1,22 @@
 <template>
-  <q-btn v-if="loggedIn" :label="user.displayName" color="green-5" outline class="q-pa-sm q-px-md text-body1" icon="person" />
-  <q-btn v-else @click="login" v-label="Login" color="green-6" class="q-pa-sm q-px-md text-body1" icon="person" />
+  <q-space></q-space>
+  <q-btn
+    v-if="loggedIn"
+    :label="$q.screen.lt.xs ? user.displayName : ''"
+    color="green-5"
+    outline
+    class="q-pa-sm q-px-md text-body1"
+    icon="person"
+  />
+  <q-btn
+    v-else
+    @click="login"
+    no-caps
+    :label="$q.screen.lt.xs ? 'Login' : ''"
+    color="green-6"
+    class="q-pa-sm q-px-md text-body1"
+    icon="person"
+  />
 </template>
 
 <script>
@@ -23,6 +39,5 @@ export default {
       }
     }
   }
-
 }
 </script>

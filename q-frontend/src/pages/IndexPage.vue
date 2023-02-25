@@ -1,26 +1,42 @@
 <template>
   <q-page class="doc-container flex flex-center bg-primary q-pb-xl">
-    <div class="col text-white" style="max-width: 1000px;">
-      <div class="q-my-xl">
-        <div class="text-h6 text-center">
-          Willkommen auf
+    <div class="col text-white" style="max-width: 1000px">
+      <div class="row justify-center q-my-md">
+        <div class="text-h6 text-center col-12">
+          Willkommen auf der Metroplanner-Instanz
         </div>
-        <div class="text-h4 text-center">
-          <pre><code style="color:#c70; background-color:#000; border-radius: 10px;"> ich-hab-Plan.de </code></pre>
+        <div class="row justify-center">
+          <div class="text-h4 text-center col-12">
+            <pre><code style="color:#c70; background-color:#000; border-radius: 10px;"> ich-hab-Plan.de </code></pre>
+          </div>
+        </div>
+        <div class="q-mt-lg row justify-center">
+          <div class="text-body1 text-center column col-sm-8 col-xs-12 q-px-xs">
+            Metroplanner ist ein Webtool zur Erstellung und zum Anzeigen von
+            intuitiven und diagramm-ähnlichen Liniennetzplänen für den ÖPNV.
+            Aufgrund der einfachen Bedienung eignet sich Metroplanner
+            insbesondere zur Erstellung von Netzplänen in kleineren Städten und
+            Gemeinden, die heute häufig noch keine derartigen Pläne besitzen.
+          </div>
         </div>
       </div>
       <!--<div class="q-my-lg text-h2 text-bold text-center">
         Metroplanner
       </div>-->
 
-      <hr class="q-my-lg" />
+      <!----<hr class="q-my-lg" />-->
 
-      <div class="text-h4 q-ma-lg">
-        Empfohlene Nahverkehrs-Pläne:
-      </div>
+      <div class="text-h6 q-mx-lg q-mt-xl">Ausgewählte Nahverkehrs-Pläne:</div>
 
-      <q-list bordered padding separator class="text-white" style="width: 100%;">
-        <PlanListItem v-for="plan in dummyPlans" :key="plan.planName" :planName="plan.planName" style="width: 100%;">
+      <q-list bordered padding separator class="text-white" style="width: 100%">
+        <PlanListItem
+          v-for="plan in dummyPlans"
+          :key="plan.planName"
+          :planName="plan.planName"
+          :planShortlink="plan.planShortlink"
+          :planDescription="plan.planDescription"
+          style="width: 100%"
+        >
         </PlanListItem>
       </q-list>
     </div>
@@ -67,8 +83,12 @@ export default defineComponent({
     return {
       dummyPlans: [
         {
-          shortLink: 'wesel',
+          planShortlink: 'wesel',
           planName: 'Liniennetzplan Wesel',
+          planDescription:
+            'Ein Beispielplan für das Liniennetz in und rund um die Stadt Wesel am Niederrhein. ' +
+            'Der Plan befindet sich noch nicht in einem finalen Zustand, es wird aber deutlich wie ' +
+            'ein Netzplan für den ÖPNV dort zukünftig aussehen könnte.',
           ownedBy: {
             displayName: 'Hendrik Lankers'
           },
@@ -79,6 +99,24 @@ export default defineComponent({
           currentNumberOfEdges: 385,
           currentNumberOfLabels: 232,
           currentNumberOfLines: 27,
+          currentNumberOfNodes: 232,
+          totalViewCount: 777
+        },
+        {
+          planShortlink: 'showcase',
+          planName: 'Generischer Beispielplan',
+          planDescription: 'Ein fiktiver Nahverkehrsplan als Showcase ' +
+          'für alle wesentlichen Features von Metroplanner.',
+          ownedBy: {
+            displayName: 'Hendrik Lankers'
+          },
+          createdAt: '2023-01-01T21:03:03.444',
+          lastModifiedAt: '2023-01-01T21:50:03.444',
+          likeCount: 0,
+          currentColorTheme: '634469a8ccfb6bf5a194fcca',
+          currentNumberOfEdges: 1,
+          currentNumberOfLabels: 10,
+          currentNumberOfLines: 10,
           currentNumberOfNodes: 232,
           totalViewCount: 777
         }

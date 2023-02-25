@@ -5,7 +5,7 @@
       style="width: 100%; background-color: #003; border-radius: 10px"
     >
       <div class="row text-center justify-around items-center" style="width: 100%; min-height: 100px">
-        <div class="column col-xs-12 col-sm-6 col-md-2">
+        <div class="column col-xs-6 col-sm-2">
           <q-item-section avatar squared>
             <div
               class="bg-secondary q-pa-md q-px-lg"
@@ -14,25 +14,21 @@
               <img
                 alt="Quasar logo"
                 src="/icons/mpl_logo.svg"
-                style="width: 100px; height: 100px"
+                style="width: 100%; height: auto"
               />
             </div>
           </q-item-section>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-9">
-          <q-item-section>
+        <div class="col-xs-6 col-sm-8 text-left">
             <q-item-label class="text-h6">
               {{ planName }}
             </q-item-label>
-            Dies ist der Plan für Wesel
-          </q-item-section>
+            {{ planDescription }}
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-1">
-          <q-item-section side top>
-            <q-btn no-caps class="bg-primary" to="/details/">
+        <div class="col-xs-6 col-sm-2 q-py-md">
+            <q-btn no-caps class="bg-primary" :to="'/details/' + planShortlink">
               <q-item-label class="text-white" caption>Details</q-item-label>
             </q-btn>
-          </q-item-section>
         </div>
       </div>
     </q-item>
@@ -46,7 +42,9 @@ export default {
     return {}
   },
   props: {
-    planName: String
+    planName: String,
+    planShortlink: String,
+    planDescription: String
   }
   /* watch: {
     planName: function (newVal, oldVal) {

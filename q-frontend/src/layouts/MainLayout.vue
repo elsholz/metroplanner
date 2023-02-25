@@ -6,13 +6,14 @@
       dark
       style="box-shadow: 0 0 5px 3px white"
     >
-      <q-toolbar>
+      <q-toolbar class="">
         <HeaderLogo> </HeaderLogo>
+
         <LoginContextButton> </LoginContextButton>
       </q-toolbar>
       <q-toolbar v-if="staging">
-        <q-toolbar-title class="text-center text-h4 q-pa-md" style="background-color: #770; color: #fff;">
-          Staging-Umgebung: Nicht verwenden
+        <q-toolbar-title class="text-center text-h5 q-pa-md" style="background-color: #770; color: #fff;">
+          ! Entwicklungs-Umgebung !
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
