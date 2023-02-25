@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar-title :class="$q.screen.gt.xs ? '' : 'absolute-center'">
+  <q-toolbar-title :class="$q.screen.gt.xs ? 'absolute-left' : 'absolute-center'">
     <q-btn no-caps flat class="text-h6" to="/">
       <template v-if="$q.screen.gt.xs">
         <q-avatar square>

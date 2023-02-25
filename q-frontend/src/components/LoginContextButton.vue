@@ -2,7 +2,7 @@
   <q-space></q-space>
   <q-btn
     v-if="loggedIn"
-    :label="$q.screen.lt.xs ? user.displayName : ''"
+    :label="$q.screen.gt.xs ? user.displayName : ''"
     color="green-5"
     outline
     class="q-pa-sm q-px-md text-body1"
@@ -12,7 +12,7 @@
     v-else
     @click="login"
     no-caps
-    :label="$q.screen.lt.xs ? 'Login' : ''"
+    :label="$q.screen.gt.xs ? 'Login' : ''"
     color="green-6"
     class="q-pa-sm q-px-md text-body1"
     icon="person"
