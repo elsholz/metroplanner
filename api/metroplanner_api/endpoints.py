@@ -228,9 +228,23 @@ class PublicEndpoint(Endpoint):
 
         children = {GET: GetPlanstate}
 
+    class ColorthemeEndpoints(Endpoint):
+        class GetColorTheme(EndpointMethod):
+            pass
+
+        children = {GET: GetColorTheme}
+
+    class UserEndpoints(Endpoint):
+        class GetUser(EndpointMethod):
+            pass
+
+        children = {GET: GetUser}
+
     children = {
-        "/api/plan/{shortlink}": PlanEndpoints,
-        "/api/planstate/{shortlink}": PlanstateEndpoints,
+        "/api/plans/{shortlink}": PlanEndpoints,
+        "/api/planstates/{shortlink}": PlanstateEndpoints,
+        "/api/colorthemes/{colorThemeID}": ColorthemeEndpoints,
+        "/api/users/{userID}": UserEndpoints,
     }
 
 
@@ -239,4 +253,27 @@ class PrivateEndpoint(Endpoint):
     Parent class for all private endpoints.
     """
 
-    children = {}
+    class UserEndpoints(Endpoint):
+        class GetUser(EndpointMethod):
+            pass
+
+        children = {GET: GetUser}
+
+    class PlanEndpoints(Endpoint):
+        class GetPlan(EndpointMethod):
+            pass
+        class PatchPlan(EndpointMethod):
+            pass
+        class PostPlan(EndpointMethod):
+            pass
+        children = {
+            GET: GetPlan,
+            PATCH: PatchPlan,
+            POST: PostPlan,
+        }
+
+    children = {
+        "/api/_user": UserEndpoints,
+        "/api/_plans": PlanEndpoints,
+        "/api/_plans/{planId}": PlanEndpoints
+        }
