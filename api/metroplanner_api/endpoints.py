@@ -109,6 +109,7 @@ class PublicEndpoint(Endpoint):
                                                 "currentNumberOfLines",
                                                 "currentNumberOfNodes",
                                                 "totalViewCount",
+                                                "planDescription",
                                             ]
                                         }
                                     )
