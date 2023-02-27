@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Dict
 from methods import GET, POST, PATCH, DELETE
 import responses
@@ -7,20 +7,32 @@ from bson.objectid import ObjectId
 from datetime import datetime
 
 
-class Endpoint(ABC):
-    children: Dict[str, "Endpoint"] = None
+class EndpointCollection(ABC):
+    """
+    A Collection of an endpoint's methods or of subordinate
+    endpoint collections.
+    """
+    children: Dict[str, "EndpointCollection"] = None
 
 
 class EndpointMethod(ABC):
-    pass
-
-
-class PublicEndpoint(Endpoint):
     """
-    Parent class for all public endpoints.
+    Baseclass for all endpoint methods.
+    Methods are first instantiated and then invoked like a function
+    call, hence the __call__ magic method needs be defined.
     """
 
-    class PlanEndpoints(Endpoint):
+    @abstractmethod
+    def __call__(self) -> Dict:
+        ...
+
+
+class PublicEndpoint(EndpointCollection):
+    """
+    Contains all public endpoint collections.
+    """
+
+    class PlanEndpoints(EndpointCollection):
         """
         Contains all endpoints for the plan resource.
         Currently only supports the GET method.
@@ -133,7 +145,7 @@ class PublicEndpoint(Endpoint):
 
         children = {GET: GetPlan}
 
-    class PlanstateEndpoints(Endpoint):
+    class PlanstateEndpoints(EndpointCollection):
         """
         Contains all endpoints for the planstate resource.
         Currently only supports the GET method.
@@ -228,15 +240,21 @@ class PublicEndpoint(Endpoint):
 
         children = {GET: GetPlanstate}
 
-    class ColorthemeEndpoints(Endpoint):
+    class ColorthemeEndpoints(EndpointCollection):
         class GetColorTheme(EndpointMethod):
-            pass
+            def __init__(self, event, context, env: environment.Environment) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
 
         children = {GET: GetColorTheme}
 
-    class UserEndpoints(Endpoint):
+    class UserEndpoints(EndpointCollection):
         class GetUser(EndpointMethod):
-            pass
+            def __init__(self, event, context, env: environment.Environment) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
 
         children = {GET: GetUser}
 
@@ -248,32 +266,128 @@ class PublicEndpoint(Endpoint):
     }
 
 
-class PrivateEndpoint(Endpoint):
+class PrivateEndpoint(EndpointCollection):
     """
-    Parent class for all private endpoints.
+    Contains all private endpoint collections.
     """
 
-    class UserEndpoints(Endpoint):
+    class UserEndpoints(EndpointCollection):
         class GetUser(EndpointMethod):
-            pass
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
 
-        children = {GET: GetUser}
+        class PatchUser(EndpointMethod):
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
 
-    class PlanEndpoints(Endpoint):
+        children = {GET: GetUser, PATCH: PatchUser}
+
+    class PlanEndpoints(EndpointCollection):
         class GetPlan(EndpointMethod):
-            pass
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
         class PatchPlan(EndpointMethod):
-            pass
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
         class PostPlan(EndpointMethod):
-            pass
-        children = {
-            GET: GetPlan,
-            PATCH: PatchPlan,
-            POST: PostPlan,
-        }
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
+        class DeletePlan(EndpointMethod):
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
+        children = {GET: GetPlan, PATCH: PatchPlan, POST: PostPlan, DELETE: DeletePlan}
+
+    class LinkEndpoints(EndpointCollection):
+        class PostLink(EndpointMethod):
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
+        class PatchLink(EndpointMethod):
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
+        class DeleteLink(EndpointMethod):
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
+        children = {POST: PostLink, PATCH: PatchLink, DELETE: DeleteLink}
+
+    class PlanstateEndpoints(EndpointCollection):
+        class PostPlanstate(EndpointMethod):
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
+        class GetPlanstate(EndpointMethod):
+            def __init__(
+                self, event, context, env: environment.Environment, auth
+            ) -> None:
+                self.event = event
+                self.context = context
+                self.env = env
+                self.auth = auth
+
+        children = {POST: PostPlanstate, GET: GetPlanstate}
 
     children = {
         "/api/_user": UserEndpoints,
         "/api/_plans": PlanEndpoints,
-        "/api/_plans/{planId}": PlanEndpoints
-        }
+        "/api/_plans/{planID}": PlanEndpoints,
+        "/api/_links": LinkEndpoints,
+        "/api/_links/{shortlink}": LinkEndpoints,
+        "/api/_planstates": PlanstateEndpoints,
+        "/api/_planstates/{planstateID}": PlanstateEndpoints,
+    }

@@ -14,7 +14,7 @@
           @click="toggleLeftDrawer"
           class="q-mr-sm"
         />
-          <HeaderLogo> </HeaderLogo>
+          <HeaderLogo :absoluteLeft='false'> </HeaderLogo>
         <!---<LoginContextButton> </LoginContextButton>-->
       </q-toolbar>
     </q-header>
@@ -207,6 +207,7 @@ import HeaderLogo from 'src/components/HeaderLogo.vue'
 /* import LoginContextButton from 'src/components/LoginContextButton.vue' */
 
 export default {
+  name: 'ViewerLayout',
   setup () {
     const leftDrawerOpen = ref(false)
     return {

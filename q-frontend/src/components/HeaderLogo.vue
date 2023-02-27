@@ -1,5 +1,13 @@
 <template>
-  <q-toolbar-title :class="$q.screen.gt.xs ? 'absolute-left' : 'absolute-center'">
+  <q-toolbar-title
+    :class="
+      $q.screen.gt.xs
+        ? this.absoluteLeft === true
+          ? 'absolute-left'
+          : ''
+        : 'absolute-center'
+    "
+  >
     <q-btn no-caps flat class="text-h6" to="/">
       <template v-if="$q.screen.gt.xs">
         <q-avatar square>
@@ -23,12 +31,12 @@
       <template v-else>
         <div class="no-wrap row">
           <div class="col col-auto q-pt-sm q-pr-sm">
-            <q-avatar square size="md" style="margin:0; padding:0;">
+            <q-avatar square size="md" style="margin: 0; padding: 0">
               <img src="/icons/favicon-128x128.png" />
             </q-avatar>
           </div>
           <div class="col col-10">
-            <div style="margin-bottom: 0;">METROPLANNER</div>
+            <div style="margin-bottom: 0">METROPLANNER</div>
             <div
               class="text-weight-thin text-monospace bg-blue-grey-10 q-mt-xl"
               style="
@@ -53,6 +61,9 @@ export default {
   name: 'HeaderLogo',
   setup () {
     return {}
+  },
+  props: {
+    absoluteLeft: Boolean
   }
 }
 </script>

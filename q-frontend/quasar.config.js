@@ -30,7 +30,8 @@ module.exports = configure(function (ctx) {
     boot: [
       'addressbar-color',
       'axios',
-      'auth'
+      'auth',
+      'pinia'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css

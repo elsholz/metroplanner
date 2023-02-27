@@ -16,7 +16,14 @@
             intuitiven und diagramm-ähnlichen Liniennetzplänen für den ÖPNV.
             Aufgrund der einfachen Bedienung eignet sich Metroplanner
             insbesondere zur Erstellung von Netzplänen in kleineren Städten und
-            Gemeinden, die heute häufig noch keine derartigen Pläne besitzen.
+            Gemeinden, die heute häufig noch keine derartigen Pläne besitzen.<br>
+          </div>
+        </div>
+        <div class="q-mt-lg row justify-center">
+          <div class="text-body1 text-center column col-12">
+            <q-btn outline no-wrap no-caps to="/project" color="green">
+              Über das Projekt
+            </q-btn>
           </div>
         </div>
       </div>
@@ -30,11 +37,9 @@
 
       <q-list bordered padding separator class="text-white" style="width: 100%">
         <PlanListItem
-          v-for="plan in dummyPlans"
-          :key="plan.planName"
-          :planName="plan.planName"
-          :planShortlink="plan.planShortlink"
-          :planDescription="plan.planDescription"
+          v-for="shortlink of plans"
+          :key="shortlink"
+          :planShortlink="shortlink"
           style="width: 100%"
         >
         </PlanListItem>
@@ -80,49 +85,16 @@ import PlanListItem from 'app/src/components/PlanListItem.vue'
 export default defineComponent({
   name: 'IndexPage',
   data () {
+    // planDescription = planViewerStore.plans[this.planShortlink].info.planDescription
+    // planName = planViewerStore.plans[this.planShortlink].info.planName
     return {
-      dummyPlans: [
-        {
-          planShortlink: 'wesel',
-          planName: 'Liniennetzplan Wesel',
-          planDescription:
-            'Ein Beispielplan für das Liniennetz in und rund um die Stadt Wesel am Niederrhein. ' +
-            'Der Plan befindet sich noch nicht in einem finalen Zustand, es wird aber deutlich wie ' +
-            'ein Netzplan für den ÖPNV dort zukünftig aussehen könnte.',
-          ownedBy: {
-            displayName: 'Hendrik Lankers'
-          },
-          createdAt: '2022-12-30T21:03:03.444',
-          lastModifiedAt: '2023-01-01T18:50:03.444',
-          likeCount: 0,
-          currentColorTheme: '634469a8ccfb6bf5a194fcca',
-          currentNumberOfEdges: 385,
-          currentNumberOfLabels: 232,
-          currentNumberOfLines: 27,
-          currentNumberOfNodes: 232,
-          totalViewCount: 777
-        },
-        {
-          planShortlink: 'showcase',
-          planName: 'Generischer Beispielplan',
-          planDescription: 'Ein fiktiver Nahverkehrsplan als Showcase ' +
-          'für alle wesentlichen Features von Metroplanner.',
-          ownedBy: {
-            displayName: 'Hendrik Lankers'
-          },
-          createdAt: '2023-01-01T21:03:03.444',
-          lastModifiedAt: '2023-01-01T21:50:03.444',
-          likeCount: 0,
-          currentColorTheme: '634469a8ccfb6bf5a194fcca',
-          currentNumberOfEdges: 1,
-          currentNumberOfLabels: 10,
-          currentNumberOfLines: 10,
-          currentNumberOfNodes: 232,
-          totalViewCount: 777
-        }
+      plans: [
+        'wesel',
+        'showcase'
       ]
     }
   },
   components: { PlanListItem }
+
 })
 </script>

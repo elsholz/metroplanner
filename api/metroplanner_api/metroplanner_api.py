@@ -19,7 +19,7 @@ def private_handler(route, method, event, context, env):
 
 def public_handler(route, method, event, context, env):
     try:
-        endpoint: endpoints.Endpoint = endpoints.PublicEndpoint.children[route]
+        endpoint: endpoints.EndpointCollection = endpoints.PublicEndpoint.children[route]
         try:
             endpoint_method: endpoints.EndpointMethod = endpoint.children[method]
             try:

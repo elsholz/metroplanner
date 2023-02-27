@@ -2,30 +2,32 @@
   <q-page padding dark>
     <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels"
       :style="'background-color: ' + (colorTheme.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
-      <div id="lines">
-        <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
-          <div v-for="(segment, segmentKey) in line.segments" v-bind:key="segmentKey"
-            :style="getLineSegmentStyle(segmentKey, segment)" :class="'line_segment line' + key">
+      <div style="transform: scale(0.8)">
+        <div id="lines">
+          <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
+            <div v-for="(segment, segmentKey) in line.segments" v-bind:key="segmentKey"
+              :style="getLineSegmentStyle(segmentKey, segment)" :class="'line_segment line' + key">
 
-          </div>
-        </div>
-      </div>
-
-      <div id="nodes">
-        <div v-for="(node, nodeKey) in planState.nodes" v-bind:key="nodeKey" :id="nodeKey"
-          :style="getNodeStyle(nodeKey, node)" class="marker">
-        </div>
-      </div>
-
-      <div id="labels">
-        <div v-for="(lbl, lblKey) in planState.labels" :key="lblKey">
-          <div v-if="lbl.anchor.node" :style="getLabelStyle(lbl.anchor.node, planState.nodes[lbl.anchor.node])">
-            <div :class="'label ' + lbl.class">
-              {{ lbl.text }}
             </div>
           </div>
-          <div v-else :class="'label ' + lbl.class" :style="getIndependentLabelStyle(lbl)">
-            {{ lbl.text }}
+        </div>
+
+        <div id="nodes">
+          <div v-for="(node, nodeKey) in planState.nodes" v-bind:key="nodeKey" :id="nodeKey"
+            :style="getNodeStyle(nodeKey, node)" class="marker">
+          </div>
+        </div>
+
+        <div id="labels">
+          <div v-for="(lbl, lblKey) in planState.labels" :key="lblKey">
+            <div v-if="lbl.anchor.node" :style="getLabelStyle(lbl.anchor.node, planState.nodes[lbl.anchor.node])">
+              <div :class="'label ' + lbl.class">
+                {{ lbl.text }}
+              </div>
+            </div>
+            <div v-else :class="'label ' + lbl.class" :style="getIndependentLabelStyle(lbl)">
+              {{ lbl.text }}
+            </div>
           </div>
         </div>
       </div>
@@ -58,13 +60,9 @@ export default {
     }
   },
   created () {
-    axios.get('/api/planstate/' + this.$route.params.shortlink, {
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      }
-    }).then(response => {
+    axios.get('/api/planstates/' + this.$route.params.shortlink).then(response => {
       console.log('Planstate response data:', response.data)
-      axios.get('/api/theme/' + response.data.colorTheme, {
+      axios.get('/api/colorthemes/' + response.data.colorTheme, {
         'Access-Control-Allow-Origin': '*'
       }).then(response => {
         this.colorTheme = response.data

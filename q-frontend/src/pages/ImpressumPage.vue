@@ -13,7 +13,7 @@
       </div>
 
       <div class="row text-white">
-        <div class="col-12">Website wird betrieben von <br /></div>
+        <div class="col-12 q-py-sm">Angaben gemäß §5 TMG:<br /></div>
       </div>
       <div class="row text-white">
         <div class="col-grow"></div>
@@ -31,54 +31,51 @@
         </div>
         <div class="col-grow"></div>
       </div>
-
-      <div class="row text-white">
-        <div class="col-12">
-          <q-avatar square size="350px" class="q-ma-sm">
-            <img src="/images/profile_image.jpg" />
-          </q-avatar>
-        </div>
-      </div>
-
       <div class="row text-white">
         <div class="col-12 q-mt-md">
-          <span class="">Anschrift</span>
           <div class="text-weight-thin">Böckersche Straße 9</div>
           <div class="text-weight-thin">46487 Wesel</div>
         </div>
       </div>
 
-      <div class="row text-white q-my-lg">
-        <div class="col">
-          <div class="q-my-sm">Kontakt</div>
-          <q-btn outline icon="mail" label="hdk.lks@pm.me" style="font-family: monospace; font-size: larger;"></q-btn></div>
+      <div class="q-mt-lg row justify-center">
+        <div class="column">
+          <q-btn outline no-wrap no-caps to="/project" color="green" class="text-bold text-h6">
+            Über das Projekt
+          </q-btn>
+        </div>
       </div>
 
-      <div class="row text-white">
-        <div class="col-12 q-mt-lg">
-          <span class="">Umsatzsteueridentifikationsnummer</span>
-          <div class="text-weight-thin">...</div>
+      <div class="row text-white q-my-lg">
+        <div class="col">
+          <div class="q-my-sm">Kontakt:</div>
+          <q-btn
+            outline
+            icon="mail"
+            label="hdk.lks@pm.me"
+            href="mailto:hdk.lks@pm.me"
+            class="text-h6"
+            style="font-family: monospace;"
+          ></q-btn>
+        </div>
+      </div>
+
+      <div class="row text-white justify-center">
+        <div class="column col-12 col-sm-6 q-mt-lg">
+          <span class=""
+            >Umsatzsteueridentifikationsnummer gemäß § 27 a
+            Umsatzsteuergesetz:</span
+          >
+          <div class="text-weight-thin">D E 3 4 8 5 9 4 6 4 5</div>
         </div>
       </div>
 
       <div class="row text-white q-mt-lg">
-        <div class="col-12">
-          <span class="">Datenschutz und Privatsphäre</span>
-          <div class="text-weight-thin">
-            Hier steht die Datenschutzerklärung. Die ist natürlich
-            sehr ausführlich und behandelt alle Fragen die eventuell auftauchen
-            könnten.
-          </div>
+        <div class="col-12 q-py-md">
+          <q-btn flat to="/privacy" color="info"> Datenschutzerklärung </q-btn>
         </div>
-      </div>
-
-      <div class="row text-white q-mt-lg q-mb-xl">
-        <div class="col-12">
-          <span class="">Haftungsausschluss für Nutzergenerierte Inhalte</span>
-          <div class="text-weight-thin">
-            Es wird keine Haftung für Drittanbieter-Inhalte übernommen, auf die (durch Nutzer) verlinkt wird.
-            Es wird keine Haftung für Nutzer-generierte Inhalte übernommen.
-          </div>
+        <div class="col-12 q-py-md q-pb-xl">
+          <q-btn flat to="/liability" color="info"> Haftungsausschluss </q-btn>
         </div>
       </div>
     </div>
