@@ -98,6 +98,7 @@ class Environment:
             try:
                 verified = self.__verifier.verify(token)
             except Exception as e:
+                print(e)
                 raise InvalidTokenError("Error validating token")
 
             try:
