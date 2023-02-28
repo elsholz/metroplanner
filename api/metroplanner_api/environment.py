@@ -14,6 +14,9 @@ from auth0.authentication.token_verifier import (
     AsymmetricSignatureVerifier,
 )
 
+from six.moves.urllib.request import urlopen
+from jose import jwt
+
 
 class BadRequestError(Exception):
     pass
@@ -26,6 +29,8 @@ class InvalidTokenError(Exception):
 DEV = "dev"
 PROD = "prod"
 REGION = "eu-central-1"
+
+
 
 
 class Environment:
@@ -54,6 +59,7 @@ class Environment:
 
         self.__AUTH0_DOMAIN = secret_value[f"AUTH0_DOMAIN_{env.upper()}"]
         self.__API_AUDIENCE = secret_value[f"AUTH0_AUDIENCE_{env.upper()}"]
+        self.__ALGORITHMS = ["RS256"]
 
         print("Connecting to MongoDB")
 
@@ -95,24 +101,84 @@ class Environment:
 
         try:
             token = auth_header.split(" ")[-1]
-            try:
-                verified = self.__verifier.verify(token)
-            except Exception as e:
-                print(e)
-                raise InvalidTokenError("Error validating token")
 
-            try:
-                assert verified["aud"] == self.__API_AUDIENCE
-                assert "sub" in verified
-                assert isinstance(verified["sub"], str)
-                assert all([x in "|@" or x.isalnum() for x in verified["sub"]])
-            except AssertionError as e:
-                raise InvalidTokenError("Token missing sub or aud is incorrect")
+            jsonurl = urlopen("https://"+self.__AUTH0_DOMAIN+"/.well-known/jwks.json")
+            jwks = json.loads(jsonurl.read())
+            unverified_header = jwt.get_unverified_header(token)
+            rsa_key = {}
+            for key in jwks["keys"]:
+                if key["kid"] == unverified_header["kid"]:
+                    rsa_key = {
+                        "kty": key["kty"],
+                        "kid": key["kid"],
+                        "use": key["use"],
+                        "n": key["n"],
+                        "e": key["e"]
+                    }
+            if rsa_key:
+                try:
+                    payload = jwt.decode(
+                        token,
+                        rsa_key,
+                        algorithms=self.__ALGORITHMS,
+                        audience=self.__API_AUDIENCE,
+                        issuer="https://"+self.__AUTH0_DOMAIN+"/"
+                    )
+                except jwt.ExpiredSignatureError as e:
+                    print('Error: Expired Signature:', e)
+                    raise e
+                except jwt.JWTClaimsError as e:
+                    print('Error, JWT Claims Error')
+                    raise e
+                except Exception as e:
+                    print('Error:', e)
+                    raise e
 
-            print("Userinfo:", verified)
-            userid = verified["sub"]
+                print(payload)
+            print('Error, couldnt find matching rsa key.')
+            raise Exception()
 
-            return userid
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            # try:
+            #     verified = self.__verifier.verify(token)
+            # except Exception as e:
+            #     print(e)
+            #     raise InvalidTokenError("Error validating token")
+
+            # try:
+            #     assert verified["aud"] == self.__API_AUDIENCE
+            #     assert "sub" in verified
+            #     assert isinstance(verified["sub"], str)
+            #     assert all([x in "|@" or x.isalnum() for x in verified["sub"]])
+            # except AssertionError as e:
+            #     raise InvalidTokenError("Token missing sub or aud is incorrect")
+
+            # print("Userinfo:", verified)
+            # userid = verified["sub"]
+
+            # return userid
 
         except Exception as e:
             print("Error in check_auth:", e)
