@@ -17,5 +17,7 @@ export default boot(async ({ app, router, store, Vue }) => {
     })
   )
 
+  console.log('Audience:', process.env.Api)
+
 // app.mount('#app');
 })
