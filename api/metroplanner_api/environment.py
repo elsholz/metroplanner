@@ -107,6 +107,7 @@ class Environment:
             except AssertionError as e:
                 raise InvalidTokenError("Token missing sub or aud is incorrect")
 
+            print("Userinfo:", verified)
             userid = verified["sub"]
 
             return userid

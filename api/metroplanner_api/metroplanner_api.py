@@ -10,14 +10,42 @@ from datetime import datetime
 ENV = environment.Environment()
 
 
-def private_handler(route, method, event, context, env):
+def private_handler(route, method, event, context, env: environment.Environment):
     try:
-        pass
-    except Exception as e:
+        sub = env.check_auth(event)
+        try:
+            endpoint: endpoints.EndpointCollection = endpoints.PrivateEndpoint.children[route]
+            try:
+                endpoint_method: endpoints.EndpointMethod = endpoint.children[method]
+                try:
+                    action = endpoint_method(event, context, env, sub)
+                    return action()
+                except Exception as e:
+                    print('Exception calling endpoint method:', e)
+                    return responses.internal_server_error_500()
+            except KeyError as e:
+                return responses.method_not_allowed_405()
+            except Exception as e:
+                print('Exception getting endpoint method:', e)
+                return responses.internal_server_error_500()
+        except KeyError as e:
+            print('Exception in private handler:', e)
+            return responses.bad_request_400()
+        except Exception as e:
+            print('Exception in private handler:', e)
+            return responses.internal_server_error_500()
+    except environment.BadRequestError as e:
+        print('Exception in private handler:', e)
+        return responses.bad_request_400()
+    except environment.InvalidTokenError as e:
+        print('Exception in private handler:', e)
         return responses.unauthorized_401()
+    except Exception as e:
+        print('Exception in private handler:', e)
+        return responses.internal_server_error_500()
+  
 
-
-def public_handler(route, method, event, context, env):
+def public_handler(route, method, event, context, env: environment.Environment):
     try:
         endpoint: endpoints.EndpointCollection = endpoints.PublicEndpoint.children[route]
         try:

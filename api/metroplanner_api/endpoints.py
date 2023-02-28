@@ -137,11 +137,9 @@ class PublicEndpoint(EndpointCollection):
                     else:
                         print("Link not found")
                         return responses.not_found_404()
-                    return responses.ok_200(link_result)
-
                 except Exception as e:
                     print("Exception!!:", e)
-                    return responses.ok_200(str(e))
+                    return responses.internal_server_error_500()
 
         children = {GET: GetPlan}
 
@@ -236,7 +234,7 @@ class PublicEndpoint(EndpointCollection):
                         return responses.not_found_404()
                 except Exception as e:
                     print("Exception!!:", e)
-                    return responses.ok_200(str(e))
+                    return responses.internal_server_error_500()
 
         children = {GET: GetPlanstate}
 
@@ -246,6 +244,12 @@ class PublicEndpoint(EndpointCollection):
                 self.event = event
                 self.context = context
                 self.env = env
+            def __call__(self) -> Dict:
+                try:
+                    db = self.env.get_database()
+                except Exception as e:
+                    print("Exception!!:", e)
+                    return responses.internal_server_error_500()
 
         children = {GET: GetColorTheme}
 
@@ -255,6 +259,8 @@ class PublicEndpoint(EndpointCollection):
                 self.event = event
                 self.context = context
                 self.env = env
+            def __call__(self) -> Dict:
+                pass
 
         children = {GET: GetUser}
 
@@ -262,7 +268,7 @@ class PublicEndpoint(EndpointCollection):
         "/api/plans/{shortlink}": PlanEndpoints,
         "/api/planstates/{shortlink}": PlanstateEndpoints,
         "/api/colorthemes/{colorThemeID}": ColorthemeEndpoints,
-        "/api/users/{userID}": UserEndpoints,
+        "/api/users/{sub}": UserEndpoints,
     }
 
 
@@ -274,111 +280,123 @@ class PrivateEndpoint(EndpointCollection):
     class UserEndpoints(EndpointCollection):
         class GetUser(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
+            def __call__(self) -> Dict:
+                try:
+                    db = self.env.get_database()
+                    user_result = db.users.find_one({
+                        "_id": self.sub
+                    })
+                except Exception as e:
+                    print("Exception!!:", e)
+                    return responses.internal_server_error_500()
+
 
         class PatchUser(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
+            def __call__(self) -> Dict:
+                pass
 
         children = {GET: GetUser, PATCH: PatchUser}
 
     class PlanEndpoints(EndpointCollection):
         class GetPlan(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         class PatchPlan(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         class PostPlan(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         class DeletePlan(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         children = {GET: GetPlan, PATCH: PatchPlan, POST: PostPlan, DELETE: DeletePlan}
 
     class LinkEndpoints(EndpointCollection):
         class PostLink(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         class PatchLink(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         class DeleteLink(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         children = {POST: PostLink, PATCH: PatchLink, DELETE: DeleteLink}
 
     class PlanstateEndpoints(EndpointCollection):
         class PostPlanstate(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         class GetPlanstate(EndpointMethod):
             def __init__(
-                self, event, context, env: environment.Environment, auth
+                self, event, context, env: environment.Environment, sub
             ) -> None:
                 self.event = event
                 self.context = context
                 self.env = env
-                self.auth = auth
+                self.sub = sub
 
         children = {POST: PostPlanstate, GET: GetPlanstate}
 
