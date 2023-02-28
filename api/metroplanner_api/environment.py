@@ -9,12 +9,7 @@ from pymongo import MongoClient
 import json
 import boto3
 from botocore.exceptions import ClientError
-from auth0.authentication.token_verifier import (
-    TokenVerifier,
-    AsymmetricSignatureVerifier,
-)
-
-from six.moves.urllib.request import urlopen
+from urllib.request import urlopen
 from jose import jwt
 
 
