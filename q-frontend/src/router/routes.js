@@ -22,6 +22,13 @@ const routes = [
     ]
   },
   {
+    path: '/profile',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/MyProfilePage.vue') }
+    ]
+  },
+  {
     path: '/privacy',
     component: () => import('layouts/MainLayout.vue'),
     children: [
