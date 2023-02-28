@@ -67,13 +67,13 @@ class Environment:
 
         self.__database = db
 
-        jwks_url = f"https://{self.__AUTH0_DOMAIN}/.well-known/jwks.json"
-        issuer = f"https://{self.__AUTH0_DOMAIN}/"
+        # jwks_url = f"https://{self.__AUTH0_DOMAIN}/.well-known/jwks.json"
+        # issuer = f"https://{self.__AUTH0_DOMAIN}/"
 
-        sv = AsymmetricSignatureVerifier(jwks_url)  # Reusable instance
-        self.__verifier = TokenVerifier(
-            signature_verifier=sv, issuer=issuer, audience=self.__API_AUDIENCE
-        )
+        #sv = AsymmetricSignatureVerifier(jwks_url)  # Reusable instance
+        # self.__verifier = TokenVerifier(
+        #     signature_verifier=sv, issuer=issuer, audience=self.__API_AUDIENCE
+        # )
 
         print("Connecting to SQS")
         self.sqs_client = boto3.client("sqs")
