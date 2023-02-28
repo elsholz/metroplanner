@@ -31,6 +31,26 @@ Conditions:
   IsProd: !Equals [!Ref env, prod]
 
 Resources:
+  ApiCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: "Cache Policy to forward headers to API"
+        DefaultTTL: 5
+        MaxTTL: 10
+        MinTTL: 1
+        Name: "MetroplannerApiCachePolicy"
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+              CookieBehavior: all
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers:
+              - Authorization
+          QueryStringsConfig:
+            QueryStringBehavior: all
   MetroplannerCfDistro:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -62,7 +82,7 @@ Resources:
               - POST
               - PATCH
               - DELETE
-            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            CachePolicyId: !Ref ApiCachePolicy
             PathPattern: "/api/*"
             Compress: true
             TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
