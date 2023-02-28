@@ -55,10 +55,9 @@
 <script>
 import { useAuth0 } from '@auth0/auth0-vue'
 
-const { loginWithRedirect, user, isAuthenticated } = useAuth0()
-
 export default {
   setup () {
+    const { loginWithRedirect, user, isAuthenticated } = useAuth0()
     return {
       login: () => {
         loginWithRedirect()
@@ -71,8 +70,7 @@ export default {
   },
 
   data () {
-    return {
-    }
+    return {}
   }
 }
 </script>
