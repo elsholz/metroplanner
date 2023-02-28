@@ -71,6 +71,7 @@ def public_handler(route, method, event, context, env: environment.Environment):
 def lambda_handler(event, context):
     try:
         print("Event:", event)
+        print('Context:', context)
 
         try:
             route_key = event["routeKey"]

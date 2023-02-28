@@ -87,6 +87,7 @@ class Environment:
 
     def check_auth(self, event):
         headers = event.get("headers", {})
+        print('Headers:', headers)
         auth_header = headers.get("Authorization", headers.get("authorization", None))
 
         if not auth_header or not isinstance(auth_header, str):
