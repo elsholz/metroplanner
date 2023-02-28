@@ -76,16 +76,16 @@ def lambda_handler(event, context):
         try:
             route_key = event["routeKey"]
             method, route_path = route_key.split(" ")
-            path_parameters = event["pathParameters"]
+            path_parameters = event.get("pathParameters", None)
             request_context = event["requestContext"]
             headers = event["headers"]
-            authentication_provided = headers.get("authentication", None) is not None
+            authentication_provided = headers.get("Authorization", None) is not None
             http = request_context["http"]
             source_ip = http["sourceIp"]
             user_agent = http["userAgent"]
             request_id = request_context["requestId"]
         except Exception as e:
-            print(e)
+            return responses.internal_server_error_500()
 
         print('Method:', method)
         print('RoutePath:', route_path)
