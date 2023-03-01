@@ -36,9 +36,9 @@ Resources:
     Properties:
       CachePolicyConfig:
         Comment: "Cache Policy to forward headers to API"
-        DefaultTTL: 5
-        MaxTTL: 10
-        MinTTL: 1
+        DefaultTTL: 0
+        MaxTTL: 0
+        MinTTL: 0
         Name: "MetroplannerApiCachePolicy"
         ParametersInCacheKeyAndForwardedToOrigin:
           CookiesConfig:
