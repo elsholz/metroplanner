@@ -35,7 +35,14 @@ Resources:
     Type: AWS::CloudFront::OriginRequestPolicy
     Properties:
       OriginRequestPolicyConfig:
-        OriginRequestPolicyConfig
+        Name: "HeaderForwardRequestPolicy"
+        Comment: "Forward authorization header"
+        CookiesConfig:
+          CookieBehavior: none
+        HeadersConfig:
+          HeaderBehavior: allViewer
+        QueryStringsConfig:
+          QueryStringBehavior: all
   MetroplannerCfDistro:
     Type: AWS::CloudFront::Distribution
     Properties:
