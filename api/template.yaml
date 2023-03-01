@@ -3,11 +3,6 @@ Transform: AWS::Serverless-2016-10-31
 
 Description: Lambda Function and API Gateway for metroplanner.
 
-Globals:
-  Function:
-    Timeout: 5
-    MemorySize: 256
-
 Mappings:
   EnvMap:
     prod:
@@ -19,6 +14,8 @@ Mappings:
       LogFunctionName: "MetroplannerLogFuncProd"
       SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:PROD_Metroplanner"
       LambdaConcurrencyLimit: 1
+      MemorySize: 512
+      Timeout: 5
     dev:
       CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/749741b5-d1e3-41f0-b379-3398c66ef8f1"
       Domain: "api.dev.ich-hab-plan.de"
@@ -28,6 +25,8 @@ Mappings:
       LogFunctionName: "MetroplannerLogFuncDev"
       SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:DEV_Metroplanner"
       LambdaConcurrencyLimit: 1
+      MemorySize: 128
+      Timeout: 7
 
 Parameters:
   env:
@@ -70,6 +69,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: !FindInMap [EnvMap, !Ref env, FunctionName]
+      MemorySize: !FindInMap [EnvMap, !Ref env, MemorySize]
+      Timeout: !FindInMap [EnvMap, !Ref env, Timeout]
       CodeUri: metroplanner_api/
       Handler: metroplanner_api.lambda_handler
       Runtime: python3.9
@@ -93,6 +94,11 @@ Resources:
                 - sqs:SendMessage
               Resource: !GetAtt LogQueue.Arn
       Events: 
+        # FunctionWarmup:
+        #   Type: ScheduleV2
+        #   Properties:
+        #     # Periodaically trigger lambda
+        #     ScheduleExpression: "cron(/10 * * * ? *)"
         # PUBLIC API
         # plans
         PublicGetPlan:

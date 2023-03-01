@@ -73,26 +73,24 @@ def lambda_handler(event, context):
         print("Event:", event)
         print('Context:', context)
 
-        try:
-            route_key = event["routeKey"]
-            method, route_path = route_key.split(" ")
-            path_parameters = event.get("pathParameters", None)
-            request_context = event["requestContext"]
-            headers = event["headers"]
-            authentication_provided = headers.get("Authorization", None) is not None
-            http = request_context["http"]
-            source_ip = http["sourceIp"]
-            user_agent = http["userAgent"]
-            request_id = request_context["requestId"]
-        except Exception as e:
-            return responses.internal_server_error_500()
-
-        print('Method:', method)
-        print('RoutePath:', route_path)
+        request_context = event["requestContext"]
 
         if not ENV.is_initialized:
             print('Initializing Environment')
             ENV.initialize_environment(request_context["stage"])
+
+        route_key = event["routeKey"]
+        method, route_path = route_key.split(" ")
+        path_parameters = event.get("pathParameters", None)
+        headers = event["headers"]
+        authentication_provided = headers.get("Authorization", None) is not None
+        http = request_context["http"]
+        source_ip = http["sourceIp"]
+        user_agent = http.get("userAgent", None)
+        request_id = request_context["requestId"]
+
+        print('Method:', method)
+        print('RoutePath:', route_path)
 
         if route_path.startswith("/api/_"):
             print('Calling private handler')

@@ -26,8 +26,6 @@ PROD = "prod"
 REGION = "eu-central-1"
 
 
-
-
 class Environment:
     def __init__(self) -> None:
         self.is_initialized = False
@@ -70,7 +68,7 @@ class Environment:
         # jwks_url = f"https://{self.__AUTH0_DOMAIN}/.well-known/jwks.json"
         # issuer = f"https://{self.__AUTH0_DOMAIN}/"
 
-        #sv = AsymmetricSignatureVerifier(jwks_url)  # Reusable instance
+        # sv = AsymmetricSignatureVerifier(jwks_url)  # Reusable instance
         # self.__verifier = TokenVerifier(
         #     signature_verifier=sv, issuer=issuer, audience=self.__API_AUDIENCE
         # )
@@ -88,7 +86,6 @@ class Environment:
 
     def check_auth(self, event):
         headers = event.get("headers", {})
-        print('Headers:', headers)
         auth_header = headers.get("Authorization", headers.get("authorization", None))
 
         if not auth_header or not isinstance(auth_header, str):
@@ -97,9 +94,12 @@ class Environment:
         try:
             token = auth_header.split(" ")[-1]
 
-            jsonurl = urlopen("https://"+self.__AUTH0_DOMAIN+"/.well-known/jwks.json")
+            jsonurl = urlopen(
+                "https://" + self.__AUTH0_DOMAIN + "/.well-known/jwks.json"
+            )
             jwks = json.loads(jsonurl.read())
             unverified_header = jwt.get_unverified_header(token)
+
             rsa_key = {}
             for key in jwks["keys"]:
                 if key["kid"] == unverified_header["kid"]:
@@ -108,7 +108,7 @@ class Environment:
                         "kid": key["kid"],
                         "use": key["use"],
                         "n": key["n"],
-                        "e": key["e"]
+                        "e": key["e"],
                     }
             if rsa_key:
                 try:
@@ -117,64 +117,22 @@ class Environment:
                         rsa_key,
                         algorithms=self.__ALGORITHMS,
                         audience=self.__API_AUDIENCE,
-                        issuer="https://"+self.__AUTH0_DOMAIN+"/"
+                        issuer="https://" + self.__AUTH0_DOMAIN + "/",
                     )
                 except jwt.ExpiredSignatureError as e:
-                    print('Error: Expired Signature:', e)
+                    print("Error: Expired Signature:", e)
                     raise e
                 except jwt.JWTClaimsError as e:
-                    print('Error, JWT Claims Error')
+                    print("Error, JWT Claims Error")
                     raise e
                 except Exception as e:
-                    print('Error:', e)
+                    print("Error:", e)
                     raise e
 
-                print(payload)
-            print('Error, couldnt find matching rsa key.')
+                if self.__API_AUDIENCE in payload.get("aud", []):
+                    sub = payload['sub']
+                    return sub
             raise Exception()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            # try:
-            #     verified = self.__verifier.verify(token)
-            # except Exception as e:
-            #     print(e)
-            #     raise InvalidTokenError("Error validating token")
-
-            # try:
-            #     assert verified["aud"] == self.__API_AUDIENCE
-            #     assert "sub" in verified
-            #     assert isinstance(verified["sub"], str)
-            #     assert all([x in "|@" or x.isalnum() for x in verified["sub"]])
-            # except AssertionError as e:
-            #     raise InvalidTokenError("Token missing sub or aud is incorrect")
-
-            # print("Userinfo:", verified)
-            # userid = verified["sub"]
-
-            # return userid
-
         except Exception as e:
             print("Error in check_auth:", e)
             raise e
