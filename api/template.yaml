@@ -18,7 +18,7 @@ Mappings:
       QueueName: "MetroplannerQueueProd"
       LogFunctionName: "MetroplannerLogFuncProd"
       SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:PROD_Metroplanner"
-      ConcurrentLambdaRuntimes: 1
+      LambdaConcurrencyLimit: 1
     dev:
       CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/749741b5-d1e3-41f0-b379-3398c66ef8f1"
       Domain: "api.dev.ich-hab-plan.de"
@@ -27,7 +27,7 @@ Mappings:
       QueueName: "MetroplannerQueueDev"
       LogFunctionName: "MetroplannerLogFuncDev"
       SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:DEV_Metroplanner"
-      ConcurrentLambdaRuntimes: 1
+      LambdaConcurrencyLimit: 1
 
 Parameters:
   env:
