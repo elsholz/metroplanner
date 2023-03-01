@@ -31,26 +31,11 @@ Conditions:
   IsProd: !Equals [!Ref env, prod]
 
 Resources:
-  ApiCachePolicy:
-    Type: AWS::CloudFront::CachePolicy
+  ApiRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
     Properties:
-      CachePolicyConfig:
-        Comment: "Cache Policy to forward headers to API"
-        DefaultTTL: 0
-        MaxTTL: 0
-        MinTTL: 0
-        Name: "MetroplannerApiCachePolicy"
-        ParametersInCacheKeyAndForwardedToOrigin:
-          CookiesConfig:
-              CookieBehavior: all
-          EnableAcceptEncodingBrotli: true
-          EnableAcceptEncodingGzip: true
-          HeadersConfig:
-            HeaderBehavior: whitelist
-            Headers:
-              - Authorization
-          QueryStringsConfig:
-            QueryStringBehavior: all
+      OriginRequestPolicyConfig:
+        OriginRequestPolicyConfig
   MetroplannerCfDistro:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -69,7 +54,7 @@ Resources:
             - GET
             - HEAD
           # Use no Caching in Dev Environment, Use Caching Optimized in Prod
-          CachePolicyId: !If [ IsProd, "658327ea-f89d-4fab-a63d-7e88639e58f6", "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"]
+          CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
           Compress: true
           TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
           ViewerProtocolPolicy: redirect-to-https
@@ -82,11 +67,12 @@ Resources:
               - POST
               - PATCH
               - DELETE
-            CachePolicyId: !Ref ApiCachePolicy
+            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
             PathPattern: "/api/*"
             Compress: true
             TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
             ViewerProtocolPolicy: redirect-to-https
+            OriginRequestPolicyId: !Ref ApiRequestPolicy
         CustomErrorResponses:
           - ErrorCode: 404
             ResponseCode: "200"
