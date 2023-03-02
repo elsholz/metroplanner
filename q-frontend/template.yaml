@@ -40,7 +40,10 @@ Resources:
         CookiesConfig:
           CookieBehavior: all
         HeadersConfig:
-          HeaderBehavior: allViewer
+          HeaderBehavior: whitelist
+          Headers:
+            - authorization
+            - Authorization
         QueryStringsConfig:
           QueryStringBehavior: all
   MetroplannerCfDistro:
