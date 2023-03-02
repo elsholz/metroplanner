@@ -6,7 +6,7 @@ Mappings:
   EnvMap:
     prod:
       Domain: "ich-hab-plan.de"
-      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/21b68b38-9184-4f8e-a51b-b0c4482e1e72"
+      CertificateArn: ""
       OriginId: prod-bucket
       Comment: PROD Metroplanner Distro
       OriginAclName: OriginAccessControlProd
@@ -14,7 +14,7 @@ Mappings:
       ApiOriginId: dev-api
     dev:
       Domain: "dev.ich-hab-plan.de"
-      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/c1ebfcc3-a24c-4e9c-943e-cb66bb52ed97"
+      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/0ac972dd-2275-42be-b5c6-055edfd1dd60"
       OriginId: dev-bucket
       Comment: Metroplanner Distro DEV
       OriginAclName: OriginAccessControlDev

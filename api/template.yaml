@@ -6,7 +6,7 @@ Description: Lambda Function and API Gateway for metroplanner.
 Mappings:
   EnvMap:
     prod:
-      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/dffae670-858c-4638-97ae-98e66515f6c3"
+      CertificateArn: ""
       Domain: "api.ich-hab-plan.de"
       FunctionName: "MetroplannerFuncProd"
       ApiName: "MetroplannerApiProd"
@@ -17,7 +17,7 @@ Mappings:
       MemorySize: 512
       Timeout: 5
     dev:
-      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/749741b5-d1e3-41f0-b379-3398c66ef8f1"
+      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/0ac972dd-2275-42be-b5c6-055edfd1dd60"
       Domain: "api.dev.ich-hab-plan.de"
       FunctionName: "MetroplannerFuncDev"
       ApiName: "MetroplannerApiDev"
@@ -393,7 +393,7 @@ Resources:
               responses:
                 '204':
                   description: No Content
-          /api/_planstate:
+          /api/_planstates:
             post:
               tags:
                 - Private API
@@ -401,7 +401,7 @@ Resources:
               responses:
                 '201':
                   description: Created
-          /api/_planstate/{planstateID}:
+          /api/_planstates/{planstateID}:
             get:
               tags:
                 - Private API
