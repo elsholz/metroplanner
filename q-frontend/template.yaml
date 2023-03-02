@@ -38,31 +38,19 @@ Resources:
         Comment: "Cache policy to enable authorization header forward"
         Name: ApiCachePolicy
         DefaultTTL: 0
-        MaxTTL: 0
+        MaxTTL: 1
         MinTTL: 0
         ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
           CookiesConfig:
-            CookieBehavior: none
-          EnableAcceptEncodingBrotli: false
-          EnableAcceptEncodingGzip: false
+            CookieBehavior: all
           HeadersConfig:
-            HeaderBehavior: none
+            HeaderBehavior: whitelist
+            Headers:
+              - Authorization
           QueryStringsConfig:
-            QueryStringBehavior: none
-  ApiRequestPolicy:
-    Type: AWS::CloudFront::OriginRequestPolicy
-    Properties:
-      OriginRequestPolicyConfig:
-        Name: ApiRequestPolicy
-        Comment: "Forward authorization header"
-        CookiesConfig:
-          CookieBehavior: none
-        HeadersConfig:
-          HeaderBehavior: whitelist
-          Headers:
-            - authorization
-        QueryStringsConfig:
-          QueryStringBehavior: all
+            QueryStringBehavior: all
   MetroplannerCfDistro:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -99,7 +87,6 @@ Resources:
             Compress: true
             TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
             ViewerProtocolPolicy: redirect-to-https
-            OriginRequestPolicyId: !Ref ApiRequestPolicy
         CustomErrorResponses:
           - ErrorCode: 404
             ResponseCode: "200"
