@@ -43,7 +43,6 @@ Resources:
           HeaderBehavior: whitelist
           Headers:
             - authorization
-            - Authorization
         QueryStringsConfig:
           QueryStringBehavior: all
   MetroplannerCfDistro:
