@@ -46,9 +46,7 @@ Resources:
           EnableAcceptEncodingBrotli: false
           EnableAcceptEncodingGzip: false
           HeadersConfig:
-            HeaderBehavior: whitelist
-            Headers:
-              - authorization
+            HeaderBehavior: none
           QueryStringsConfig:
             QueryStringBehavior: none
   ApiRequestPolicy:
