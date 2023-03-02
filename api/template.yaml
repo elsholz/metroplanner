@@ -17,7 +17,7 @@ Mappings:
       MemorySize: 512
       Timeout: 5
     dev:
-      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/0ac972dd-2275-42be-b5c6-055edfd1dd60"
+      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/cf2cffe9-92c6-44d6-b0f0-6efabebd537a"
       Domain: "api.dev.ich-hab-plan.de"
       FunctionName: "MetroplannerFuncDev"
       ApiName: "MetroplannerApiDev"
