@@ -31,18 +31,18 @@ Conditions:
   IsProd: !Equals [!Ref env, prod]
 
 Resources:
-  # ApiRequestPolicy:
-  #   Type: AWS::CloudFront::OriginRequestPolicy
-  #   Properties:
-  #     OriginRequestPolicyConfig:
-  #       Name: "HeaderForwardRequestPolicy"
-  #       Comment: "Forward authorization header"
-  #       CookiesConfig:
-  #         CookieBehavior: none
-  #       HeadersConfig:
-  #         HeaderBehavior: allViewer
-  #       QueryStringsConfig:
-  #         QueryStringBehavior: all
+  ApiRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: "HeaderForwardRequestPolicy"
+        Comment: "Forward authorization header"
+        CookiesConfig:
+          CookieBehavior: all
+        HeadersConfig:
+          HeaderBehavior: allViewer
+        QueryStringsConfig:
+          QueryStringBehavior: all
   MetroplannerCfDistro:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -79,7 +79,7 @@ Resources:
             Compress: true
             TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
             ViewerProtocolPolicy: redirect-to-https
-            # OriginRequestPolicyId: !Ref ApiRequestPolicy
+            OriginRequestPolicyId: !Ref ApiRequestPolicy
         CustomErrorResponses:
           - ErrorCode: 404
             ResponseCode: "200"
