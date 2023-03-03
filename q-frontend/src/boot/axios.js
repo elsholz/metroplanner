@@ -4,9 +4,9 @@ import axiosRetry from 'axios-retry'
 
 export default boot(({ app }) => {
   axiosRetry(axios, {
-    retries: 3,
+    retries: 5,
     retryDelay: (retryCount) => {
-      console.log(`retry attempt: ${retryCount}`)
+      console.log('Retry number ' + retryCount)
       return retryCount * 1000
     },
     retryCondition: (error) => {
