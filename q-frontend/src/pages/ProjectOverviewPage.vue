@@ -47,7 +47,7 @@
         <div class="col-12 text-h6">Problemstellung</div>
         <hr style="background-color: white; width: 300px" />
       </div>
-      <div class="row text-white text-left q-pb-lg">
+      <div class="row text-white text-justify q-pb-lg">
         <div class="col-12">
           <p>
             Wer in kleineren Städten und Gemeinden den ÖPNV verwenden möchte
@@ -62,7 +62,7 @@
         <div class="col-12 text-h6">Zielsetzung</div>
         <hr style="background-color: white; width: 300px" />
       </div>
-      <div class="row text-white text-left q-pb-lg">
+      <div class="row text-white text-justify q-pb-lg">
         <div class="col-12">
           <p>
             Ziel des Metroplanners ist es, die Nutzung des ÖPNVs für Jedermann
@@ -83,11 +83,11 @@
         </div>
       </div>
 
-      <div class="row text-white text-center">
+      <div class="row text-white">
         <div class="col-12 text-h6">Technische Hintergründe</div>
         <hr style="background-color: white; width: 300px" />
       </div>
-      <div class="row text-white text-left q-pb-lg">
+      <div class="row text-white text-justify q-pb-lg">
         <div class="col-12">
           <p>
             Damit die Netzpläne für möglichst viele Menschen nutzbar sind und um
@@ -154,7 +154,7 @@
         <div class="col-12 text-h6">Roadmap</div>
         <hr style="background-color: white; width: 300px" />
       </div>
-      <div class="row text-white text-left q-pb-lg">
+      <div class="row text-white text-justify q-pb-lg">
         <div class="col-12">
           Die Roadmap für das Projekt sieht folgende Milestones vor:
           <ul>
@@ -178,7 +178,7 @@
       </div>
       <div class="row text-white">
         <div class="col-12">
-          <q-avatar square size="400px" class="q-ma-sm">
+          <q-avatar square size="384px" class="q-ma-sm">
             <img src="/images/profile_image.jpg" />
           </q-avatar>
         </div>

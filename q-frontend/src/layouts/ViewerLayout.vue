@@ -14,7 +14,7 @@
           @click="toggleLeftDrawer"
           class="q-mr-sm"
         />
-          <HeaderLogo :absoluteLeft='false'> </HeaderLogo>
+        <HeaderLogo :absoluteLeft="false"> </HeaderLogo>
         <!---<LoginContextButton> </LoginContextButton>-->
       </q-toolbar>
     </q-header>
@@ -29,187 +29,217 @@
       dark
       style="box-shadow: 0 0 10px 5px gray"
     >
-      <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px">
-        <q-list padding>
-          <q-item>
-            <q-item-section>
-              <q-text class="text-h5 q-pa-sm">
-                {{ planData.planName }}
-              </q-text>
-            </q-item-section>
-          </q-item>
+      <template v-if="planInfo.planName != undefined">
+        <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px">
+          <q-list padding>
+            <q-item>
+              <q-item-section>
+                <q-text class="text-h5 q-pa-sm">
+                  {{ planInfo.planName }}
+                </q-text>
+              </q-item-section>
+            </q-item>
 
-          <q-separator class="q-my-lg" dark />
+            <q-separator class="q-my-lg" dark />
 
-          <q-item>
-            <q-item-section avatar class="q-ml-md">
-              <q-icon name="clear_all" />
-            </q-item-section>
+            <q-item>
+              <q-item-section avatar class="q-ml-md">
+                <q-icon name="clear_all" />
+              </q-item-section>
 
-            <q-item-section> Linien: </q-item-section>
+              <q-item-section> Linien: </q-item-section>
 
-            <q-item-section>
-              {{ planData.currentNumberOfLines || 0 }}
-            </q-item-section>
-          </q-item>
+              <q-item-section>
+                {{ planInfo.currentNumberOfLines || 0 }}
+              </q-item-section>
+            </q-item>
 
-          <q-item>
-            <q-item-section avatar class="q-ml-md">
-              <q-icon name="commit" />
-            </q-item-section>
+            <q-item>
+              <q-item-section avatar class="q-ml-md">
+                <q-icon name="commit" />
+              </q-item-section>
 
-            <q-item-section> Haltestellen: </q-item-section>
+              <q-item-section> Haltestellen: </q-item-section>
 
-            <q-item-section>
-              {{ planData.currentNumberOfNodes || 0 }}
-            </q-item-section>
-          </q-item>
+              <q-item-section>
+                {{ planInfo.currentNumberOfNodes || 0 }}
+              </q-item-section>
+            </q-item>
 
-          <q-item>
-            <q-item-section avatar class="q-ml-md">
-              <q-icon name="polyline" />
-            </q-item-section>
+            <q-item>
+              <q-item-section avatar class="q-ml-md">
+                <q-icon name="polyline" />
+              </q-item-section>
 
-            <q-item-section> Verbindungen: </q-item-section>
+              <q-item-section> Verbindungen: </q-item-section>
 
-            <q-item-section>
-              {{ planData.currentNumberOfEdges || 0 }}
-            </q-item-section>
-          </q-item>
+              <q-item-section>
+                {{ planInfo.currentNumberOfEdges || 0 }}
+              </q-item-section>
+            </q-item>
 
-          <q-separator class="q-my-lg" dark />
+            <q-item>
+              <q-item-section avatar class="q-ml-md">
+                <q-icon name="text_fields" />
+              </q-item-section>
 
-          <q-item>
-            <q-item-section>
-              <div class="row">
-                <div class="col-xs-6">
-                  <q-icon name="visibility" size="sm" class="q-mx-md" />
-                  {{ planStats.totalViewCount || 0 }}
-                  <q-tooltip class="bg-accent text-body1">
-                    Anzahl Aufrufe
-                  </q-tooltip>
+              <q-item-section> Beschriftungen: </q-item-section>
+
+              <q-item-section>
+                {{ planInfo.currentNumberOfLabels || 0 }}
+              </q-item-section>
+            </q-item>
+
+            <q-separator class="q-my-lg" dark />
+
+            <q-item>
+              <q-item-section>
+                <div class="row">
+                  <div class="col-xs-6">
+                    <q-icon name="visibility" size="sm" class="q-mx-md" />
+                    {{ planInfo.totalViewCount || 0 }}
+                    <q-tooltip class="bg-accent text-body1">
+                      Anzahl Aufrufe
+                    </q-tooltip>
+                  </div>
+                  <div class="col-xs-6">
+                    <q-icon name="favorite" size="sm" class="q-mx-md" />
+                    {{ planInfo.likeCount || 0 }}
+                    <q-tooltip class="bg-positive text-body1">
+                      Anzahl Likes
+                    </q-tooltip>
+                  </div>
                 </div>
-                <div class="col-xs-6">
-                  <q-icon name="favorite" size="sm" class="q-mx-md" />
-                  {{ planData.likeCount || 0 }}
-                  <q-tooltip class="bg-positive text-body1">
-                    Anzahl Likes
-                  </q-tooltip>
-                </div>
-              </div>
-            </q-item-section>
-          </q-item>
+              </q-item-section>
+            </q-item>
 
-          <q-page-sticky position="bottom-left" :offset="[18, 18]">
-            <q-fab
-              v-model="fab2"
-              label="Actions"
-              external-label
-              label-class="bg-grey-3 text-black text-body1"
-              vertical-actions-align="left"
-              color="primary"
-              icon="keyboard_arrow_up"
-              direction="up"
-              persistent
-            >
-              <q-fab-action
-                label-class="bg-grey-3 text-black text-body1"
+            <q-page-sticky position="bottom-left" :offset="[18, 18]">
+              <q-fab
+                v-model="fab2"
+                label="Actions"
                 external-label
+                label-class="bg-grey-3 text-black text-body1"
+                vertical-actions-align="left"
                 color="primary"
-                @click="onClick"
-                icon="share"
-                label="Email"
-              />
-              <q-fab-action
-                label-class="bg-grey-3 text-black text-body1"
-                external-label
-                color="positive"
-                @click="onClick"
-                icon="favorite"
-                label="Like"
-              />
-              <q-fab-action
-                label-class="bg-grey-3 text-black text-body1"
-                external-label
-                color="negative"
-                @click="onClick"
-                icon="report"
-                label="Report"
-              />
-            </q-fab>
-          </q-page-sticky>
-        </q-list>
-      </q-scroll-area>
+                icon="keyboard_arrow_up"
+                direction="up"
+                persistent
+              >
+                <q-fab-action
+                  label-class="bg-grey-3 text-black text-body1"
+                  external-label
+                  color="primary"
+                  @click="onClick"
+                  icon="share"
+                  label="Email"
+                />
+                <q-fab-action
+                  label-class="bg-grey-3 text-black text-body1"
+                  external-label
+                  color="positive"
+                  @click="onClick"
+                  icon="favorite"
+                  label="Like"
+                />
+                <q-fab-action
+                  label-class="bg-grey-3 text-black text-body1"
+                  external-label
+                  color="negative"
+                  @click="onClick"
+                  icon="report"
+                  label="Report"
+                />
+              </q-fab>
+            </q-page-sticky>
+          </q-list>
+        </q-scroll-area>
 
-      <q-img
-        class="absolute-top"
-        style="height: 150px; border-bottom: 2px solid gray"
-      >
-        <div class="absolute-bottom">
-          <div class="row q-pt-md">
-            <div class="col-xs-6">
-              Plan erstellt von:
-              <div class="text-weight-bold text-h6">
-                {{ planOwner.displayName || "unbekannt" }}
+        <q-img
+          class="absolute-top"
+          style="height: 150px; border-bottom: 2px solid gray"
+        >
+          <div class="absolute-bottom">
+            <div class="row q-pt-md">
+              <div class="col-xs-6">
+                Plan erstellt von:
+                <div class="text-weight-bold text-h6">
+                {{ planInfo.planOwner?.displayName || "unbekannt" }}
+                </div>
+              </div>
+              <div class="col-xs-grow"></div>
+              <div class="col-shrink">
+                <q-btn flat round :to="'/users/' + planInfo.planOwner?._id" :disable="planInfo.planOwner == undefined">
+                  <q-avatar size="72px" class="q-mb-sm">
+                    <img
+                      :src="
+                        planInfo.planOwner?.profilePicture ||
+                        'https://source.boringavatars.com/pixel/72/' +
+                          planInfo.planOwner?._id +
+                          '?colors=66f873,5a3dcf,99848a'
+                      "
+                    />
+                  </q-avatar>
+                </q-btn>
               </div>
             </div>
-            <div class="col-xs-grow"></div>
-            <div class="col-shrink">
-              <q-btn flat round :to="'/users/' + planOwner._id">
-                <q-avatar size="72px" class="q-mb-sm">
-                  <img
-                    :src="
-                      planOwner.profilePicture ||
-                      'https://source.boringavatars.com/pixel/72/' +
-                        planOwner._id +
-                        '?colors=66f873,5a3dcf,99848a'
-                    "
-                  />
-                </q-avatar>
-              </q-btn>
-            </div>
-          </div>
 
-          <div class="row">
-            <div class="col-xs-6">
-              <q-icon name="auto_awesome" size="xs" class="q-mx-md" />
-              {{ planData?.createdAt || "-" }}
-              <q-tooltip class="bg-positive text-body1" :offset="[0, 35]">
-                Erstellt am
-              </q-tooltip>
-            </div>
-            <div class="col-xs-6">
-              <q-icon name="edit" size="xs" class="q-mx-md" />
-              {{ planData?.lastModifiedAt || "-" }}
-              <q-tooltip class="bg-secondary text-body1" :offset="[0, 35]">
-                Zuletzt bearbeitet am
-              </q-tooltip>
+            <div class="row">
+              <div class="col-xs-6">
+                <q-icon name="auto_awesome" size="xs" class="q-mx-md" />
+                {{ planInfo?.createdAt.slice(0, 10) || "-" }}
+                <q-tooltip class="bg-positive text-body1" :offset="[0, 35]">
+                  Erstellt am
+                </q-tooltip>
+              </div>
+              <div class="col-xs-6">
+                <q-icon name="edit" size="xs" class="q-mx-md" />
+                {{ planInfo?.lastModifiedAt.slice(0, 10) || "-" }}
+                <q-tooltip class="bg-secondary text-body1" :offset="[0, 35]">
+                  Zuletzt bearbeitet am
+                </q-tooltip>
+              </div>
             </div>
           </div>
-        </div>
-      </q-img>
+        </q-img>
+      </template>
+      <template v-else>
+        <q-inner-loading
+          :showing="true"
+          label="Plandaten werden geladen..."
+          label-class="text-white"
+          class="bg-primary"
+          style="border: 3px solid #fff5; border-radius: 10px"
+          label-style="font-size: 1em"
+          color="white"
+          size="1em"
+        />
+      </template>
     </q-drawer>
 
     <q-page-container>
-      <!---<router-view  hello="world"/>-->
       <PlanViewer :planName="planName"></PlanViewer>
-
-      <!--import PlanViewer from 'pages/PlanViewer.vue'-->
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { toRaw, ref } from 'vue'
-import axios from 'axios'
+// import { toRaw, ref } from 'vue'
+// import axios from 'axios'
+import { ref } from 'vue'
 import PlanViewer from 'src/pages/PlanViewer.vue'
 import HeaderLogo from 'src/components/HeaderLogo.vue'
+import { usePlanViewerStore } from 'src/stores/viewer_store'
 /* import LoginContextButton from 'src/components/LoginContextButton.vue' */
+
+const planViewerStore = usePlanViewerStore()
 
 export default {
   name: 'ViewerLayout',
   setup () {
     const leftDrawerOpen = ref(false)
+    const planInfo = ref({})
+    const shortlink = ref('')
+
     return {
       leftDrawerOpen,
       toggleLeftDrawer () {
@@ -217,36 +247,17 @@ export default {
         console.log(leftDrawerOpen.value)
         leftDrawerOpen.value = !leftDrawerOpen.value
         console.log(leftDrawerOpen.value)
-      }
+      },
+      planInfo,
+      shortlink
     }
   },
-  data () {
-    return {
-      planData: {},
-      planOwner: {},
-      planStats: {},
-      planName: null
-    }
-  },
-  created () {
-    console.log(this.$route.params.shortlink)
-    axios.get('/api/plan/' + this.$route.params.shortlink).then((response) => {
-      console.log(response)
-      const rawData = toRaw(response.data)
-      console.log(rawData)
-      this.planData = rawData
-      this.planStats = { totalViewCount: rawData.totalViewCount }
-      this.planData.createdAt = rawData.createdAt.slice(0, 10)
-      this.planData.lastModifiedAt = rawData.lastModifiedAt.slice(0, 10)
-      this.planName = this.planData.planName
-      // console.log('raw, plan data, plan owner, planstats::', rawData, this.planData, this.planOwner, this.planStats)
-      // console.log('planData.planName', this.planData.planName)
-      /* axios.get('/api/user/' + this.planData.ownedBy).then(response => {
-        this.planOwner = response.data
-      }).catch(function (error) {
-        console.log('Error fetching user profile: ', error)
-      }) */
-    })
+  created: async function () {
+    this.shortlink = this.$route.params.shortlink
+
+    await planViewerStore.getPlanInfo(this.shortlink)
+
+    this.planInfo = planViewerStore.plans[this.shortlink].info
   },
   mounted () {},
   components: { PlanViewer, HeaderLogo /* LoginContextButton */ }
