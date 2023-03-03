@@ -68,8 +68,7 @@ Resources:
           CachedMethods:
             - GET
             - HEAD
-          # Use no Caching in Dev Environment, Use Caching Optimized in Prod
-          CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
           Compress: true
           TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
           ViewerProtocolPolicy: redirect-to-https
@@ -82,8 +81,21 @@ Resources:
               - POST
               - PATCH
               - DELETE
-            CachePolicyId: !Ref ApiCachePolicy
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
             PathPattern: "/api/*"
+            Compress: true
+            TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
+            ViewerProtocolPolicy: redirect-to-https
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - PUT
+              - POST
+              - PATCH
+              - DELETE
+            CachePolicyId: !Ref ApiCachePolicy
+            PathPattern: "/api/_*"
             Compress: true
             TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
             ViewerProtocolPolicy: redirect-to-https
@@ -100,7 +112,6 @@ Resources:
               OriginProtocolPolicy: "http-only"
             DomainName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
             Id: !FindInMap [EnvMap, !Ref env, OriginId]
-            # OriginAccessControlId: !GetAtt CfDistroOriginAccessControl.Id
         ViewerCertificate:
           AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
           MinimumProtocolVersion: TLSv1.2_2021
@@ -111,15 +122,6 @@ Resources:
           Value: metroplanner
         - Key: Environment
           Value: !Ref env
-  # CfDistroOriginAccessControl:
-  #   Type: AWS::CloudFront::OriginAccessControl
-  #   Properties:
-  #     OriginAccessControlConfig:
-  #       Description: "Restrict access to S3 Bucket to solely through the CF Distro"
-  #       Name: !FindInMap [EnvMap, !Ref env, OriginAclName]
-  #       OriginAccessControlOriginType: s3
-  #       SigningBehavior: always
-  #       SigningProtocol: sigv4
   MetroplannerBucket:
     Type: AWS::S3::Bucket
     Properties:
