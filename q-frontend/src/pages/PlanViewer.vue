@@ -1,7 +1,7 @@
 <template>
   <q-page padding dark>
     <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels"
-      :style="'background-color: ' + (colorTheme.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
+      :style="'background-color: ' + (colorTheme?.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
       <div :style="`transform: scale(${planState.scaleFactor || 0.8}); height: ${planState.planHeight * coordinateScalar}px; width: ${planState.planWidth * coordinateScalar}px; border: 1px solid white;`">
         <div id="lines">
           <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
@@ -62,13 +62,13 @@ export default {
   created () {
     axios.get('/api/planstates/' + this.$route.params.shortlink).then(response => {
       console.log('Planstate response data:', response.data)
-      axios.get('/api/colorthemes/' + response.data.colorTheme, {
+      /* axios.get('/api/colorthemes/' + response.data.colorTheme, {
         'Access-Control-Allow-Origin': '*'
       }).then(response => {
         this.colorTheme = response.data
       }).catch(function (error) {
         console.log('Error fetching Color theme: ', error)
-      })
+      }) */
       this.planState = response.data
       this.addCSS()
 
