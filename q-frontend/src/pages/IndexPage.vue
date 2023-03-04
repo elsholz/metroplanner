@@ -89,6 +89,7 @@ export default defineComponent({
     // planName = planViewerStore.plans[this.planShortlink].info.planName
     return {
       plans: [
+        'walsumbahn',
         'wesel',
         'showcase'
       ]

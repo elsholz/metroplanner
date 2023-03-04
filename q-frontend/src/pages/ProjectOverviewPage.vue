@@ -5,7 +5,7 @@
     dark
     class="justify-center flex row items-center"
   >
-    <div class="column col col-lg-6 col-md-8 col-sm-12 text-body1 text-center">
+    <div class="column col col-lg-6 col-md-8 col-sm-12 q-px-sm text-body1 text-center">
       <div class="row q-pt-md text-white text-center">
         <div class="col-12">
           <h3>Projektvorstellung</h3>
@@ -178,7 +178,7 @@
       </div>
       <div class="row text-white">
         <div class="col-12">
-          <q-avatar square size="384px" class="q-ma-sm">
+          <q-avatar square :size="$q.screen.gt.xs ? '450px': '350px'" class="q-ma-sm">
             <img src="/images/profile_image.jpg" />
           </q-avatar>
         </div>

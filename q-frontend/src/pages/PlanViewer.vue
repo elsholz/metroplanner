@@ -2,7 +2,7 @@
   <q-page padding dark>
     <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels"
       :style="'background-color: ' + (colorTheme.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
-      <div style="transform: scale(0.8)">
+      <div :style="`transform: scale(${planState.scaleFactor || 0.8}); height: ${planState.planHeight * coordinateScalar}px; width: ${planState.planWidth * coordinateScalar}px; border: 1px solid white;`">
         <div id="lines">
           <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
             <div v-for="(segment, segmentKey) in line.segments" v-bind:key="segmentKey"
@@ -193,10 +193,10 @@ export default {
       }
     },
     getX (x) {
-      return (20 + x) * this.coordinateScalar
+      return ((this.planState.globalOffsetX || 20) + x) * this.coordinateScalar
     },
     getY (y) {
-      return (7 + y) * this.coordinateScalar
+      return ((this.planState.globalOffsetY || 7) + y) * this.coordinateScalar
     },
     degToRad (x) {
       return x / (180 / Math.PI)

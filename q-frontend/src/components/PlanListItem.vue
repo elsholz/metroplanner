@@ -1,5 +1,5 @@
 <template>
-  <q-btn to="/p/wesel" flat no-caps>
+  <q-btn :to="'/p/' + planShortlink" flat no-caps>
     <q-item
       class="text-body1 q-my-sm"
       style="width: 100%; background-color: #003; border-radius: 10px"
