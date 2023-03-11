@@ -5,6 +5,7 @@ import responses
 import environment
 from bson.objectid import ObjectId
 from datetime import datetime
+import jsonschema
 
 
 class EndpointCollection(ABC):
@@ -299,23 +300,51 @@ class PrivateEndpoint(EndpointCollection):
                         return responses.ok_200(user_result)
                     else:
                         print("User profile not found, creating profile.")
-                        user_creation_result = db.users.insert_one(user_data:= {
-                             '_id': self.sub,
-                             'displayName': '',
-                             'public': False,
-                             'profileViews': 0,
-                             'likesGiven': [],
-                             'profilePicture': None,
-                             'bio': ''
-                        })
+                        user_creation_result = db.users.insert_one(
+                            user_data := {
+                                "_id": self.sub,
+                                "displayName": "",
+                                "public": False,
+                                "profileViews": 0,
+                                "likesGiven": [],
+                                "profilePicture": None,
+                                "bio": "",
+                            }
+                        )
 
-                        print('User Creation result', user_creation_result)
+                        print("User Creation result", user_creation_result)
                         return responses.ok_200(user_data)
                 except Exception as e:
                     print("Exception!!:", e)
                     return responses.internal_server_error_500()
 
         class PatchUser(EndpointMethod):
+            schema = {
+                "type": "object",
+                "properties": {
+                    "bio": {
+                        "type": "string",
+                        "pattern": "^([.]*)$",
+                        "minLength": 0,
+                        "maxLength": 250,
+                    },
+                    "displayName": {
+                        "type": "string",
+                        "pattern": "^.*$",
+                        "minLength": 3,
+                        "maxLength": 20,
+                    },
+                    "profilePicture": {
+                        "type": "string",
+                        "pattern": "^https://dev.ich-hab-plan.de.*$",
+                        "minLength": 10,
+                        "maxLength": 150,
+                    },
+                },
+                "additionalProperties": False,
+                "required": ["bio", "displayName", "profilePicture"],
+            }
+
             def __init__(
                 self, event, context, env: environment.Environment, sub
             ) -> None:
@@ -325,7 +354,11 @@ class PrivateEndpoint(EndpointCollection):
                 self.sub = sub
 
             def __call__(self) -> Dict:
-                pass
+                print(self.event)
+                jsonschema.validate(
+                    instance={"name": "Eggs", "price": 34.99}, schema=self.schema
+                )
+                return responses.ok_200(self.event["body"])
 
         children = {GET: GetUser, PATCH: PatchUser}
 
