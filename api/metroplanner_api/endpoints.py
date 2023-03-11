@@ -292,6 +292,12 @@ class PrivateEndpoint(EndpointCollection):
                     user_result = db.users.find_one({
                         "_id": self.sub
                     })
+                    if (user_result):
+                        print('Found User Profile:', user_result)
+                        return responses.ok_200(user_result)
+                    else: 
+                        print('User profile not found:', user_result)
+                        return responses.not_found_404()
                 except Exception as e:
                     print("Exception!!:", e)
                     return responses.internal_server_error_500()
