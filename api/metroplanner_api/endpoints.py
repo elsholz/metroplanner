@@ -12,6 +12,7 @@ class EndpointCollection(ABC):
     A Collection of an endpoint's methods or of subordinate
     endpoint collections.
     """
+
     children: Dict[str, "EndpointCollection"] = None
 
 
@@ -244,6 +245,7 @@ class PublicEndpoint(EndpointCollection):
                 self.event = event
                 self.context = context
                 self.env = env
+
             def __call__(self) -> Dict:
                 try:
                     db = self.env.get_database()
@@ -259,6 +261,7 @@ class PublicEndpoint(EndpointCollection):
                 self.event = event
                 self.context = context
                 self.env = env
+
             def __call__(self) -> Dict:
                 pass
 
@@ -286,22 +289,31 @@ class PrivateEndpoint(EndpointCollection):
                 self.context = context
                 self.env = env
                 self.sub = sub
+
             def __call__(self) -> Dict:
                 try:
                     db = self.env.get_database()
-                    user_result = db.users.find_one({
-                        "_id": self.sub
-                    })
-                    if (user_result):
-                        print('Found User Profile:', user_result)
+                    user_result = db.users.find_one({"_id": self.sub})
+                    if user_result:
+                        print("Found User Profile:", user_result)
                         return responses.ok_200(user_result)
-                    else: 
-                        print('User profile not found:', user_result)
-                        return responses.not_found_404()
+                    else:
+                        print("User profile not found, creating profile.")
+                        user_creation_result = db.users.insert_one(user_data:= {
+                             '_id': self.sub,
+                             'displayName': '',
+                             'public': False,
+                             'profileViews': 0,
+                             'likesGiven': [],
+                             'profilePicture': None,
+                             'bio': ''
+                        })
+
+                        print('User Creation result', user_creation_result)
+                        return responses.ok_200(user_data)
                 except Exception as e:
                     print("Exception!!:", e)
                     return responses.internal_server_error_500()
-
 
         class PatchUser(EndpointMethod):
             def __init__(
@@ -311,6 +323,7 @@ class PrivateEndpoint(EndpointCollection):
                 self.context = context
                 self.env = env
                 self.sub = sub
+
             def __call__(self) -> Dict:
                 pass
 
