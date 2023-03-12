@@ -423,7 +423,7 @@ class PrivateEndpoint(EndpointCollection):
             def __call__(self) -> Dict:
                 try:
                     path_parameters = self.event["pathParameters"]
-                    planid = path_parameters["planid"]
+                    planid = path_parameters["planID"]
                     db = self.env.get_database()
                     plan_details = db.plans.find_one(
                         {"_id": ObjectId(planid)},
