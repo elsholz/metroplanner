@@ -460,13 +460,19 @@ class PrivateEndpoint(EndpointCollection):
                             {
                                 "_id": {
                                     "plan": ObjectId(planid),
-                                    "shortlink": shortlink["_id"],
+                                    "link": shortlink["_id"],
                                 }
                             },
                             {'_id': 0}
                         )
-                        print('found shortlink stats:', shortlink_stats)
-                        shortlink['stats'] = shortlink_stats
+                        if shortlink_stats:
+                            print('found shortlink stats:', shortlink_stats)
+                            shortlink['stats'] = shortlink_stats
+                        else:
+                            shortlink['stats'] = {
+                                'totalCount': 0,
+                                'views': {}
+                            }
                     print('Shortlinks:', shortlinks)
                     
                     plan_details['shortlinks'] = shortlinks
