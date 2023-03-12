@@ -302,7 +302,8 @@ class PrivateEndpoint(EndpointCollection):
 
                         plans_created = list(db.plans.find({"ownedBy": self.sub}, {"planName": 1, "planDescription": 1, "_id": 1}))
                         for p in plans_created:
-                            p['_id'] = str(p['_id'])
+                            p['planId'] = str(p['_id'])
+                        del p['_id']
 
                         print('plans as list: ', plans_created)
                         user_result['plansCreated'] = plans_created
