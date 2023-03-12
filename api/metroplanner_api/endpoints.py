@@ -8,6 +8,7 @@ from datetime import datetime
 import jsonschema
 import json
 from pymongo import ReturnDocument
+from bson.objectid import ObjectId
 
 
 class EndpointCollection(ABC):
@@ -300,13 +301,28 @@ class PrivateEndpoint(EndpointCollection):
                     if user_result:
                         print("Found User Profile:", user_result)
 
-                        plans_created = list(db.plans.find({"ownedBy": self.sub}, {"planName": 1, "planDescription": 1, "_id": 1}))
+                        plans_created = list(
+                            db.plans.find(
+                                {"ownedBy": self.sub},
+                                {"planName": 1, "planDescription": 1, "_id": 1},
+                            )
+                        )
                         for p in plans_created:
-                            p['planId'] = str(p['_id'])
-                        del p['_id']
+                            p["planId"] = str(p["_id"])
+                            del p["_id"]
 
-                        print('plans as list: ', plans_created)
-                        user_result['plansCreated'] = plans_created
+                        likes = []
+                        for liked_planid in user_result['likesGiven']:
+                            print("Get shortlink for plan with id", liked_planid)
+                            liked_plan_shortlink = db.links.find_one({
+                                'plan': liked_planid
+                            }, {'_id': 1})
+                            print('Liked plan Shortlink:', liked_plan_shortlink)
+                            likes.append(liked_plan_shortlink['_id'])
+                        user_result['likesGiven'] = likes
+
+                        print("plans as list: ", plans_created)
+                        user_result["plansCreated"] = plans_created
 
                         return responses.ok_200(user_result)
                     else:
@@ -323,7 +339,7 @@ class PrivateEndpoint(EndpointCollection):
                             }
                         )
 
-                        user_data['plansCreated'] = []
+                        user_data["plansCreated"] = []
 
                         print("User Creation result", user_creation_result)
                         return responses.ok_200(user_data)
@@ -349,7 +365,10 @@ class PrivateEndpoint(EndpointCollection):
                     },
                 },
                 "additionalProperties": False,
-                "required": ["bio", "displayName", ], 
+                "required": [
+                    "bio",
+                    "displayName",
+                ],
             }
 
             def __init__(
@@ -374,7 +393,7 @@ class PrivateEndpoint(EndpointCollection):
                             {"$set": data},
                             return_document=ReturnDocument.AFTER,
                         )
-                        print('Updated result:', updated_result)
+                        print("Updated result:", updated_result)
                         if updated_result:
                             return responses.ok_200(updated_result)
                         else:
@@ -400,6 +419,62 @@ class PrivateEndpoint(EndpointCollection):
                 self.context = context
                 self.env = env
                 self.sub = sub
+
+            def __call__(self) -> Dict:
+                try:
+                    path_parameters = self.event["pathParameters"]
+                    planid = path_parameters["planid"]
+                    db = self.env.get_database()
+                    plan_details = db.plans.find_one(
+                        {"_id": ObjectId(planid)},
+                        {
+                            "_id": 0,
+                        },
+                    )
+                    print("Found plan Details: ", plan_details)
+
+                    states = []
+                    for planstateid in plan_details["history"]:
+                        planstate_details = db.planstates.find_one(
+                            {"_id": planstateid},
+                            {
+                                "_id": 0,
+                                "createdAt": 1,
+                                "numberOfEdges": 1,
+                                "numberOfLines": 1,
+                                "numberOfNodes": 1,
+                                "numberOfLabels": 1,
+                            },
+                        )
+                        print("Found planstate details:", planstate_details)
+                        states.append(planstate_details)
+
+                    print('states:', states)
+                    plan_details["history"] = states
+
+                    shortlinks = db.links.find({"plan": ObjectId(planid)}, {"plan": 0})
+
+                    for shortlink in shortlinks:
+                        print('Shortlink: ', shortlink)
+                        shortlink_stats = db.stats.find_one(
+                            {
+                                "_id": {
+                                    "plan": ObjectId(planid),
+                                    "shortlink": shortlink["_id"],
+                                }
+                            },
+                            {'_id': 0}
+                        )
+                        print('found shortlink stats:', shortlink_stats)
+                        shortlink['stats'] = shortlink_stats
+                    print('Shortlinks:', shortlinks)
+                    
+                    plan_details['shortlinks'] = shortlinks
+
+                    return responses.ok_200(plan_details)
+
+                except Exception as e:
+                    return responses.internal_server_error_500()
 
         class PatchPlan(EndpointMethod):
             def __init__(
