@@ -372,7 +372,7 @@ class PrivateEndpoint(EndpointCollection):
                                 "_id": self.sub,
                             },
                             {"$set": data},
-                            ReturnDocument.AFTER,
+                            return_document=ReturnDocument.AFTER,
                         )
                         print('Updated result:', updated_result)
                         if updated_result:
