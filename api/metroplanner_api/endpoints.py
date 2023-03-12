@@ -367,7 +367,7 @@ class PrivateEndpoint(EndpointCollection):
                     try:
                         jsonschema.validate(instance=data, schema=self.schema)
                         db = self.env.get_database()
-                        updated_result = db.users.update_one(
+                        updated_result = db.users.find_one_and_update(
                             {
                                 "_id": self.sub,
                             },
