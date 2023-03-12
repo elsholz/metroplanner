@@ -433,6 +433,11 @@ class PrivateEndpoint(EndpointCollection):
                     )
                     print("Found plan Details: ", plan_details)
 
+                    if forked_from := plan_details['forkedFrom']:
+                        plan_details['forkedFrom'] = str(forked_from)
+                    if current_state := plan_details['currentState']:
+                        plan_details['currentState'] = str(current_state)
+
                     states = []
                     for planstateid in plan_details["history"]:
                         planstate_details = db.planstates.find_one(
