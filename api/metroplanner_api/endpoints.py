@@ -300,9 +300,7 @@ class PrivateEndpoint(EndpointCollection):
                     if user_result:
                         print("Found User Profile:", user_result)
 
-                        plans_created = db.plans.find({"ownedBy": self.sub}, {'_id': 1})
-                        print('Plans created by user: ', plans_created)
-                        plans_created = list(plans_created)
+                        plans_created = [str(x) for x in list(db.plans.find({"ownedBy": self.sub}, {'_id': 1}))]
                         print('plans as list: ', plans_created)
                         user_result['plansCreated'] = plans_created
 
