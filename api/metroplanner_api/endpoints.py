@@ -374,6 +374,7 @@ class PrivateEndpoint(EndpointCollection):
                             {"$set": data},
                             ReturnDocument.AFTER,
                         )
+                        print('Updated result:', updated_result)
                         if updated_result:
                             return responses.ok_200(updated_result)
                         else:
