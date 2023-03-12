@@ -336,20 +336,20 @@ class PrivateEndpoint(EndpointCollection):
                         "minLength": 3,
                         "maxLength": 20,
                     },
-                    "profilePicture": {
-                        "oneOf": [
-                            {
-                                "type": "string",
-                                "pattern": "^https://dev.ich-hab-plan.de.*$",
-                                "minLength": 10,
-                                "maxLength": 150,
-                            },
-                            {"type": "null"},
-                        ]
-                    },
+                    # "profilePicture": {
+                    #     "oneOf": [
+                    #         {
+                    #             "type": "string",
+                    #             "pattern": "^https://dev.ich-hab-plan.de.*$",
+                    #             "minLength": 10,
+                    #             "maxLength": 150,
+                    #         },
+                    #         {"type": "null"},
+                    #     ]
+                    # },
                 },
                 "additionalProperties": False,
-                "required": ["bio", "displayName", "profilePicture"],
+                "required": ["bio", "displayName", ], #"profilePicture"],
             }
 
             def __init__(
