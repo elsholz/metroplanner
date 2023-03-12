@@ -337,14 +337,19 @@ class PrivateEndpoint(EndpointCollection):
                         "maxLength": 20,
                     },
                     "profilePicture": {
-                        "type": "string",
-                        "pattern": "^https://dev.ich-hab-plan.de.*$",
-                        "minLength": 10,
-                        "maxLength": 150,
+                        "oneOf": [
+                            {
+                                "type": "string",
+                                "pattern": "^https://dev.ich-hab-plan.de.*$",
+                                "minLength": 10,
+                                "maxLength": 150,
+                            },
+                            {"type": "null"},
+                        ]
                     },
                 },
                 "additionalProperties": False,
-                "required": ["bio", "displayName"],
+                "required": ["bio", "displayName", "profilePicture"],
             }
 
             def __init__(
@@ -358,23 +363,23 @@ class PrivateEndpoint(EndpointCollection):
             def __call__(self) -> Dict:
                 print(self.event)
                 try:
-                    data = json.loads(self.event['body'])
+                    data = json.loads(self.event["body"])
                     try:
-                        jsonschema.validate(
-                            instance=data, schema=self.schema
-                        )
+                        jsonschema.validate(instance=data, schema=self.schema)
                         db = self.env.get_database()
-                        updated_result = db.users.update_one({
-                            '_id': self.sub,
-                        }, {
-                            '$set': data
-                        }, ReturnDocument.AFTER)
+                        updated_result = db.users.update_one(
+                            {
+                                "_id": self.sub,
+                            },
+                            {"$set": data},
+                            ReturnDocument.AFTER,
+                        )
                         if updated_result:
                             return responses.ok_200(updated_result)
                         else:
                             return responses.internal_server_error_500()
                     except jsonschema.ValidationError as e:
-                        print('Error validating user patch data', data)
+                        print("Error validating user patch data", data)
                         return responses.bad_request_400()
                 except KeyError as e:
                     print(e)
