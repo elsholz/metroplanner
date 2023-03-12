@@ -6,6 +6,8 @@ import environment
 from bson.objectid import ObjectId
 from datetime import datetime
 import jsonschema
+import json
+from pymongo import ReturnDocument
 
 
 class EndpointCollection(ABC):
@@ -355,10 +357,31 @@ class PrivateEndpoint(EndpointCollection):
 
             def __call__(self) -> Dict:
                 print(self.event)
-                jsonschema.validate(
-                    instance={"name": "Eggs", "price": 34.99}, schema=self.schema
-                )
-                return responses.ok_200(self.event["body"])
+                try:
+                    data = json.loads(self.event['body'])
+                    try:
+                        jsonschema.validate(
+                            instance=data, schema=self.schema
+                        )
+                        db = self.env.get_database()
+                        updated_result = db.users.update_one({
+                            '_id': self.sub,
+                        }, {
+                            '$set': data
+                        }, ReturnDocument.AFTER)
+                        if updated_result:
+                            return responses.ok_200(updated_result)
+                        else:
+                            return responses.internal_server_error_500()
+                    except jsonschema.ValidationError as e:
+                        print('Error validating user patch data', data)
+                        return responses.bad_request_400()
+                except KeyError as e:
+                    print(e)
+                    return responses.bad_request_400()
+                except Exception as e:
+                    print(e)
+                    return responses.internal_server_error_500()
 
         children = {GET: GetUser, PATCH: PatchUser}
 
