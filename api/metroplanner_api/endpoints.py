@@ -326,7 +326,7 @@ class PrivateEndpoint(EndpointCollection):
                 "properties": {
                     "bio": {
                         "type": "string",
-                        "pattern": r"^([\sa-zA-Z.,\-\(\)]*)$",
+                        # "pattern": r"^([\sa-zA-Z.,\-\(\)]*)$",
                         "minLength": 0,
                         "maxLength": 250,
                     },
