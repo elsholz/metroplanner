@@ -326,13 +326,13 @@ class PrivateEndpoint(EndpointCollection):
                 "properties": {
                     "bio": {
                         "type": "string",
-                        "pattern": "^([.]*)$",
+                        "pattern": r"^([\sa-zA-Z.,\-\(\)]*)$",
                         "minLength": 0,
                         "maxLength": 250,
                     },
                     "displayName": {
                         "type": "string",
-                        "pattern": "^.*$",
+                        "pattern": r"^.*$",
                         "minLength": 3,
                         "maxLength": 20,
                     },
