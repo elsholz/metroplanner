@@ -452,30 +452,35 @@ class PrivateEndpoint(EndpointCollection):
                     print('states:', states)
                     plan_details["history"] = states
 
-                    shortlinks = db.links.find({"plan": ObjectId(planid)}, {"plan": 0})
+                    shortlinks = list(db.links.find({"plan": ObjectId(planid)}, {"plan": 0}))
+
+                    shortlinks_with_stats = []
 
                     for shortlink in shortlinks:
-                        print('Shortlink: ', shortlink)
-                        shortlink_stats = db.stats.find_one(
-                            {
-                                "_id": {
-                                    "plan": ObjectId(planid),
-                                    "link": shortlink["_id"],
+                        if(shortlink['active']):
+                            print('Shortlink: ', shortlink)
+                            shortlink_stats = db.stats.find_one(
+                                {
+                                    "_id": {
+                                        "plan": ObjectId(planid),
+                                        "link": shortlink["_id"],
+                                    }
+                                },
+                                {'_id': 0}
+                            )
+                            if shortlink_stats:
+                                print('found shortlink stats:', shortlink_stats)
+                                shortlink['stats'] = shortlink_stats
+                            else:
+                                shortlink['stats'] = {
+                                    'totalCount': 0,
+                                    'views': {}
                                 }
-                            },
-                            {'_id': 0}
-                        )
-                        if shortlink_stats:
-                            print('found shortlink stats:', shortlink_stats)
-                            shortlink['stats'] = shortlink_stats
-                        else:
-                            shortlink['stats'] = {
-                                'totalCount': 0,
-                                'views': {}
-                            }
-                    print('Shortlinks:', shortlinks)
+                            del shortlink['active']
+                            shortlinks_with_stats.append(shortlink)
+                    print('Shortlinks:', shortlinks_with_stats)
                     
-                    plan_details['shortlinks'] = shortlinks
+                    plan_details['shortlinks'] = shortlinks_with_stats
 
                     return responses.ok_200(plan_details)
 
