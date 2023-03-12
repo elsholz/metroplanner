@@ -344,7 +344,7 @@ class PrivateEndpoint(EndpointCollection):
                     },
                 },
                 "additionalProperties": False,
-                "required": ["bio", "displayName", "profilePicture"],
+                "required": ["bio", "displayName"],
             }
 
             def __init__(
