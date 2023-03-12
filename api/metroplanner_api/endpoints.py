@@ -451,6 +451,7 @@ class PrivateEndpoint(EndpointCollection):
                                 "numberOfLabels": 1,
                             },
                         )
+                        planstate_details['planstateid'] = str(planstateid)
                         print("Found planstate details:", planstate_details)
                         states.append(planstate_details)
 
