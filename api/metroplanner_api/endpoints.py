@@ -299,6 +299,13 @@ class PrivateEndpoint(EndpointCollection):
                     user_result = db.users.find_one({"_id": self.sub})
                     if user_result:
                         print("Found User Profile:", user_result)
+
+                        plans_created = db.plans.find({"ownedBy": self.sub}, {'_id': 1})
+                        print('Plans created by user: ', plans_created)
+                        plans_created = list(plans_created)
+                        print('plans as list: ', plans_created)
+                        user_result['plansCreated'] = plans_created
+
                         return responses.ok_200(user_result)
                     else:
                         print("User profile not found, creating profile.")
@@ -313,6 +320,8 @@ class PrivateEndpoint(EndpointCollection):
                                 "bio": "",
                             }
                         )
+
+                        user_data['plansCreated'] = []
 
                         print("User Creation result", user_creation_result)
                         return responses.ok_200(user_data)
@@ -336,20 +345,9 @@ class PrivateEndpoint(EndpointCollection):
                         "minLength": 3,
                         "maxLength": 20,
                     },
-                    # "profilePicture": {
-                    #     "oneOf": [
-                    #         {
-                    #             "type": "string",
-                    #             "pattern": "^https://dev.ich-hab-plan.de.*$",
-                    #             "minLength": 10,
-                    #             "maxLength": 150,
-                    #         },
-                    #         {"type": "null"},
-                    #     ]
-                    # },
                 },
                 "additionalProperties": False,
-                "required": ["bio", "displayName", ], #"profilePicture"],
+                "required": ["bio", "displayName", ], 
             }
 
             def __init__(
