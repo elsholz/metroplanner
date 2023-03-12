@@ -481,10 +481,12 @@ class PrivateEndpoint(EndpointCollection):
                     print('Shortlinks:', shortlinks_with_stats)
                     
                     plan_details['shortlinks'] = shortlinks_with_stats
+                    print('Plan Details:', plan_details)
 
                     return responses.ok_200(plan_details)
 
                 except Exception as e:
+                    print(e)
                     return responses.internal_server_error_500()
 
         class PatchPlan(EndpointMethod):
