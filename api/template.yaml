@@ -190,7 +190,7 @@ Resources:
         PrivatePostPlanstate:
           Type: HttpApi
           Properties:
-            Path: /api/_planstates
+            Path: /api/_planstates/{planID}
             Method: post
             ApiId: !Ref MetroplannerApi
         PrivateGetPlanstate:
@@ -393,11 +393,18 @@ Resources:
               responses:
                 '204':
                   description: No Content
-          /api/_planstates:
+          /api/_planstates/{planID}:
             post:
               tags:
                 - Private API
               description: Create a new plan
+              parameters:
+                - in: path
+                  name: planID 
+                  schema:
+                    type: string
+                  required: true
+                  description: ID of the plan this planstate is to be created for
               responses:
                 '201':
                   description: Created

@@ -9,6 +9,7 @@ import jsonschema
 import json
 from pymongo import ReturnDocument
 from bson.objectid import ObjectId
+import request_schemas
 
 
 class EndpointCollection(ABC):
@@ -312,14 +313,14 @@ class PrivateEndpoint(EndpointCollection):
                             del p["_id"]
 
                         likes = []
-                        for liked_planid in user_result['likesGiven']:
+                        for liked_planid in user_result["likesGiven"]:
                             print("Get shortlink for plan with id", liked_planid)
-                            liked_plan_shortlink = db.links.find_one({
-                                'plan': liked_planid
-                            }, {'_id': 1})
-                            print('Liked plan Shortlink:', liked_plan_shortlink)
-                            likes.append(liked_plan_shortlink['_id'])
-                        user_result['likesGiven'] = likes
+                            liked_plan_shortlink = db.links.find_one(
+                                {"plan": liked_planid}, {"_id": 1}
+                            )
+                            print("Liked plan Shortlink:", liked_plan_shortlink)
+                            likes.append(liked_plan_shortlink["_id"])
+                        user_result["likesGiven"] = likes
 
                         print("plans as list: ", plans_created)
                         user_result["plansCreated"] = plans_created
@@ -348,29 +349,6 @@ class PrivateEndpoint(EndpointCollection):
                     return responses.internal_server_error_500()
 
         class PatchUser(EndpointMethod):
-            schema = {
-                "type": "object",
-                "properties": {
-                    "bio": {
-                        "type": "string",
-                        # "pattern": r"^([\sa-zA-Z.,\-\(\)]*)$",
-                        "minLength": 0,
-                        "maxLength": 250,
-                    },
-                    "displayName": {
-                        "type": "string",
-                        "pattern": r"^.*$",
-                        "minLength": 3,
-                        "maxLength": 20,
-                    },
-                },
-                "additionalProperties": False,
-                "required": [
-                    "bio",
-                    "displayName",
-                ],
-            }
-
             def __init__(
                 self, event, context, env: environment.Environment, sub
             ) -> None:
@@ -384,7 +362,9 @@ class PrivateEndpoint(EndpointCollection):
                 try:
                     data = json.loads(self.event["body"])
                     try:
-                        jsonschema.validate(instance=data, schema=self.schema)
+                        jsonschema.validate(
+                            instance=data, schema=request_schemas.patch_user_schema
+                        )
                         db = self.env.get_database()
                         updated_result = db.users.find_one_and_update(
                             {
@@ -431,65 +411,68 @@ class PrivateEndpoint(EndpointCollection):
                             "_id": 0,
                         },
                     )
-                    print("Found plan Details: ", plan_details)
 
-                    if forked_from := plan_details['forkedFrom']:
-                        plan_details['forkedFrom'] = str(forked_from)
-                    if current_state := plan_details['currentState']:
-                        plan_details['currentState'] = str(current_state)
+                    if plan_details["ownedBy"] == self.sub:
+                        print("Found plan Details: ", plan_details)
 
-                    states = []
-                    for planstateid in plan_details["history"]:
-                        planstate_details = db.planstates.find_one(
-                            {"_id": planstateid},
-                            {
-                                "_id": 0,
-                                "createdAt": 1,
-                                "numberOfEdges": 1,
-                                "numberOfLines": 1,
-                                "numberOfNodes": 1,
-                                "numberOfLabels": 1,
-                            },
-                        )
-                        planstate_details['planstateid'] = str(planstateid)
-                        print("Found planstate details:", planstate_details)
-                        states.append(planstate_details)
+                        if forked_from := plan_details["forkedFrom"]:
+                            plan_details["forkedFrom"] = str(forked_from)
+                        if current_state := plan_details["currentState"]:
+                            plan_details["currentState"] = str(current_state)
 
-                    print('states:', states)
-                    plan_details["history"] = states
-
-                    shortlinks = list(db.links.find({"plan": ObjectId(planid)}, {"plan": 0}))
-
-                    shortlinks_with_stats = []
-
-                    for shortlink in shortlinks:
-                        if(shortlink['active']):
-                            print('Shortlink: ', shortlink)
-                            shortlink_stats = db.stats.find_one(
+                        states = []
+                        for planstateid in plan_details["history"]:
+                            planstate_details = db.planstates.find_one(
+                                {"_id": planstateid},
                                 {
-                                    "_id": {
-                                        "plan": ObjectId(planid),
-                                        "link": shortlink["_id"],
-                                    }
+                                    "_id": 0,
+                                    "createdAt": 1,
+                                    "numberOfEdges": 1,
+                                    "numberOfLines": 1,
+                                    "numberOfNodes": 1,
+                                    "numberOfLabels": 1,
                                 },
-                                {'_id': 0}
                             )
-                            if shortlink_stats:
-                                print('found shortlink stats:', shortlink_stats)
-                                shortlink['stats'] = shortlink_stats
-                            else:
-                                shortlink['stats'] = {
-                                    'totalCount': 0,
-                                    'views': {}
-                                }
-                            del shortlink['active']
-                            shortlinks_with_stats.append(shortlink)
-                    print('Shortlinks:', shortlinks_with_stats)
-                    
-                    plan_details['shortlinks'] = shortlinks_with_stats
-                    print('Plan Details:', plan_details)
+                            planstate_details["planstateid"] = str(planstateid)
+                            print("Found planstate details:", planstate_details)
+                            states.append(planstate_details)
 
-                    return responses.ok_200(plan_details)
+                        print("states:", states)
+                        plan_details["history"] = states
+
+                        shortlinks = list(
+                            db.links.find({"plan": ObjectId(planid)}, {"plan": 0})
+                        )
+
+                        shortlinks_with_stats = []
+
+                        for shortlink in shortlinks:
+                            if shortlink["active"]:
+                                print("Shortlink: ", shortlink)
+                                shortlink_stats = db.stats.find_one(
+                                    {
+                                        "_id": {
+                                            "plan": ObjectId(planid),
+                                            "link": shortlink["_id"],
+                                        }
+                                    },
+                                    {"_id": 0},
+                                )
+                                if shortlink_stats:
+                                    print("found shortlink stats:", shortlink_stats)
+                                    shortlink["stats"] = shortlink_stats
+                                else:
+                                    shortlink["stats"] = {"totalCount": 0, "views": {}}
+                                del shortlink["active"]
+                                shortlinks_with_stats.append(shortlink)
+                        print("Shortlinks:", shortlinks_with_stats)
+
+                        plan_details["shortlinks"] = shortlinks_with_stats
+                        print("Plan Details:", plan_details)
+
+                        return responses.ok_200(plan_details)
+                    else:
+                        return responses.unauthorized_401()
 
                 except Exception as e:
                     print(e)
@@ -504,6 +487,76 @@ class PrivateEndpoint(EndpointCollection):
                 self.env = env
                 self.sub = sub
 
+            def __call__(self) -> Dict:
+                try:
+                    path_parameters = self.event["pathParameters"]
+                    planid = path_parameters["planID"]
+                    db = self.env.get_database()
+                    plan_details = db.plans.find_one(
+                        {
+                            "_id": ObjectId(planid),
+                        },
+                        {
+                            "_id": 0,
+                            "ownedBy": 1,
+                        },
+                    )
+
+                    if plan_details["ownedBy"] == self.sub:
+                        data = json.loads(self.event["body"])
+                        jsonschema.validate(
+                            instance=data, schema=request_schemas.patch_plan_schema
+                        )
+
+                        set_data = {}
+
+                        for k in [
+                            "planName",
+                            "planDescription",
+                            "currentState",
+                            "currentColorTheme",
+                        ]:
+                            if k == "currentColorTheme":
+                                print("Can't change color theme atm")
+                                return responses.not_implemented_501()
+                            if k == "currentState":
+                                new_id = ObjectId(data["currentState"])
+                                get_planstate_result = db.planstates.find_one(
+                                    {"_id": new_id}, {"_id": 1}
+                                )
+                                if get_planstate_result:
+                                    print(
+                                        "Found corresponding planstate!",
+                                        get_planstate_result,
+                                    )
+                                else:
+                                    print(
+                                        "Did not find corresponding planstate!",
+                                        get_planstate_result,
+                                    )
+                                    return responses.bad_request_400()
+                                set_data[k] = new_id
+                            else:
+                                set_data[k] = data[k]
+
+                        set_data["lastModifiedAt"] = datetime.now().isoformat()
+
+                        db.plans.update_one(
+                            {
+                                "_id": ObjectId(planid),
+                            },
+                            {
+                                "$set": set_data,
+                            },
+                        )
+
+                        return responses.ok_200()
+                    else:
+                        return responses.unauthorized_401()
+                except Exception as e:
+                    print("Patching plan failed", e)
+                    return responses.internal_server_error_500()
+
         class PostPlan(EndpointMethod):
             def __init__(
                 self, event, context, env: environment.Environment, sub
@@ -513,6 +566,9 @@ class PrivateEndpoint(EndpointCollection):
                 self.env = env
                 self.sub = sub
 
+            def __call__(self) -> Dict:
+                return responses.not_implemented_501()
+
         class DeletePlan(EndpointMethod):
             def __init__(
                 self, event, context, env: environment.Environment, sub
@@ -521,6 +577,9 @@ class PrivateEndpoint(EndpointCollection):
                 self.context = context
                 self.env = env
                 self.sub = sub
+
+            def __call__(self) -> Dict:
+                return responses.not_implemented_501()
 
         children = {GET: GetPlan, PATCH: PatchPlan, POST: PostPlan, DELETE: DeletePlan}
 
@@ -534,6 +593,9 @@ class PrivateEndpoint(EndpointCollection):
                 self.env = env
                 self.sub = sub
 
+            def __call__(self) -> Dict:
+                return responses.not_implemented_501()
+
         class PatchLink(EndpointMethod):
             def __init__(
                 self, event, context, env: environment.Environment, sub
@@ -543,6 +605,9 @@ class PrivateEndpoint(EndpointCollection):
                 self.env = env
                 self.sub = sub
 
+            def __call__(self) -> Dict:
+                return responses.not_implemented_501()
+
         class DeleteLink(EndpointMethod):
             def __init__(
                 self, event, context, env: environment.Environment, sub
@@ -551,6 +616,9 @@ class PrivateEndpoint(EndpointCollection):
                 self.context = context
                 self.env = env
                 self.sub = sub
+
+            def __call__(self) -> Dict:
+                return responses.not_implemented_501()
 
         children = {POST: PostLink, PATCH: PatchLink, DELETE: DeleteLink}
 
@@ -564,6 +632,86 @@ class PrivateEndpoint(EndpointCollection):
                 self.env = env
                 self.sub = sub
 
+            def __call__(self) -> Dict:
+                try:
+                    path_parameters = self.event["pathParameters"]
+                    planid = path_parameters["planID"]
+                    make_current = "makeCurrent" in self.event.get(
+                        "queryStringParameters", {}
+                    )
+                    db = self.env.get_database()
+                    plan_details = db.plans.find_one(
+                        {"_id": ObjectId(planid)},
+                        {
+                            "_id": 0,
+                            "ownedBy": 1,
+                        },
+                    )
+
+                    if plan_details["ownedBy"] == self.sub:
+                        data = json.loads(self.event["body"])
+
+                        try:
+                            print(
+                                "Planstate to be created for plan with id",
+                                planid,
+                                "Make current?",
+                                make_current,
+                            )
+                            jsonschema.validate(
+                                instance=data,
+                                schema=request_schemas.post_planstate_schema,
+                            )
+
+                            number_of_edges = 0
+
+                            for ln in data["lines"]:
+                                for cons in ln["connections"]:
+                                    number_of_edges += len(cons["nodes"])
+
+                            data["numberOfEdges"] = number_of_edges
+                            data["numberOfLines"] = len(data["lines"])
+                            data["numberOfNodes"] = len(data["nodes"])
+                            data["numberOfLabels"] = len(data["labels"])
+
+                            data["createdAt"] = datetime.now().isoformat()
+
+                            created_result = db.planstates.insert_one(data)
+                            print("Created planstate:", created_result)
+
+                            set_data = {
+                                "lastModifiedAt": data["createdAt"],
+                            }
+
+                            if make_current:
+                                set_data["currentState"] = (created_result.inserted_id,)
+                                set_data["numberOfEdges"] = data["numberOfEdges"]
+                                set_data["numberOfLines"] = data["numberOfLines"]
+                                set_data["numberOfNodes"] = data["numberOfNodes"]
+                                set_data["numberOfLabels"] = data["numberOfLabels"]
+
+                            db.plans.update_one(
+                                {"_id": ObjectId(planid)},
+                                {
+                                    "$push": {
+                                        "history": created_result.inserted_id,
+                                    },
+                                    "$set": set_data,
+                                },
+                            )
+
+                            return responses.created_201(
+                                {"planstateID": str(created_result.inserted_id), **data}
+                            )
+                        except jsonschema.ValidationError as e:
+                            print("Validation error creating planstate:", e)
+                            return responses.bad_request_400()
+                    else:
+                        return responses.unauthorized_401()
+                except Exception as e:
+                    print("error creating planstate:", e)
+                    return responses.internal_server_error_500()
+
         class GetPlanstate(EndpointMethod):
             def __init__(
                 self, event, context, env: environment.Environment, sub
@@ -572,6 +720,27 @@ class PrivateEndpoint(EndpointCollection):
                 self.context = context
                 self.env = env
                 self.sub = sub
+
+            def __call__(self) -> Dict:
+                try:
+                    path_parameters = self.event["pathParameters"]
+                    planstateid = path_parameters["planstateID"]
+                    db = self.env.get_database()
+                    planstate = db.planstates.find_one(
+                        {"_id": ObjectId(planstateid)},
+                        {"_id": 0},
+                    )
+
+                    if planstate:
+                        print("Found planstate with id", planstateid)
+                        return responses.ok_200(planstate)
+                    else:
+                        print(f"Planstate with id {planstateid} not found", planstate)
+                        return responses.not_found_404()
+
+                except Exception as e:
+                    print("Exception during GET Planstate:", e)
+                    return responses.internal_server_error_500()
 
         children = {POST: PostPlanstate, GET: GetPlanstate}
 
