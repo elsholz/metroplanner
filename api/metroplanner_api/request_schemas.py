@@ -106,8 +106,29 @@ patch_plan_schema = {
             "description": "ID of the current planstate.",
         },
         "currentColorTheme": {
-            "type": "objectId",
-            "description": "ID of the plan's color theme.",
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "colorful-dl",
+                        "colorful-ld",
+                        "glow",
+                        "shine",
+                        "pastels-dl",
+                        "pastels-ld",
+                        "dark-pastels",
+                        "light-pastels",
+                        "monochrome-dl",
+                        "monochrome-ld",
+                        "black-white",
+                        "white-black",
+                    ],
+                },
+                # {
+                #     "type": "objectId",
+                #     "description": "ID of the plan's color theme.",
+                # },
+            ]
         },
     },
     "additionalProperties": False,

@@ -305,11 +305,19 @@ class PrivateEndpoint(EndpointCollection):
                         plans_created = list(
                             db.plans.find(
                                 {"ownedBy": self.sub},
-                                {"planName": 1, "planDescription": 1, "_id": 1},
+                                {"planName": 1, "planDescription": 1, "_id": 1, "planShortlink": 1, "public": 1},
                             )
                         )
                         for p in plans_created:
                             p["planId"] = str(p["_id"])
+
+                            if not 'planShortlink' in p:
+                                plan_link = db.links.find_one({
+                                    'plan': p['_id']
+                                })
+                                if plan_link:
+                                    p['planShortlink'] = plan_link['_id']
+
                             del p["_id"]
 
                         likes = []
