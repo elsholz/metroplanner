@@ -1,3 +1,40 @@
+definite_color_patterns = [
+    {
+        "type": "string",
+        "pattern": "^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$",
+    },
+    {
+        "type": "string",
+        "pattern": "^hsl\(\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%\)$",
+    },
+    {
+        "type": "string",
+        "pattern": "^hsla\(\d{1,3},\s?\d{1,3}%,\s?\d{1,3}%,\s?(1|(0\.\d{1,10}))\)$",
+    },
+]
+
+theme_color_patterns = [
+    {
+        "type": "string",
+        "pattern": "^(fore|back)ground$",
+    },
+    {
+        "type": "string",
+        "pattern": "^landscape::(((deep|shallow)?water)|border)$",
+    },
+    {
+        "type": "string",
+        "pattern": "^lines::\d{1,3}$",
+    },
+]
+
+colors = {
+    "oneOf": [
+        *definite_color_patterns,
+        *theme_color_patterns,
+    ]
+}
+
 styling = {
     "type": "object",
     "properties": {
@@ -26,7 +63,11 @@ anchor = {
         "node": {
             "oneOf": [
                 point,
-                {"type": "string", "description": "unique node identifier"},
+                {
+                    "type": "string",
+                    "description": "unique node identifier",
+                    "maxLength": 50,
+                },
             ]
         },
         "xShift": {"type": "number"},
@@ -51,7 +92,11 @@ label_basics = {
                 "right",
             ],
         },
-        "text": {"type": "string"},
+        "text": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100,
+        },
         "anchor": anchor,
         "styling": styling,
     },
@@ -92,7 +137,7 @@ patch_plan_schema = {
         "planName": {
             "type": "string",
             "description": "Display name of this plan.",
-            "minLength": 3,
+            "minLength": 0,
             "maxLength": 30,
         },
         "planDescription": {
@@ -185,6 +230,7 @@ post_planstate_schema = {
                     "label": {
                         "type": "string",
                         "description": "UUID of the node's label.",
+                        "maxLength": 36,
                     },
                 },
                 "required": ["location"],
@@ -195,11 +241,29 @@ post_planstate_schema = {
             "additionalProperties": {
                 "type": "object",
                 "properties": {
-                    "name": {"type": "string"},
-                    "color": {"type": "string"},
+                    "name": {
+                        "type": "string",
+                        "maxLength": 50,
+                    },
+                    "color": colors,
                     "borderWidth": {"type": "number"},
-                    "borderStyle": {"type": "string"},
-                    "borderColor": {"type": "string"},
+                    "borderStyle": {
+                        "type": "string",
+                        "enum": [
+                            "dotted",
+                            "p.dashed",
+                            "p.solid",
+                            "p.double",
+                            "p.groove",
+                            "p.ridge",
+                            "p.inset",
+                            "p.outset",
+                            "p.none",
+                            "p.hidden",
+                            "p.mix",
+                        ],
+                    },
+                    "borderColor": colors,
                     "width": {"type": "number"},
                     "connections": {
                         "type": "array",
