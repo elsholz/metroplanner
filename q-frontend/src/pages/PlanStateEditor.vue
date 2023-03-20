@@ -45,7 +45,7 @@
 import axios from 'axios'
 
 export default {
-  name: 'PlanEditor',
+  name: 'PlanStateEditor',
   props: {
     planName: String
   },

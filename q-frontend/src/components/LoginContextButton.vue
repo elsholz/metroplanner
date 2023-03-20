@@ -2,39 +2,41 @@
   <q-space></q-space>
   <q-btn
     v-if="isAuthenticated"
-    :label="$q.screen.gt.sm ? user : ''"
+    :label="$q.screen.gt.sm ? ( userStore.displayName || user.name ) : ''"
     color="green-5"
     outline
     class="q-pa-sm q-px-md text-body1"
     icon="person"
   >
     <q-menu class="bg-green" :offset="[0, 5]" dark>
-      <q-btn no-caps flat wrap class="q-ma-md">
+      <q-btn no-caps flat wrap class="q-ma-md" to="/profile">
         <div class="column">
           <div class="row">
             <div class="column col-12 items-center text-h6">
-              {{ user }}
+              {{ userStore.displayName || user.name }}
             </div>
           </div>
           <div class="row">
             <div class="column col-12 items-center text-h6">
               <q-avatar size="164px" class="q-ma-sm">
-                <img src="/images/profile_image.jpg" />
+                <img :src="
+                    this.userStore.profilePicture ||
+                    'https://source.boringavatars.com/pixel/72/' +
+                      this.user.sub +
+                      '?colors=66f873,5a3dcf,99848a'
+                " />
               </q-avatar>
             </div>
           </div>
-          <div class="row">
-            <div
-              class="column col-12 items-center text-body1 text-weight-light"
-            >
-              Profil öffnen
-            </div>
-          </div>
+          <q-tooltip class="text-body2">
+            Profil öffnen
+          </q-tooltip>
         </div>
       </q-btn>
       <div class="row">
         <div class="column col-12 items-center">
-          <q-btn color="red" no-caps class="q-ma-md" push v-close-popup>
+          <CreatePlanButton color="white"></CreatePlanButton>
+          <q-btn color="red" no-caps class="q-ma-md" push v-close-popup @click="logout">
             Logout
           </q-btn>
         </div>
@@ -54,23 +56,34 @@
 
 <script>
 import { useAuth0 } from '@auth0/auth0-vue'
+import { useUserStore } from 'src/stores/user_store'
+import CreatePlanButton from './CreatePlanButton.vue'
+
+const userStore = useUserStore()
 
 export default {
   setup () {
-    const { loginWithRedirect, user, isAuthenticated } = useAuth0()
+    const { loginWithRedirect, user, isAuthenticated, getAccessTokenSilently, logout } = useAuth0()
+    userStore.init(user, isAuthenticated, getAccessTokenSilently)
+    userStore.loadUserProfile()
     return {
-      login: () => {
+      login: async () => {
         loginWithRedirect()
-        console.log('User:', user)
-        console.log('isAuthenticated:', isAuthenticated)
       },
       user,
-      isAuthenticated
+      isAuthenticated,
+      userStore,
+      logout: function () {
+        logout({ logoutParams: { returnTo: window.origin } })
+      }
     }
   },
-
-  data () {
-    return {}
-  }
+  watch: {
+    isAuthenticated: async function (newValue) {
+      console.log('Is Authenticated changed! ', newValue)
+      await this.userStore.loadUserProfile()
+    }
+  },
+  components: { CreatePlanButton }
 }
 </script>

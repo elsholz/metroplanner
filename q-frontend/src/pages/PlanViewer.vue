@@ -7,7 +7,6 @@
           <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
             <div v-for="(segment, segmentKey) in line.segments" v-bind:key="segmentKey"
               :style="getLineSegmentStyle(segmentKey, segment)" :class="'line_segment line' + key">
-
             </div>
           </div>
         </div>

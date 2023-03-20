@@ -1,24 +1,48 @@
-
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
-    ]
+    children: [{ path: '', component: () => import('pages/IndexPage.vue') }]
   },
   {
     path: '/p/:shortlink',
     component: () => import('src/layouts/ViewerLayout.vue'),
+    children: [{ path: '', component: () => import('pages/PlanViewer.vue') }]
+  },
+  {
+    path: '/details/:shortlink',
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PlanViewer.vue') }
+      { path: '', component: () => import('pages/PlanDetailPage.vue') }
     ]
   },
   {
     path: '/edit/:planid',
+    component: () => import('src/layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/PlanInfoEditor.vue') }
+    ]
+  },
+  {
+    path: '/create',
+    alias: ['/p/:shortlink/fork', '/edit/:planid/fork'],
+    component: () => import('src/layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/CreatePlanPage.vue') }
+    ]
+  },
+  {
+    path: '/edit/:planid/:planstateid',
     component: () => import('src/layouts/EditorLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PlanEditor.vue') }
+      { path: '', component: () => import('src/pages/PlanStateEditor.vue') }
+    ]
+  },
+  {
+    path: '/user/:userid',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/UserProfilePage.vue') }
     ]
   },
   {
@@ -31,9 +55,7 @@ const routes = [
   {
     path: '/privacy',
     component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PrivacyPage.vue') }
-    ]
+    children: [{ path: '', component: () => import('pages/PrivacyPage.vue') }]
   },
   {
     path: '/liability',

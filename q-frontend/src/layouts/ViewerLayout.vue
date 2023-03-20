@@ -34,9 +34,21 @@
           <q-list padding>
             <q-item>
               <q-item-section>
-                <q-text class="text-h5 q-pa-sm">
-                  {{ planInfo.planName }}
-                </q-text>
+                <div class="row">
+                  <div class="column col-10">
+                    <q-text class="text-h5 q-pa-sm">
+                      {{ planInfo.planName }}
+                    </q-text>
+                  </div>
+                  <div class="column col-2">
+                    <ForkButton :shortlink="this.$route.params.shortlink"></ForkButton>
+                  </div>
+                  <div class="column col-12">
+                    <q-text class="text-body1 q-pa-sm">
+                      {{ planInfo.planDescription }}
+                    </q-text>
+                  </div>
+                </div>
               </q-item-section>
             </q-item>
 
@@ -96,16 +108,27 @@
               <q-item-section>
                 <div class="row">
                   <div class="col-xs-6">
-                    <q-icon name="visibility" size="sm" class="q-mx-md" />
+                    <q-icon name="visibility" size="sm" class="q-mx-md">
+                    </q-icon>
                     {{ planInfo.totalViewCount || 0 }}
-                    <q-tooltip class="bg-accent text-body1">
+                    <q-tooltip
+                      class="bg-indigo text-body1"
+                      anchor="top middle"
+                      self="bottom middle"
+                      style="white-space: nowrap"
+                    >
                       Anzahl Aufrufe
                     </q-tooltip>
                   </div>
                   <div class="col-xs-6">
-                    <q-icon name="favorite" size="sm" class="q-mx-md" />
+                    <q-icon name="favorite" size="sm" class="q-mx-md"> </q-icon>
                     {{ planInfo.likeCount || 0 }}
-                    <q-tooltip class="bg-positive text-body1">
+                    <q-tooltip
+                      class="bg-green text-body1"
+                      anchor="top middle"
+                      self="bottom middle"
+                      style="white-space: nowrap"
+                    >
                       Anzahl Likes
                     </q-tooltip>
                   </div>
@@ -113,7 +136,36 @@
               </q-item-section>
             </q-item>
 
-            <q-page-sticky position="bottom-left" :offset="[18, 18]">
+            <q-separator class="q-mb-lg" dark />
+
+            <q-item>
+              <q-item-section>
+                <div class="row">
+                  <!--<div class="col-2">
+                    <q-btn
+                      icon="report"
+                      color="red"
+                      outline
+                    ></q-btn>
+                  </div>-->
+                  <div class="col-6">
+                    <q-btn
+                      icon="favorite"
+                      color="purple"
+                      @click="toggleFavorite"
+                      >Favorisieren</q-btn
+                    >
+                  </div>
+                  <div class="col-6">
+                    <q-btn icon="share" color="green" @click="copyLink"
+                      >Link kopieren</q-btn
+                    >
+                  </div>
+                </div>
+              </q-item-section>
+            </q-item>
+
+            <!--<q-page-sticky position="bottom-left" :offset="[18, 18]">
               <q-fab
                 v-model="fab2"
                 label="Actions"
@@ -150,7 +202,7 @@
                   label="Report"
                 />
               </q-fab>
-            </q-page-sticky>
+            </q-page-sticky>-->
           </q-list>
         </q-scroll-area>
 
@@ -163,12 +215,17 @@
               <div class="col-xs-6">
                 Plan erstellt von:
                 <div class="text-weight-bold text-h6">
-                {{ planInfo.planOwner?.displayName || "unbekannt" }}
+                  {{ planInfo.planOwner?.displayName || "unbekannt" }}
                 </div>
               </div>
               <div class="col-xs-grow"></div>
               <div class="col-shrink">
-                <q-btn flat round :to="'/users/' + planInfo.planOwner?._id" :disable="planInfo.planOwner == undefined">
+                <q-btn
+                  flat
+                  round
+                  :to="'/users/' + planInfo.planOwner?._id"
+                  :disable="planInfo.planOwner == undefined"
+                >
                   <q-avatar size="72px" class="q-mb-sm">
                     <img
                       :src="
@@ -224,12 +281,11 @@
 
 <script>
 // import { toRaw, ref } from 'vue'
-// import axios from 'axios'
 import { ref } from 'vue'
 import PlanViewer from 'src/pages/PlanViewer.vue'
 import HeaderLogo from 'src/components/HeaderLogo.vue'
 import { usePlanViewerStore } from 'src/stores/viewer_store'
-/* import LoginContextButton from 'src/components/LoginContextButton.vue' */
+import ForkButton from 'src/components/ForkButton.vue'
 
 const planViewerStore = usePlanViewerStore()
 
@@ -260,6 +316,12 @@ export default {
     this.planInfo = planViewerStore.plans[this.shortlink].info
   },
   mounted () {},
-  components: { PlanViewer, HeaderLogo /* LoginContextButton */ }
+  methods: {
+    toggleFavorite: async function () {},
+    copyLink: function () {
+      navigator.clipboard.writeText(window.location)
+    }
+  },
+  components: { PlanViewer, HeaderLogo, ForkButton }
 }
 </script>

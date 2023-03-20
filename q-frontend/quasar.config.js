@@ -31,7 +31,8 @@ module.exports = configure(function (ctx) {
       'addressbar-color',
       'axios',
       'auth',
-      'pinia'
+      'pinia',
+      'charts'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -113,7 +114,8 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'AddressbarColor'
+        'AddressbarColor',
+        'Notify'
       ]
     },
 
