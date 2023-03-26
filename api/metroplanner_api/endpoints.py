@@ -11,6 +11,9 @@ from pymongo import ReturnDocument
 from bson.objectid import ObjectId
 import request_schemas
 
+def get_basic_plan_data():
+    pass
+
 
 class EndpointCollection(ABC):
     """
@@ -80,7 +83,7 @@ class PublicEndpoint(EndpointCollection):
                                         f"Error: Plan with ID {plan_id} for "
                                         f"Shortlink {shortlink} has been deleted."
                                     )
-                                    return responses.not_found_404()
+                                    return responses.gone_410()
                                 else:
                                     print("Plan found and not deleted, getting stats")
                                     stats_result = (
@@ -136,13 +139,13 @@ class PublicEndpoint(EndpointCollection):
                                     f"Error: Plan with ID {plan_id} for "
                                     f"Shortlink {shortlink} does not exist."
                                 )
-                                return responses.not_found_404()
+                                return responses.gone_410()
                         else:
                             print("Link is inactive")
-                            return responses.not_found_404()
+                            return responses.gone_410()
                     else:
                         print("Link not found")
-                        return responses.not_found_404()
+                        return responses.gone_410()
                 except Exception as e:
                     print("Exception!!:", e)
                     return responses.internal_server_error_500()
@@ -190,7 +193,7 @@ class PublicEndpoint(EndpointCollection):
                                         f"Error: Plan with ID {plan_id} for "
                                         f"Shortlink {shortlink} has been deleted."
                                     )
-                                    return responses.not_found_404()
+                                    return responses.gone_410()
                                 else:
                                     print(
                                         "Plan found and not deleted, getting latest state"
@@ -231,13 +234,13 @@ class PublicEndpoint(EndpointCollection):
                                     return responses.ok_200(latest_state)
                             else:
                                 print(f"Plan with ID {plan_id} not found")
-                                return responses.not_found_404()
+                                return responses.gone_410()
                         else:
                             print("Link is not active")
-                            return responses.not_found_404()
+                            return responses.gone_410()
                     else:
                         print(f"Link {shortlink} not found")
-                        return responses.not_found_404()
+                        return responses.gone_410()
                 except Exception as e:
                     print("Exception!!:", e)
                     return responses.internal_server_error_500()
@@ -268,7 +271,32 @@ class PublicEndpoint(EndpointCollection):
                 self.env = env
 
             def __call__(self) -> Dict:
-                pass
+                path_parameters = self.event["pathParameters"]
+                userid = path_parameters["userID"]
+
+                try:
+                    db = self.env.get_database()
+                    user_result = db.users.find_one({"_id": userid})
+                    print("User result:", user_result)
+                    if user_result:
+                        user_data = {
+                            "bio": user_result["bio"],
+                            "displayName": user_result["displayName"],
+                            "profilePicture": user_result["profilePicture"],
+                            "public": (public := user_result["public"]),
+                        }
+                        if public:
+                            # collect plans created
+                            # collect plans liked
+                            print("User Profile is public")
+                        else:
+                            print("User Profile is not public")
+                            return responses.ok(user_data)
+
+                    else:
+                        return responses.gone_410()
+                except Exception as e:
+                    return responses.internal_server_error_500()
 
         children = {GET: GetUser}
 
@@ -305,18 +333,22 @@ class PrivateEndpoint(EndpointCollection):
                         plans_created = list(
                             db.plans.find(
                                 {"ownedBy": self.sub},
-                                {"planName": 1, "planDescription": 1, "_id": 1, "planShortlink": 1, "public": 1},
+                                {
+                                    "planName": 1,
+                                    "planDescription": 1,
+                                    "_id": 1,
+                                    "planShortlink": 1,
+                                    "public": 1,
+                                },
                             )
                         )
                         for p in plans_created:
                             p["planId"] = str(p["_id"])
 
-                            if not 'planShortlink' in p:
-                                plan_link = db.links.find_one({
-                                    'plan': p['_id']
-                                })
+                            if not "planShortlink" in p:
+                                plan_link = db.links.find_one({"plan": p["_id"]})
                                 if plan_link:
-                                    p['planShortlink'] = plan_link['_id']
+                                    p["planShortlink"] = plan_link["_id"]
 
                             del p["_id"]
 
@@ -687,16 +719,16 @@ class PrivateEndpoint(EndpointCollection):
                             created_result = db.planstates.insert_one(data)
                             print("Created planstate:", created_result)
 
-                            set_data = {
+                            set_plan_data = {
                                 "lastModifiedAt": data["createdAt"],
                             }
 
                             if make_current:
-                                set_data["currentState"] = (created_result.inserted_id,)
-                                set_data["numberOfEdges"] = data["numberOfEdges"]
-                                set_data["numberOfLines"] = data["numberOfLines"]
-                                set_data["numberOfNodes"] = data["numberOfNodes"]
-                                set_data["numberOfLabels"] = data["numberOfLabels"]
+                                set_plan_data["currentState"] = (created_result.inserted_id,)
+                                set_plan_data["numberOfEdges"] = data["numberOfEdges"]
+                                set_plan_data["numberOfLines"] = data["numberOfLines"]
+                                set_plan_data["numberOfNodes"] = data["numberOfNodes"]
+                                set_plan_data["numberOfLabels"] = data["numberOfLabels"]
 
                             db.plans.update_one(
                                 {"_id": ObjectId(planid)},
@@ -704,7 +736,7 @@ class PrivateEndpoint(EndpointCollection):
                                     "$push": {
                                         "history": created_result.inserted_id,
                                     },
-                                    "$set": set_data,
+                                    "$set": set_plan_data,
                                 },
                             )
 
@@ -732,19 +764,39 @@ class PrivateEndpoint(EndpointCollection):
             def __call__(self) -> Dict:
                 try:
                     path_parameters = self.event["pathParameters"]
+                    planid = path_parameters["planID"]
                     planstateid = path_parameters["planstateID"]
+
                     db = self.env.get_database()
-                    planstate = db.planstates.find_one(
-                        {"_id": ObjectId(planstateid)},
-                        {"_id": 0},
+                    plan_details = db.plans.find_one(
+                        {"_id": ObjectId(planid)},
+                        {"_id": 0,
+                         "ownedBy": 1, "history": 1},
                     )
 
-                    if planstate:
-                        print("Found planstate with id", planstateid)
-                        return responses.ok_200(planstate)
+                    if plan_details:
+                        if plan_details['ownedBy'] == self.sub:
+                            if ObjectId(planstateid) in plan_details['history']:
+                                planstate = db.planstates.find_one(
+                                    {"_id": ObjectId(planstateid)},
+                                    {"_id": 0},
+                                )
+
+                                if planstate:
+                                    print("Found planstate with id", planstateid)
+                                    return responses.ok_200(planstate)
+                                else:
+                                    print(f"Planstate with id {planstateid} not found", planstate)
+                                    return responses.gone_410()
+                            else:
+                                print('Requested Planstate not in plan history', planstateid, plan_details['history'])
+                                return responses.gone_410()
+                        else:
+                            print("ownedBy doesn't match sub", plan_details['ownedBy'], self.sub)
+                            return responses.unauthorized_401()
                     else:
-                        print(f"Planstate with id {planstateid} not found", planstate)
-                        return responses.not_found_404()
+                            print(f"Plan with id {planid} not found", plan_details)
+                            return responses.gone_410()
 
                 except Exception as e:
                     print("Exception during GET Planstate:", e)
@@ -758,6 +810,6 @@ class PrivateEndpoint(EndpointCollection):
         "/api/_plans/{planID}": PlanEndpoints,
         "/api/_links": LinkEndpoints,
         "/api/_links/{shortlink}": LinkEndpoints,
-        "/api/_planstates": PlanstateEndpoints,
-        "/api/_planstates/{planstateID}": PlanstateEndpoints,
+        "/api/_plans/{planID}/_planstates": PlanstateEndpoints,
+        "/api/_plans/{planID}/_planstates/{planstateID}": PlanstateEndpoints,
     }

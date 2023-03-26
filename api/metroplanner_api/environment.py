@@ -131,7 +131,7 @@ class Environment:
 
                 if self.__API_AUDIENCE in payload.get("aud", []):
                     sub = payload['sub']
-                    return sub
+                    return sub.removeprefix('auth0|')
             raise Exception()
         except Exception as e:
             print("Error in check_auth:", e)

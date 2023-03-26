@@ -2,8 +2,6 @@
   <q-layout view="hHh lpR fff">
     <q-header
       elevated
-      class="bg-dark text-white"
-      dark
       style="box-shadow: 0 0 5px 3px white"
     >
       <q-toolbar class="">

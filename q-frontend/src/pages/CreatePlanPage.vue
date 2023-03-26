@@ -53,9 +53,35 @@
             </div>
           </div>
         </div>
+
+        <div class="row items-center justify-center">
+          <div class="column col-xs-12 col-sm-6">
+            <div class="text-h6 text-center q-mt-lg">Initialier Planzustand</div>
+            <hr color="white" width="200px;" />
+            <PlanstateListItem
+              :planId="this.planId || 0"
+              :planstateId="false"
+              :numberOfEdges="this.numberOfEdges || 0"
+              :numberOfNodes="this.numberOfNodes || 0"
+              :numberOfLines="this.numberOfLines || NaN"
+              :numberOfLabels="this.numberOfLabels || 0"
+              :isCurrentState="false"
+              :actionsEnabled="false"
+              style="width: 100%"
+            >
+            </PlanstateListItem>
+          </div>
+        </div>
+
         <div class="row items-center justify-center q-my-lg q-mt-xl">
           <div class="column">
-            <q-btn color="teal-9" push glossy class="text-h6" icon-right="check">
+            <q-btn
+              color="teal-9"
+              push
+              glossy
+              class="text-body1"
+              icon-right="check"
+            >
               Plan erstellen
             </q-btn>
           </div>
@@ -105,6 +131,7 @@
 </template>
 
 <script>
+import PlanstateListItem from 'src/components/PlanstateListItem.vue'
 import { ref } from 'vue'
 
 export default {
@@ -122,6 +149,7 @@ export default {
         this.$route.params?.planstateid || this.$route.params?.shortlink
       )
     }
-  }
+  },
+  components: { PlanstateListItem }
 }
 </script>

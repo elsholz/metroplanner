@@ -16,8 +16,9 @@ def unauthorized_401():
     return {"statusCode": 401, "body": "Unauthorized"}
 def forbidden_403():
     return {"statusCode": 403, "body": "Forbidden"}
-def not_found_404():
-    return {"statusCode": 404, "body": "Not Found"}
+# using 410 over 404 as a workaround, since AWS CloudFront will return index.html on 404 errors
+def gone_410():
+    return {"statusCode": 410, "body": "Gone"}
 def method_not_allowed_405():
     return {"statusCode": 405, "body": "Method Not Allowed"}
 def not_acceptable_406():

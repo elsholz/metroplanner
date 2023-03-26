@@ -125,27 +125,66 @@ patch_user_schema = {
     ],
 }
 
-post_plan_schema = {
-    "additionalProperties": False,
-    "required": [],
+plan_basics = {
+    "planName": {
+        "type": "string",
+        "description": "Display name of this plan.",
+        "minLength": 0,
+        "maxLength": 30,
+    },
+    "planDescription": {
+        "type": "string",
+        "description": "Description of this plan.",
+        "minLength": 0,
+        "maxLength": 250,
+    },
 }
+
+post_plan_schema = {
+    "type": "object",
+    "description": "Request content for creating a new plan, either from scratch or forked from a public shortlink or private planstate.",
+    "properties": {
+        **plan_basics,
+        "forkFrom": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description":"For forking a plan from a public plan, given its shortlink.",
+                    "properties": {
+                        "shortlink": {
+                            "type": "string",
+                        }
+                    },
+                    "required": ["shortlink"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "description":"For forking a plan from one's own plan's planstate.",
+                    "properties": {
+                        "planID": {
+                            "type": "string"
+                        },
+                        "planstateID": {
+                            "type": "string",
+                        },
+                    },
+                    "required": ["planstateID", "planID"],
+                    "additionalProperties": False,
+                },
+            ]
+        },
+    },
+    "additionalProperties": False,
+    "required": ["planName", "planDescription"],
+}
+
 
 patch_plan_schema = {
     "type": "object",
     "description": "Document containing a metro plans basic information, excluding state info.",
     "properties": {
-        "planName": {
-            "type": "string",
-            "description": "Display name of this plan.",
-            "minLength": 0,
-            "maxLength": 30,
-        },
-        "planDescription": {
-            "type": "string",
-            "description": "Description of this plan.",
-            "minLength": 0,
-            "maxLength": 250,
-        },
+        **plan_basics,
         "currentState": {
             "type": "objectId",
             "description": "ID of the current planstate.",

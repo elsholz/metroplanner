@@ -35,7 +35,7 @@
 
       <div class="text-h6 q-mx-lg q-mt-xl">Ausgewählte Nahverkehrs-Pläne:</div>
 
-      <q-list bordered padding separator class="text-white" style="width: 100%">
+      <q-list padding separator class="text-white" style="width: 100%">
         <PlanListItem
           v-for="shortlink of plans"
           :key="shortlink"

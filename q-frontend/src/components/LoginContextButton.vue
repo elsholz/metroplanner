@@ -1,5 +1,7 @@
 <template>
   <q-space></q-space>
+  <!--<q-btn :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'" @click="toggleDarkMode" outline class="q-mr-sm q-py-sm">
+  </q-btn>-->
   <q-btn
     v-if="isAuthenticated"
     :label="$q.screen.gt.sm ? ( userStore.displayName || user.name ) : ''"
@@ -8,7 +10,7 @@
     class="q-pa-sm q-px-md text-body1"
     icon="person"
   >
-    <q-menu class="bg-green" :offset="[0, 5]" dark>
+    <q-menu class="bg-green" :offset="[0, 5]">
       <q-btn no-caps flat wrap class="q-ma-md" to="/profile">
         <div class="column">
           <div class="row">
@@ -76,6 +78,12 @@ export default {
       logout: function () {
         logout({ logoutParams: { returnTo: window.origin } })
       }
+    }
+  },
+  methods: {
+    toggleDarkMode: function () {
+      console.log('Toggling dark mode', this.$q.dark.isActive)
+      this.$q.dark.toggle()
     }
   },
   watch: {

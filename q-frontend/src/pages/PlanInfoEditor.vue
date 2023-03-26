@@ -4,7 +4,7 @@
     dark
   >
     <div
-      v-if="this.planDetailsLoaded"
+      v-if="this.planDetailsLoaded && !this.saving"
       class="row justify-center"
       style="width: 100%"
     >
@@ -16,11 +16,12 @@
           </div>
         </div>
         <div class="row items-center justify-center">
-          <div class="column col-6">
+          <div class="column col-xs-12 col-sm-10 col-md-6">
             <div class="column col-6 text-h6">Planname:</div>
             <div class="column col-6 text-white">
               <div class="q-my-sm">
                 <q-input
+                  :oninput="changePlanInfo"
                   dark
                   color="white"
                   outlined
@@ -28,7 +29,7 @@
                   input-class="text-h6"
                   input-style="text-align: center"
                   :rules="[
-                    (val) => val.length <= 20 || 'Maximal 20 Zeichen erlaubt',
+                    (val) => val.length <= 30 || 'Maximal 30 Zeichen erlaubt',
                   ]"
                 />
               </div>
@@ -36,11 +37,12 @@
           </div>
         </div>
         <div class="row items-center justify-center">
-          <div class="column col-xs-12 col-sm-6">
+          <div class="column col-xs-12 col-sm-10 col-md-6">
             <div class="column col-6 text-h6">Planbeschreibung:</div>
             <div class="column col-6 text-white">
               <div class="q-my-sm">
                 <q-input
+                  :oninput="changePlanInfo"
                   dark
                   color="white"
                   outlined
@@ -49,11 +51,29 @@
                   input-class="text-body1"
                   input-style="text-align: left"
                   :rules="[
-                    (val) => val.length <= 200 || 'Maximal 200 Zeichen erlaubt',
+                    (val) => val.length <= 250 || 'Maximal 250 Zeichen erlaubt',
                   ]"
                 />
               </div>
             </div>
+          </div>
+        </div>
+        <div
+          class="row items-center justify-center text-body1"
+          v-if="planInfoChanged"
+        >
+          <div
+            class="column col-xs-6 col-sm-4 text-white items-center text-center"
+          >
+            <q-btn
+              dark
+              color="green"
+              v-if="planInfoChanged"
+              animate
+              @click="savePlanInfo"
+            >
+              <div class="text-white text-body1">Änderungen speichern</div>
+            </q-btn>
           </div>
         </div>
 
@@ -89,16 +109,16 @@
 
         <div class="row items-center justify-center text-body1">
           <div
-            class="column col-xs-6 col-sm-4 text-white items-center text-center"
+            class="column col-12 text-white items-center text-center q-mt-lg q-mb-xl"
           >
-            <div class="q-mb-md">Zuletzt bearbeitet:</div>
+            <div class="q-mb-xs">Zuletzt bearbeitet:</div>
             <div>
-              <q-icon name="today" size="md" />:
-              {{ lastModifiedAt?.split(" ")[0] }}
-            </div>
-            <div>
-              <q-icon name="schedule" size="md" />:
-              {{ lastModifiedAt?.split(" ")[1] }}
+              <q-icon name="today" size="md" class="q-mx-sm q-my-sm" />{{
+                lastModifiedAt?.split(" ")[0]
+              }}
+              <q-icon name="schedule" size="md" class="q-mx-sm q-my-sm" />{{
+                lastModifiedAt?.split(" ")[1]
+              }}
             </div>
           </div>
         </div>
@@ -138,9 +158,41 @@
             <div class="row justify-center" style="width: 100%">
               <hr color="white" width="200px;" />
             </div>
+            <div class="row justify-center" style="width: 100%">
+              <div class="text-h6">
+                Gesamtzahl Aufrufe: {{ this.totalViewCount }}
+              </div>
+            </div>
 
-            <div>
-              <ChartComponent :views="this.views"></ChartComponent>
+            <div class="q-my-md"
+                style="border: 2px solid #333; border-radius: 10px;"
+            >
+              <q-tabs
+                v-model="tab"
+                dense
+                class="text-white"
+                active-color="secondary"
+                indicator-color="secondary"
+                align="justify"
+                narrow-indicator
+              >
+                <q-tab name="days" label="Aufrufe pro Tag" />
+                <q-tab name="hours" dark label="Aufrufe pro Stunde" />
+              </q-tabs>
+
+              <q-separator />
+
+              <q-tab-panels v-model="tab" animated class="bg-primary">
+                <q-tab-panel dark name="days">
+                  <div class="text-h6">Aufrufe pro Tag</div>
+                  <ChartComponent :views="this.views.daily" :labels="true"></ChartComponent>
+                </q-tab-panel>
+
+                <q-tab-panel name="hours">
+                  <div class="text-h6">Aufrufe pro Stunde</div>
+                  <ChartComponent :views="this.views.hourly" :labels="false"></ChartComponent>
+                </q-tab-panel>
+              </q-tab-panels>
             </div>
           </div>
         </div>
@@ -184,6 +236,17 @@
         </div>
       </div>
     </div>
+    <div v-else-if="this.saving">
+      <q-inner-loading
+        :showing="true"
+        label="Daten werden gespeichert…"
+        label-class="text-green"
+        class="bg-dark"
+        label-style="font-size: 1.5em"
+        color="white"
+        size="7em"
+      />
+    </div>
     <div v-else>
       <q-inner-loading
         :showing="true"
@@ -218,20 +281,23 @@ export default {
       currentNumberOfLines: ref(undefined),
       currentNumberOfLabels: ref(undefined),
       currentNumberOfEdges: ref(undefined),
+      totalViewCount: ref(undefined),
       lastModifiedAt: ref(undefined),
       shortlinks: ref(undefined),
       windowOrigin: window.location.origin,
+      planInfoChanged: ref(false),
+      saving: ref(false),
+      tab: ref('days'),
 
       planstates: ref([]),
-      tab: ref('created'),
       planEditorStore,
       planDetailsLoaded: ref(false)
     }
   },
   methods: {
-    changeProfile: function () {
-      console.log('Profile Changed!')
-      this.profileChanged = true
+    changePlanInfo: function () {
+      console.log('PlanInfo Changed!')
+      this.planInfoChanged = true
     }
   },
   created: async function () {
@@ -253,33 +319,42 @@ export default {
     this.shortlinks = planDetails.shortlinks
     this.shortlinks[0].active = true
     const views = planDetails.shortlinks[0].stats.views
+    this.totalViewCount = planDetails.shortlinks[0].stats.totalCount
 
-    this.views = []
+    this.views = {
+      daily: [],
+      hourly: []
+    }
     const viewsDaily = {}
+    const viewsHourly = {}
 
     for (const [datehour, count] of Object.entries(views)) {
       // const [d, t] = datehour.split('T')
-      const d = datehour.split('T')[0]
+      const [d, hour] = datehour.split('T')
       const [year, month, day] = d.split('-')
       const dayTimestamp = new Date(
         parseInt(year),
         parseInt(month) - 1,
         parseInt(day)
       ).getTime()
+      const hourTimestamp = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hour)
+      ).getTime()
 
       if (!viewsDaily[dayTimestamp]) {
         viewsDaily[dayTimestamp] = 0
       }
       viewsDaily[dayTimestamp] += count
-      // const date = new Date(
-      //   parseInt(year),
-      //   parseInt(month) - 1,
-      //   parseInt(day),
-      //   parseInt(t)
-      // ).getTime()
+      viewsHourly[hourTimestamp] = count
     }
     for (const [timestamp, count] of Object.entries(viewsDaily)) {
-      this.views.push([parseInt(timestamp), count])
+      this.views.daily.push([parseInt(timestamp), count])
+    }
+    for (const [timestamp, count] of Object.entries(viewsHourly)) {
+      this.views.hourly.push([parseInt(timestamp), count])
     }
     console.log('Views:', this.views)
   },

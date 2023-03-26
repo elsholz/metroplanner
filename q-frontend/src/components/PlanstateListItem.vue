@@ -14,29 +14,29 @@
         <div
           class="col-sm-4 col-md-3 items-center text-left"
           style="display: block; overflow: hidden; text-overflow: ellipsis"
+          v-if="this.createdAt"
         >
           <div class="row q-ma-sm q-my-md">
-            <q-icon name="today" size="sm">
+            <q-icon name="today" size="sm" class="q-mx-sm">
               <q-tooltip
                 anchor="top middle"
                 self="bottom middle"
                 class="text-body2"
                 >Erstellt am (Datum)</q-tooltip
               > </q-icon
-            >: {{ createdAt.split("T")[0] }}
+            >{{ createdAt.split("T")[0] }}
           </div>
           <div class="row q-ma-sm q-my-md">
-            <q-icon name="schedule" size="sm">
+            <q-icon name="schedule" size="sm" class="q-mx-sm">
               <q-tooltip class="text-body2">
                 Erstellt um (Uhrzeit)</q-tooltip
               > </q-icon
-            >:
-            {{ createdAt.split("T")[1].split(".")[0] }}
+            >{{ createdAt.split("T")[1].split(".")[0] }}
           </div>
         </div>
 
         <div
-          class="col-sm-4 col-md-6 items-center"
+          :class="(this.actionsEnabled && this.createdAt) ? 'col-xs-4 col-sm-5 items-center' : 'col-12 items-center'"
           style="display: block; overflow: hidden; text-overflow: ellipsis"
         >
           <div class="row">
@@ -88,20 +88,15 @@
           </div>
         </div>
 
-        <div class="col-sm-4 col-md-2 q-py-md">
-          <!--<q-btn no-caps class="bg-green-10 q-py-sm q-mb-sm" v-if="!this.isCurrentState" >
-            <q-item-label class="text-white" caption
-              >Veröffentlichen</q-item-label
-            >
-          </q-btn>-->
+        <div class="col-xs-12 col-sm-12 col-md-4 " v-if="this.actionsEnabled">
           <q-btn
             no-caps
-            class="bg-blue-10 q-py-sm q-mt-sm"
+            class="bg-blue-10 q-py-sm q-mt-sm q-mx-sm"
             :to="'/edit/' + this.planId + '/' + this.planstateId"
           >
               Von hier bearbeiten
           </q-btn>
-          <ForkButton class="q-mt-sm" :planstateid="this.planstateId"></ForkButton>
+          <ForkButton class="q-mt-sm q-mx-sm" :planstateid="this.planstateId"></ForkButton>
         </div>
       </div>
     </q-item>
@@ -124,7 +119,14 @@ export default {
     numberOfNodes: Number,
     numberOfLabels: Number,
     isCurrentState: Boolean,
-    createdAt: String
+    createdAt: {
+      type: String,
+      default: undefined
+    },
+    actionsEnabled: {
+      type: Boolean,
+      default: true
+    }
     // colorthemeName: String
   },
   methods: {

@@ -38,7 +38,7 @@
     <div id="chart-timeline">
       <apexchart
         type="bar"
-        height="350"
+        height="500"
         ref="chart"
         :options="chartOptions"
         :series="series"
@@ -58,6 +58,9 @@ export default {
   props: {
     views: {
       type: Object
+    },
+    labels: {
+      type: Boolean
     }
   },
   data: function () {
@@ -69,22 +72,40 @@ export default {
         }
       ],
       chartOptions: {
+        plotOptions: {
+          bar: {
+            dataLabels: {
+              orientation: 'vertical',
+              position: 'bottom' // bottom/center/top
+            }
+          }
+        },
         chart: {
           background: '#0000',
           foreColor: '#fff',
           id: 'area-datetime',
           type: 'bar',
-          height: 350,
           zoom: {
             autoScaleYaxis: true
           }
         },
+        dataLabels: {
+          enabled: this.labels,
+          style: {
+            colors: ['#fff']
+          },
+          offsetY: 10 // play with this value
+        },
+        yaxis: [
+          {
+            seriesName: 'Views',
+            logarithmic: false,
+            tickAmount: 7
+          }
+        ],
         theme: {
           mode: 'dark',
           palette: 'palette2'
-        },
-        dataLabels: {
-          enabled: false
         },
         markers: {
           size: 0,
@@ -92,8 +113,7 @@ export default {
         },
         xaxis: {
           type: 'datetime',
-          // min: new Date('01 Mar 2012').getTime(),
-          tickAmount: 6
+          tickAmount: 5
         },
         fill: {
           colorFrom: '#00f',
