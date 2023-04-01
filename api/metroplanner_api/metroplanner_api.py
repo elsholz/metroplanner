@@ -70,6 +70,7 @@ def public_handler(route, method, event, context, env: environment.Environment):
 
 
 def lambda_handler(event, context):
+    started_at = datetime.now()
     try:
         print("Event:", event)
         print("Context:", context)
@@ -117,6 +118,7 @@ def lambda_handler(event, context):
                 {"code": str(res["statusCode"])}
                 | {
                     "timestamp": datetime.now().isoformat(),
+                    "execution_time": (datetime.now() - started_at).total_seconds() * 1000,
                     "route_key": route_key,
                     "source_ip": source_ip,
                     "user_agent": user_agent,

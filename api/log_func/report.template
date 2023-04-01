@@ -6,6 +6,8 @@ Requests in the last 24h:
     Client Error (4xx): $clienterror
     Server Error (5xx): $servererror
 
+Average Processing Time: $avgtime milliseconds
+
 Detailed Response Codes:
 $detailed
 
