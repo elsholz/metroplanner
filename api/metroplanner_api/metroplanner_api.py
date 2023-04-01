@@ -74,10 +74,9 @@ def lambda_handler(event, context):
         print("Event:", event)
         print("Context:", context)
 
-        print('Source:', event.get('source', None))
-        print(context.function_name)
-        env = context.function_name.removeprefix("MetroplannerFunc")
+        env = context.function_name.removeprefix("MetroplannerFunc").lower()
         print("env is:", env)
+        print('SOURCE:', event['source'], event['source'] == 'aws.scheduler')
 
         if not ENV.is_initialized:
             print("Initializing Environment")
