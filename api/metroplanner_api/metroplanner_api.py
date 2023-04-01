@@ -71,6 +71,9 @@ def public_handler(route, method, event, context, env: environment.Environment):
 
 def lambda_handler(event, context):
     try:
+        if event['source'] == 'aws.scheduler':
+            print("Scheduled invocation at", datetime.now().isoformat())
+            return
         print("Event:", event)
         print("Context:", context)
 
