@@ -80,7 +80,7 @@ def lambda_handler(event, context):
             print("Initializing Environment")
             ENV.initialize_environment(env)
 
-        if event['source'] == 'aws.scheduler':
+        if event.get('source', None) == 'aws.scheduler':
             print("Scheduled invocation at", datetime.now().isoformat())
             return
 

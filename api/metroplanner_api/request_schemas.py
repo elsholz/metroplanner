@@ -47,6 +47,32 @@ styling = {
     },
 }
 
+color_theme = {
+    "oneOf": [
+        {
+            "type": "string",
+            "enum": [
+                "colorful-dl",
+                "colorful-ld",
+                "glow",
+                "shine",
+                "pastels-dl",
+                "pastels-ld",
+                "dark-pastels",
+                "light-pastels",
+                "monochrome-dl",
+                "monochrome-ld",
+                "black-white",
+                "white-black",
+            ],
+        },
+        # {
+        #     "type": "objectId",
+        #     "description": "ID of the plan's color theme.",
+        # },
+    ]
+}
+
 point = {
     "type": "array",
     "items": {
@@ -149,7 +175,7 @@ post_plan_schema = {
             "oneOf": [
                 {
                     "type": "object",
-                    "description":"For forking a plan from a public plan, given its shortlink.",
+                    "description": "For forking a plan from a public plan, given its shortlink.",
                     "properties": {
                         "shortlink": {
                             "type": "string",
@@ -160,11 +186,9 @@ post_plan_schema = {
                 },
                 {
                     "type": "object",
-                    "description":"For forking a plan from one's own plan's planstate.",
+                    "description": "For forking a plan from one's own plan's planstate.",
                     "properties": {
-                        "planID": {
-                            "type": "string"
-                        },
+                        "planID": {"type": "string"},
                         "planstateID": {
                             "type": "string",
                         },
@@ -189,35 +213,14 @@ patch_plan_schema = {
             "type": "objectId",
             "description": "ID of the current planstate.",
         },
-        "currentColorTheme": {
-            "oneOf": [
-                {
-                    "type": "string",
-                    "enum": [
-                        "colorful-dl",
-                        "colorful-ld",
-                        "glow",
-                        "shine",
-                        "pastels-dl",
-                        "pastels-ld",
-                        "dark-pastels",
-                        "light-pastels",
-                        "monochrome-dl",
-                        "monochrome-ld",
-                        "black-white",
-                        "white-black",
-                    ],
-                },
-                # {
-                #     "type": "objectId",
-                #     "description": "ID of the plan's color theme.",
-                # },
-            ]
-        },
+        "currentColorTheme": color_theme,
     },
     "additionalProperties": False,
     "required": [],
 }
+
+
+
 
 post_planstate_schema = {
     "type": "object",
