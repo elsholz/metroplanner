@@ -473,6 +473,9 @@ class PrivateEndpoint(EndpointCollection):
                                     "numberOfLabels": 1,
                                 },
                             )
+                            if not planstate_details:
+                                print(f"Warning: Planstate details for planstateid {planstateid} not found.")
+                                continue
                             planstate_details["planstateid"] = str(planstateid)
                             print("Found planstate details:", planstate_details)
                             states.append(planstate_details)
