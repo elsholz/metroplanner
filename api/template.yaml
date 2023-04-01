@@ -94,11 +94,11 @@ Resources:
                 - sqs:SendMessage
               Resource: !GetAtt LogQueue.Arn
       Events: 
-        # FunctionWarmup:
-        #   Type: ScheduleV2
-        #   Properties:
-        #     # Periodaically trigger lambda
-        #     ScheduleExpression: "cron(/10 * * * ? *)"
+        FunctionWarmup:
+          Type: ScheduleV2
+          Properties:
+            # Trigger Lambda every 2 minutes to reuse container
+            ScheduleExpression: "cron(/2 * * * ? *)"
         # PUBLIC API
         # plans
         PublicGetPlan:
