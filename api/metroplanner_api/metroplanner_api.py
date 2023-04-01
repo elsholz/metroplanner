@@ -71,9 +71,6 @@ def public_handler(route, method, event, context, env: environment.Environment):
 
 def lambda_handler(event, context):
     try:
-        if event['source'] == 'aws.scheduler':
-            print("Scheduled invocation at", datetime.now().isoformat())
-            return
         print("Event:", event)
         print("Context:", context)
 
@@ -82,6 +79,10 @@ def lambda_handler(event, context):
         if not ENV.is_initialized:
             print("Initializing Environment")
             ENV.initialize_environment(request_context["stage"])
+
+        if event['source'] == 'aws.scheduler':
+            print("Scheduled invocation at", datetime.now().isoformat())
+            return
 
         route_key = event["routeKey"]
         method, route_path = route_key.split(" ")
