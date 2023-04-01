@@ -74,6 +74,8 @@ def lambda_handler(event, context):
         print("Event:", event)
         print("Context:", context)
 
+        print('Source:', event.get('source', None))
+        print(context.function_name)
         env = context.function_name.removeprefix("MetroplannerFunc")
         print("env is:", env)
 
