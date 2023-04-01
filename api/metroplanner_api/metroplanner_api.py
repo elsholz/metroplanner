@@ -74,15 +74,18 @@ def lambda_handler(event, context):
         print("Event:", event)
         print("Context:", context)
 
-        request_context = event["requestContext"]
+        env = context.function_name.removeprefix("MetroplannerFunc")
+        print("env is:", env)
 
         if not ENV.is_initialized:
             print("Initializing Environment")
-            ENV.initialize_environment(request_context["stage"])
+            ENV.initialize_environment(env)
 
         if event['source'] == 'aws.scheduler':
             print("Scheduled invocation at", datetime.now().isoformat())
             return
+
+        request_context = event["requestContext"]
 
         route_key = event["routeKey"]
         method, route_path = route_key.split(" ")
