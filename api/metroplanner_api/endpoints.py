@@ -459,6 +459,8 @@ class PrivateEndpoint(EndpointCollection):
                             plan_details["forkedFrom"] = str(forked_from)
                         if current_state := plan_details["currentState"]:
                             plan_details["currentState"] = str(current_state)
+                        if isinstance(current_colortheme:= plan_details["currentColorTheme"], ObjectId):
+                            plan_details["currentColorTheme"] = str(current_colortheme)
 
                         states = []
                         for planstateid in plan_details["history"]:
