@@ -11,6 +11,7 @@ from pymongo import ReturnDocument
 from bson.objectid import ObjectId
 import request_schemas
 
+
 def get_basic_plan_data():
     pass
 
@@ -459,7 +460,10 @@ class PrivateEndpoint(EndpointCollection):
                             plan_details["forkedFrom"] = str(forked_from)
                         if current_state := plan_details["currentState"]:
                             plan_details["currentState"] = str(current_state)
-                        if isinstance(current_colortheme:= plan_details["currentColorTheme"], ObjectId):
+                        if isinstance(
+                            current_colortheme := plan_details["currentColorTheme"],
+                            ObjectId,
+                        ):
                             plan_details["currentColorTheme"] = str(current_colortheme)
 
                         states = []
@@ -476,7 +480,9 @@ class PrivateEndpoint(EndpointCollection):
                                 },
                             )
                             if not planstate_details:
-                                print(f"Warning: Planstate details for planstateid {planstateid} not found.")
+                                print(
+                                    f"Warning: Planstate details for planstateid {planstateid} not found."
+                                )
                                 continue
                             planstate_details["planstateid"] = str(planstateid)
                             print("Found planstate details:", planstate_details)
@@ -612,7 +618,113 @@ class PrivateEndpoint(EndpointCollection):
                 self.sub = sub
 
             def __call__(self) -> Dict:
-                return responses.not_implemented_501()
+                try:
+                    data = json.loads(self.event["body"])
+                    jsonschema.validate(
+                        instance=data, schema=request_schemas.post_plan_schema
+                    )
+
+                    db = self.env.get_database()
+
+                    new_plan_data = {
+                        "planName": data["planName"],
+                        "planDescription": data["planName"],
+                        "forkedFrom": None,
+                        "deleted": None,
+                        "createdAt": (now := datetime.now().isoformat()),
+                        "lastModifiedAt": now,
+                        "likeCount": 0,
+                        "ownedBy": self.sub,
+                        "colorTheme": (theme := "colorful-dl"),
+                        "currentNumberOfEdges": 0,
+                        "currentNumberOfLines": 0,
+                        "currentNumberOfNodes": 0,
+                        "currentNumberOfLabels": 0,
+                    }
+
+                    if fork_from := data.get("forkFrom", None):
+                        if shortlink := fork_from.get("shortlink", None):
+                            link_data = db.links.find_one({"_id": shortlink})
+
+                            if link_data and link_data["active"]:
+                                planid = link_data["plan"]
+                            else:
+                                return responses.gone_410()
+                        else:
+                            planid = ObjectId(fork_from.get("planID", None))
+
+                        plan_details = db.plans.find_one(
+                            {
+                                "_id": planid,
+                            },
+                        )
+
+                        if plan_details:
+                            if shortlink or plan_details["ownedBy"] == self.sub:
+                                planstateid = (
+                                    ObjectId(fork_from["planstateID"])
+                                    if not shortlink
+                                    else plan_details["currentState"]
+                                )
+
+                                planstate = db.planstates.find_one(
+                                    {
+                                        "_id": planstateid,
+                                    },
+                                    {
+                                        "_id": 0,
+                                    },
+                                )
+
+
+                                if planstate:
+                                    insert_planstate_res = db.planstates.insert(planstate)
+                                    new_plan_data["currentNumberOfEdges"] = planstate["numberOfEdges"]
+                                    new_plan_data["currentNumberOfLines"] = planstate['numberOfLines']
+                                    new_plan_data["currentNumberOfNodes"] = planstate['numberOfNodes']
+                                    new_plan_data["currentNumberOfLabels"] = planstate['numberOfLabels']
+                                    new_plan_data["colorTheme"] = plan_details["colorTheme"]
+                                else:
+                                    return responses.gone_410()
+                            else:
+                                raise responses.unauthorized_401()
+                        else:
+                            return responses.gone_410()
+                    else:
+                        insert_planstate_res = db.planstates.insert(
+                            {
+                                "createdAt": now,
+                                "numberOfEdges": 0,
+                                "numberOfLines": 0,
+                                "numberOfNodes": 0,
+                                "numberOfLabels": 0,
+                                "nodes": {},
+                                "lines": [],
+                                "labels": {},
+                                "globalOffsetX": 0,
+                                "globalOffsetY": 0,
+                                "planHeight": 10,
+                                "planWidth": 10,
+                                "colorTheme": theme,
+                            }
+                        )
+
+                    new_plan_data["currentState"] = (
+                        new_planstateid := insert_planstate_res["_id"]
+                    )
+                    new_plan_data["history"] = [new_planstateid]
+
+                    insert_res = db.plans.insert_one(new_plan_data)
+                    print("After insertion, this is the result:", insert_res)
+
+                    return responses.created_201({'planid': str(insert_res['_id'])})
+
+                except jsonschema.ValidationError as e:
+                    print(e)
+                    return responses.bad_request_400()
+                except Exception as e:
+                    print("Operation failed", e)
+                    return responses.internal_server_error_500()
 
         class DeletePlan(EndpointMethod):
             def __init__(
@@ -729,7 +841,9 @@ class PrivateEndpoint(EndpointCollection):
                             }
 
                             if make_current:
-                                set_plan_data["currentState"] = (created_result.inserted_id,)
+                                set_plan_data["currentState"] = (
+                                    created_result.inserted_id,
+                                )
                                 set_plan_data["numberOfEdges"] = data["numberOfEdges"]
                                 set_plan_data["numberOfLines"] = data["numberOfLines"]
                                 set_plan_data["numberOfNodes"] = data["numberOfNodes"]
@@ -775,13 +889,12 @@ class PrivateEndpoint(EndpointCollection):
                     db = self.env.get_database()
                     plan_details = db.plans.find_one(
                         {"_id": ObjectId(planid)},
-                        {"_id": 0,
-                         "ownedBy": 1, "history": 1},
+                        {"_id": 0, "ownedBy": 1, "history": 1},
                     )
 
                     if plan_details:
-                        if plan_details['ownedBy'] == self.sub:
-                            if ObjectId(planstateid) in plan_details['history']:
+                        if plan_details["ownedBy"] == self.sub:
+                            if ObjectId(planstateid) in plan_details["history"]:
                                 planstate = db.planstates.find_one(
                                     {"_id": ObjectId(planstateid)},
                                     {"_id": 0},
@@ -791,17 +904,28 @@ class PrivateEndpoint(EndpointCollection):
                                     print("Found planstate with id", planstateid)
                                     return responses.ok_200(planstate)
                                 else:
-                                    print(f"Planstate with id {planstateid} not found", planstate)
+                                    print(
+                                        f"Planstate with id {planstateid} not found",
+                                        planstate,
+                                    )
                                     return responses.gone_410()
                             else:
-                                print('Requested Planstate not in plan history', planstateid, plan_details['history'])
+                                print(
+                                    "Requested Planstate not in plan history",
+                                    planstateid,
+                                    plan_details["history"],
+                                )
                                 return responses.gone_410()
                         else:
-                            print("ownedBy doesn't match sub", plan_details['ownedBy'], self.sub)
+                            print(
+                                "ownedBy doesn't match sub",
+                                plan_details["ownedBy"],
+                                self.sub,
+                            )
                             return responses.unauthorized_401()
                     else:
-                            print(f"Plan with id {planid} not found", plan_details)
-                            return responses.gone_410()
+                        print(f"Plan with id {planid} not found", plan_details)
+                        return responses.gone_410()
 
                 except Exception as e:
                     print("Exception during GET Planstate:", e)
