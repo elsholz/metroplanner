@@ -619,10 +619,12 @@ class PrivateEndpoint(EndpointCollection):
 
             def __call__(self) -> Dict:
                 try:
+                    print("Received request to create a new plan. Validating JSON data...")
                     data = json.loads(self.event["body"])
                     jsonschema.validate(
                         instance=data, schema=request_schemas.post_plan_schema
                     )
+                    print("Data successfully validated:", data)
 
                     db = self.env.get_database()
 
@@ -642,7 +644,10 @@ class PrivateEndpoint(EndpointCollection):
                         "currentNumberOfLabels": 0,
                     }
 
+                    print("initial data for new plan:", new_plan_data)
+
                     if fork_from := data.get("forkFrom", None):
+                        print("Plan is to be forked from", fork_from)
                         if shortlink := fork_from.get("shortlink", None):
                             link_data = db.links.find_one({"_id": shortlink})
 
@@ -691,6 +696,7 @@ class PrivateEndpoint(EndpointCollection):
                         else:
                             return responses.gone_410()
                     else:
+                        print("Creating plan from scratch")
                         insert_planstate_res = db.planstates.insert(
                             {
                                 "createdAt": now,
@@ -708,7 +714,7 @@ class PrivateEndpoint(EndpointCollection):
                                 "colorTheme": theme,
                             }
                         )
-
+                    print("Created plan, result:", insert_planstate_res)
                     new_plan_data["currentState"] = (
                         new_planstateid := insert_planstate_res["_id"]
                     )
