@@ -683,7 +683,7 @@ class PrivateEndpoint(EndpointCollection):
 
 
                                 if planstate:
-                                    insert_planstate_res = db.planstates.insert(planstate)
+                                    insert_planstate_res = db.planstates.insert_one(planstate)
                                     new_plan_data["currentNumberOfEdges"] = planstate["numberOfEdges"]
                                     new_plan_data["currentNumberOfLines"] = planstate['numberOfLines']
                                     new_plan_data["currentNumberOfNodes"] = planstate['numberOfNodes']
@@ -697,7 +697,7 @@ class PrivateEndpoint(EndpointCollection):
                             return responses.gone_410()
                     else:
                         print("Creating plan from scratch")
-                        insert_planstate_res = db.planstates.insert(
+                        insert_planstate_res = db.planstates.insert_one(
                             {
                                 "createdAt": now,
                                 "numberOfEdges": 0,
