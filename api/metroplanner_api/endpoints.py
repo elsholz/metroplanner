@@ -716,14 +716,14 @@ class PrivateEndpoint(EndpointCollection):
                         )
                     print("Created plan, result:", insert_planstate_res)
                     new_plan_data["currentState"] = (
-                        new_planstateid := insert_planstate_res["_id"]
+                        new_planstateid := insert_planstate_res.inserted_id
                     )
                     new_plan_data["history"] = [new_planstateid]
 
                     insert_res = db.plans.insert_one(new_plan_data)
                     print("After insertion, this is the result:", insert_res)
 
-                    return responses.created_201({'planid': str(insert_res.inserted_id)})
+                    return responses.created_201({'planId': str(insert_res.inserted_id)})
 
                 except jsonschema.ValidationError as e:
                     print(e)
