@@ -461,10 +461,10 @@ class PrivateEndpoint(EndpointCollection):
                         if current_state := plan_details["currentState"]:
                             plan_details["currentState"] = str(current_state)
                         if isinstance(
-                            current_colortheme := plan_details["currentColorTheme"],
+                            current_colortheme := plan_details["colorTheme"],
                             ObjectId,
                         ):
-                            plan_details["currentColorTheme"] = str(current_colortheme)
+                            plan_details["colorTheme"] = str(current_colortheme)
 
                         states = []
                         for planstateid in plan_details["history"]:

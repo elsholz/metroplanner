@@ -171,6 +171,7 @@ post_plan_schema = {
     "description": "Request content for creating a new plan, either from scratch or forked from a public shortlink or private planstate.",
     "properties": {
         **plan_basics,
+        "colorTheme": color_theme,
         "forkFrom": {
             "oneOf": [
                 {
@@ -200,7 +201,7 @@ post_plan_schema = {
         },
     },
     "additionalProperties": False,
-    "required": ["planName", "planDescription"],
+    "required": ["planName", "planDescription", "colorTheme"],
 }
 
 
@@ -209,11 +210,11 @@ patch_plan_schema = {
     "description": "Document containing a metro plans basic information, excluding state info.",
     "properties": {
         **plan_basics,
+        "colorTheme": color_theme,
         "currentState": {
             "type": "objectId",
             "description": "ID of the current planstate.",
         },
-        "currentColorTheme": color_theme,
     },
     "additionalProperties": False,
     "required": [],
