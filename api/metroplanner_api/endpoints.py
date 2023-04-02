@@ -723,7 +723,7 @@ class PrivateEndpoint(EndpointCollection):
                     insert_res = db.plans.insert_one(new_plan_data)
                     print("After insertion, this is the result:", insert_res)
 
-                    return responses.created_201({'planid': str(insert_res['_id'])})
+                    return responses.created_201({'planid': str(insert_res.inserted_id)})
 
                 except jsonschema.ValidationError as e:
                     print(e)
