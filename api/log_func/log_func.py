@@ -53,11 +53,11 @@ def lambda_handler(event, context):
                 res.extend(response_codes[code])
         return len(res)
 
-    successful_times = [c['execution_time'] for c in response_codes if code.startswith('2')]
+    successful_times = [c['execution_time'] for c in response_codes if c.startswith('2')]
     report = Template(open("report.template").read()).substitute(
         {
             "app": "Metroplanner",
-            "avgtime": sum(successful_times) / len(successful_times),
+            "avgtime": sum(successful_times) / (len(successful_times) or 1),
             "env": env.upper(),
             "total": len(list(x for l in response_codes.values() for x in l)),
             "successful": get_codes_starting_with('2'),
