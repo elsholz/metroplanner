@@ -5,8 +5,8 @@ def ok_200(body="OK"):
         return {"statusCode": 200, "body": "OK"}
     else:
         return {"statusCode": 200, "body": dumps(body, indent=4)}
-def created_201():
-    return {"statusCode": 201, "body": "Created"}
+def created_201(body={}):
+    return {"statusCode": 201, "body": dumps(body, indent=4)}
 def no_content_204():
     return {"statusCode": 204, "body": "No Content"}
 
