@@ -10,7 +10,9 @@ import json
 from pymongo import ReturnDocument
 from bson.objectid import ObjectId
 import request_schemas
+import random
 
+Σ = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ3456789-"
 
 def get_basic_plan_data():
     pass
@@ -723,7 +725,14 @@ class PrivateEndpoint(EndpointCollection):
                     insert_res = db.plans.insert_one(new_plan_data)
                     print("After insertion, this is the result:", insert_res)
 
-                    return responses.created_201({'planId': str(insert_res.inserted_id)})
+                    new_plan_id = insert_res.inserted_id
+                    db.links.insert_one({
+                        '_id': ''.join([random.choice(Σ) for _ in range(8)]),
+                        'plan': new_plan_id,
+                        'active': True,
+                    })
+
+                    return responses.created_201({'planId': str(new_plan_id)})
 
                 except jsonschema.ValidationError as e:
                     print(e)
