@@ -8,14 +8,38 @@ export const usePlanEditorStore = defineStore('editorStore', {
   state: function () {
     const userStore = useUserStore()
     const planDetails = ref({})
-    const planStates = ref({})
+    const planState = ref(undefined)
+    const selectedNodeIDs = ref([])
+    const nodes = ref({})
+    const labels = ref({})
+    const selectedLineIDs = ref(undefined)
+    const selectedLabelIDs = ref(undefined)
+    const planWidth = ref(0)
+    const planHeight = ref(0)
+    const globalOffsetX = ref(0)
+    const globalOffsetY = ref(0)
+    const coordinateScalar = ref(15)
+    const searchTerm = ref('')
+    const contextMenuOpen = ref(false)
+    const lines = ref([])
 
     return {
-    // Planstates by planstateId
-      planStates,
-      // Plan Details by planId
+      planState,
       planDetails,
-      userStore
+      userStore,
+      selectedLabelIDs,
+      selectedLineIDs,
+      selectedNodeIDs,
+      planWidth,
+      planHeight,
+      globalOffsetX,
+      globalOffsetY,
+      nodes,
+      lines,
+      labels,
+      coordinateScalar,
+      searchTerm,
+      contextMenuOpen
     }
   },
 
@@ -26,40 +50,89 @@ export const usePlanEditorStore = defineStore('editorStore', {
       const userStore = useUserStore()
       const token = await userStore.auth.getAccessTokenSilently()
       console.log('Got token')
-      await axios.get('/api/_plans/' + planid, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then((response) => {
-        console.log('Received plan details: ', response.data)
-        console.log('THis is this:', this)
-        this.planDetails[planid] = response.data
-      })
+      await axios
+        .get('/api/_plans/' + planid, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          console.log('Received plan details: ', response.data)
+          this.planDetails = response.data
+        })
     },
-    loadPlanState: async function (planstateid) {
-      console.log('Editor load planstate called for planstateid', planstateid)
+
+    loadPlanState: async function (planid, planstateid) {
+      console.log(
+        'Editor load planstate called for planid, planstateid',
+        planid,
+        planstateid
+      )
       const userStore = useUserStore()
       const token = await userStore.auth.getAccessTokenSilently()
 
-      await axios.get('/api/_planstates/' + planstateid, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-      ).then((response) => {
-        console.log('Received planstate: ', response.data)
-        this.planStates[planstateid] = response.data
-      })
+      await axios
+        .get('/api/_plans/' + planid + '/_planstates/' + planstateid, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        .then((response) => {
+          console.log('Received planstate: ', response.data)
+          this.planState = response.data
+          this.planHeight = this.planState.planHeight
+          this.planWidth = this.planState.planWidth
+          this.globalOffsetX = this.planState.globalOffsetX
+          this.globalOffsetY = this.planState.globalOffsetY
+          this.nodes = this.planState.nodes
+          this.lines = this.planState.lines
+          for (const k of Object.keys(this.nodes)) {
+            const [x, y] = this.nodes[k].location
+
+            this.nodes[k].marker.diagonalStretch = (this.nodes[k].marker.sizeFactor > 1) ?? false
+            delete this.nodes[k].marker.sizeFactor
+
+            this.nodes[k].locationX = x
+            this.nodes[k].locationY = y
+            this.nodes[k].labelVisible = true
+            this.nodes[k].nodeVisible = true
+
+            if (!(typeof this.nodes[k].label === 'object')) {
+              const labelKey = this.nodes[k].label
+              try {
+                delete this.planState.labels[labelKey]?.anchor?.node
+                if (
+                  Object.keys(this.planState.labels[labelKey].anchor).length ===
+                  0
+                ) {
+                  delete this.planState.labels[labelKey]?.anchor
+                }
+              } catch {}
+              this.nodes[k].label = this.planState.labels[labelKey]
+              delete this.planState.labels[labelKey]
+            }
+            if (this.nodes[k].label === undefined) {
+              this.nodes[k].label = {
+                class: 'left',
+                text: k
+              }
+            }
+            this.nodes[k].label.shiftX = this.nodes[k].label.anchor?.shiftX ?? 0
+            this.nodes[k].label.shiftY = this.nodes[k].label.anchor?.shiftY ?? 0
+          }
+          this.labels = this.planState.labels
+          this.selectedNodeIDs = []
+        })
     },
 
-    savePlanState: async function (planstateid, publish) {
+    savePlanState: async function (publish) {
       const { getAccessTokenSilently } = useAuth0()
       const token = await getAccessTokenSilently()
 
-      if (this.planstate[planstateid] !== undefined) {
+      if (this.planState !== undefined) {
         console.log(
           'Editor save planstate called for current planstate: ',
-          this.planstate
+          this.planState
         )
         await axios
           .post('/api/_planstates', this.planstate, {
@@ -71,6 +144,19 @@ export const usePlanEditorStore = defineStore('editorStore', {
             return response
           })
       } else console.log('Error saving planstate')
+    },
+
+    createNewPlan: async function (data) {
+      console.log('Create plan called with data', data)
+      const userStore = useUserStore()
+      const token = await userStore.auth.getAccessTokenSilently()
+      return await axios.post('/api/_plans', data, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      /* .then((response) => {
+          console.log('Plan created successfully: ', response.data.planId)
+          return response
+        }) */
     }
   }
 })

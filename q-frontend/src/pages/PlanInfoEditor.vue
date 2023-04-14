@@ -1,15 +1,13 @@
 <template>
-  <q-page
-    class="doc-container flex justify-center bg-primary q-pb-xl text-white"
-    dark
-  >
-    <div
-      v-if="this.planDetailsLoaded && !this.saving"
-      class="row justify-center"
-      style="width: 100%"
-    >
-      <div class="column col-xs-12 col-sm-10 col-md-8 q-px-sm">
-        <div class="row q-my-lg">
+  <q-page class="doc-container flex justify-center bg-primary q-pb-xl text-white" dark>
+    <div class="row justify-left" style="width: 100%">
+      <q-btn dark icon="keyboard_arrow_left" class="q-ma-md" color="negative" no-caps to="/profile">
+        zurück
+      </q-btn>
+    </div>
+    <div v-if="this.planDetailsLoaded && !this.saving" class="row justify-center" style="width: 100%">
+      <div class="column col-12 q-px-sm">
+        <div class="row q-mb-md">
           <div class="column items-center justify-center col-12 text-white">
             <div class="text-h4 text-center q-mt-lg">Plandetails</div>
             <hr color="white" width="200px;" />
@@ -20,18 +18,10 @@
             <div class="column col-6 text-h6">Planname:</div>
             <div class="column col-6 text-white">
               <div class="q-my-sm">
-                <q-input
-                  :oninput="changePlanInfo"
-                  dark
-                  color="white"
-                  outlined
-                  v-model="planName"
-                  input-class="text-h6"
-                  input-style="text-align: center"
-                  :rules="[
+                <q-input :oninput="changePlanInfo" dark color="white" outlined v-model="planName" input-class="text-h6"
+                  input-style="text-align: center" :rules="[
                     (val) => val.length <= 30 || 'Maximal 30 Zeichen erlaubt',
-                  ]"
-                />
+                  ]" />
               </div>
             </div>
           </div>
@@ -41,76 +31,46 @@
             <div class="column col-6 text-h6">Planbeschreibung:</div>
             <div class="column col-6 text-white">
               <div class="q-my-sm">
-                <q-input
-                  :oninput="changePlanInfo"
-                  dark
-                  color="white"
-                  outlined
-                  v-model="planDescription"
-                  autogrow
-                  input-class="text-body1"
-                  input-style="text-align: left"
-                  :rules="[
+                <q-input :oninput="changePlanInfo" dark color="white" outlined v-model="planDescription" autogrow
+                  input-class="text-body1" input-style="text-align: left" :rules="[
                     (val) => val.length <= 250 || 'Maximal 250 Zeichen erlaubt',
-                  ]"
-                />
+                  ]" />
               </div>
             </div>
           </div>
         </div>
-        <div
-          class="row items-center justify-center text-body1"
-          v-if="planInfoChanged"
-        >
-          <div
-            class="column col-xs-6 col-sm-4 text-white items-center text-center"
-          >
-            <q-btn
-              dark
-              color="green"
-              v-if="planInfoChanged"
-              animate
-              @click="savePlanInfo"
-            >
+        <div class="row items-center justify-center text-body1" v-if="planInfoChanged">
+          <div class="column col-xs-6 col-sm-4 text-white items-center text-center">
+            <q-btn dark color="green" v-if="planInfoChanged" animate @click="savePlanInfo">
               <div class="text-white text-body1">Änderungen speichern</div>
             </q-btn>
           </div>
         </div>
 
         <div class="row items-center justify-center text-body1">
-          <div
-            class="column col-xs-6 col-sm-4 text-white items-center text-center"
-          >
+          <div class="column col-xs-6 col-sm-4 text-white items-center text-center">
             <q-icon name="clear_all" size="md" />
             Linien: {{ currentNumberOfLines || 0 }}
           </div>
-          <div
-            class="column col-xs-6 col-sm-4 text-white items-center text-center"
-          >
+          <div class="column col-xs-6 col-sm-4 text-white items-center text-center">
             <q-icon name="commit" size="md" />
             Haltestellen: {{ currentNumberOfNodes || 0 }}
           </div>
         </div>
 
         <div class="row items-center justify-center text-body1">
-          <div
-            class="column col-xs-6 col-sm-4 text-white items-center text-center"
-          >
+          <div class="column col-xs-6 col-sm-4 text-white items-center text-center">
             <q-icon name="polyline" size="md" />
             Verbindungen: {{ currentNumberOfEdges || 0 }}
           </div>
-          <div
-            class="column col-xs-6 col-sm-4 text-white items-center text-center no-wrap"
-          >
+          <div class="column col-xs-6 col-sm-4 text-white items-center text-center no-wrap">
             <q-icon name="text_fields" size="md" />
             Beschriftungen: {{ currentNumberOfLabels || 0 }}
           </div>
         </div>
 
         <div class="row items-center justify-center text-body1">
-          <div
-            class="column col-12 text-white items-center text-center q-mt-lg q-mb-xl"
-          >
+          <div class="column col-12 text-white items-center text-center q-mt-lg q-mb-xl">
             <div class="q-mb-xs">Zuletzt bearbeitet:</div>
             <div>
               <q-icon name="today" size="md" class="q-mx-sm q-my-sm" />{{
@@ -132,18 +92,13 @@
               <hr color="white" width="200px;" />
             </div>
 
-            <div
-              v-for="link in this.shortlinks"
-              :key="link"
-              class="row justify-center"
-            >
+            <div v-for="link in this.shortlinks" :key="link" class="row justify-center">
               <q-btn flat no-caps :to="'/p/' + link._id">
                 <div class="text-h6" style="font-family: monospace">
-                  <span class="text-weight-thin"
-                    >{{ this.windowOrigin }}/p/</span
-                  ><span class="text-bold" style="text-decoration: underline">{{
-                    link._id
-                  }}</span>
+                  <span class="text-weight-thin">{{ this.windowOrigin }}/p/</span><span class="text-bold"
+                    style="text-decoration: underline">{{
+                      link._id
+                    }}</span>
                 </div>
               </q-btn>
             </div>
@@ -164,18 +119,9 @@
               </div>
             </div>
 
-            <div class="q-my-md"
-                style="border: 2px solid #333; border-radius: 10px;"
-            >
-              <q-tabs
-                v-model="tab"
-                dense
-                class="text-white"
-                active-color="secondary"
-                indicator-color="secondary"
-                align="justify"
-                narrow-indicator
-              >
+            <div class="q-my-md" style="border: 2px solid #333; border-radius: 10px" v-if="views">
+              <q-tabs v-model="tab" dense class="text-white" active-color="secondary" indicator-color="secondary"
+                align="justify" narrow-indicator>
                 <q-tab name="days" label="Aufrufe pro Tag" />
                 <q-tab name="hours" dark label="Aufrufe pro Stunde" />
               </q-tabs>
@@ -197,8 +143,8 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="column col-12 text-white">
+        <div class="row justify-center">
+          <div class="column col-12 col-md-10 col-lg-8 text-white">
             <div class="row justify-center" style="width: 100%">
               <div class="text-h4">Historie</div>
             </div>
@@ -206,26 +152,12 @@
               <hr color="white" width="200px;" />
             </div>
             <div class="row justify-center" style="width: 100%">
-              <q-list
-                padding
-                separator
-                class="text-white"
-                style="width: 100%"
-                v-if="planstates"
-              >
-                <PlanstateListItem
-                  v-for="planstate of planstates.slice().reverse()"
-                  :key="planstate"
-                  :planId="this.planId"
-                  :planstateId="planstate.planstateid"
-                  :numberOfEdges="planstate.numberOfEdges"
-                  :numberOfNodes="planstate.numberOfNodes"
-                  :numberOfLines="planstate.numberOfLines"
-                  :numberOfLabels="planstate.numberOfLabels"
-                  :isCurrentState="planstate.planstateid === currentState"
-                  :createdAt="planstate.createdAt"
-                  style="width: 100%"
-                >
+              <q-list padding separator class="text-white" style="width: 100%" v-if="planstates">
+                <PlanstateListItem v-for="planstate of planstates.slice().reverse()" :key="planstate"
+                  :planId="this.planId" :planstateId="planstate.planstateid" :numberOfEdges="planstate.numberOfEdges"
+                  :numberOfNodes="planstate.numberOfNodes" :numberOfLines="planstate.numberOfLines"
+                  :numberOfLabels="planstate.numberOfLabels" :isCurrentState="planstate.planstateid === currentState"
+                  :createdAt="planstate.createdAt" style="width: 100%">
                 </PlanstateListItem>
               </q-list>
               <div v-else>
@@ -237,26 +169,12 @@
       </div>
     </div>
     <div v-else-if="this.saving">
-      <q-inner-loading
-        :showing="true"
-        label="Daten werden gespeichert…"
-        label-class="text-green"
-        class="bg-dark"
-        label-style="font-size: 1.5em"
-        color="white"
-        size="7em"
-      />
+      <q-inner-loading :showing="true" label="Daten werden gespeichert…" label-class="text-green" class="bg-dark"
+        label-style="font-size: 1.5em" color="white" size="7em" />
     </div>
     <div v-else>
-      <q-inner-loading
-        :showing="true"
-        :label="planName || 'Planübersicht wird geladen'"
-        label-class="text-white"
-        class="bg-dark"
-        label-style="font-size: 1.5em"
-        color="white"
-        size="7em"
-      />
+      <q-inner-loading :showing="true" :label="planName || 'Planübersicht wird geladen'" label-class="text-white"
+        class="bg-dark" label-style="font-size: 1.5em" color="white" size="7em" />
     </div>
   </q-page>
 </template>
@@ -304,8 +222,7 @@ export default {
     this.planId = this.$route.params.planid
 
     await this.planEditorStore.loadPlanDetails(this.planId)
-    const planDetails = this.planEditorStore.planDetails[this.planId]
-    this.planDetailsLoaded = true
+    const planDetails = this.planEditorStore.planDetails
 
     this.currentNumberOfNodes = planDetails.currentNumberOfNodes
     this.currentNumberOfLines = planDetails.currentNumberOfLines
@@ -318,13 +235,9 @@ export default {
     this.planstates = planDetails.history
     this.shortlinks = planDetails.shortlinks
     this.shortlinks[0].active = true
-    const views = planDetails.shortlinks[0].stats.views
-    this.totalViewCount = planDetails.shortlinks[0].stats.totalCount
+    const views = planDetails.shortlinks[0]?.stats?.views
+    this.totalViewCount = planDetails.shortlinks[0]?.stats?.totalCount ?? 0
 
-    this.views = {
-      daily: [],
-      hourly: []
-    }
     const viewsDaily = {}
     const viewsHourly = {}
 
@@ -350,6 +263,13 @@ export default {
       viewsDaily[dayTimestamp] += count
       viewsHourly[hourTimestamp] = count
     }
+
+    this.views = Object.keys(viewsDaily).length ? {
+      daily: [],
+      hourly: []
+    }
+      : undefined
+
     for (const [timestamp, count] of Object.entries(viewsDaily)) {
       this.views.daily.push([parseInt(timestamp), count])
     }
@@ -357,6 +277,7 @@ export default {
       this.views.hourly.push([parseInt(timestamp), count])
     }
     console.log('Views:', this.views)
+    this.planDetailsLoaded = true
   },
   components: { PlanstateListItem, ChartComponent }
 }

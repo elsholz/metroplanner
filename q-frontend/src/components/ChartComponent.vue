@@ -1,40 +1,5 @@
 <template>
   <div id="chart">
-    <!--
-        <div class="toolbar">
-          <q-btn id="one_month"
-              @click="updateData('one_month')" :class="{active: selection==='one_month'}"
-              >
-            1M
-          </q-btn>
-
-          <button id="six_months"
-              @click="updateData('six_months')" :class="{active: selection==='six_months'}"
-              >
-            6M
-          </button>
-
-          <button id="one_year"
-
-              @click="updateData('one_year')" :class="{active: selection==='one_year'}"
-              >
-            1Y
-          </button>
-
-          <button id="ytd"
-              @click="updateData('ytd')" :class="{active: selection==='ytd'}"
-              >
-            YTD
-          </button>
-
-          <button id="all"
-              @click="updateData('all')" :class="{active: selection==='all'}"
-              >
-            ALL
-          </button>
-        </div>
-    -->
-
     <div id="chart-timeline">
       <apexchart
         type="bar"

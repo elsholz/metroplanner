@@ -6,8 +6,9 @@ export default boot(({ app }) => {
   axiosRetry(axios, {
     retries: 5,
     retryDelay: (retryCount) => {
-      console.log('Retry number ' + retryCount)
-      return retryCount * 1000
+      const delay = retryCount * 1000 + Math.random() * 1000 - 1000
+      console.log('Retry number ' + retryCount, ' waiting ', delay, ' milliseconds')
+      return delay
     },
     retryCondition: (error) => {
       return error.response.status === 503

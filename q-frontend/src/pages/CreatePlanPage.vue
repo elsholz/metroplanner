@@ -4,7 +4,7 @@
     padding
     dark
   >
-    <div class="row justify-center" style="width: 100%" v-if="this.loaded">
+    <div class="row justify-center" style="width: 100%" v-if="this.loaded && !this.creating">
       <div class="column col-xs-12 col-sm-10 col-md-8 q-px-sm">
         <div class="row q-my-lg">
           <div class="column items-center justify-center col-12 text-white">
@@ -56,8 +56,9 @@
 
         <div class="row items-center justify-center">
           <div class="column col-xs-12 col-sm-6">
-            <div class="text-h6 text-center q-mt-lg">Initialier Planzustand</div>
+            <div class="text-h6 text-center q-mt-lg">Anfänglicher Planinhalt</div>
             <hr color="white" width="200px;" />
+            <div class="text-body1 text-center text-italic q-mt-lg" v-if="!this.forked">Leer</div>
             <PlanstateListItem
               :planId="this.planId || 0"
               :planstateId="false"
@@ -68,6 +69,7 @@
               :isCurrentState="false"
               :actionsEnabled="false"
               style="width: 100%"
+              v-else
             >
             </PlanstateListItem>
           </div>
@@ -81,6 +83,7 @@
               glossy
               class="text-body1"
               icon-right="check"
+              @click="createPlan()"
             >
               Plan erstellen
             </q-btn>
@@ -116,10 +119,21 @@
         </div>-->
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="this.creating">
       <q-inner-loading
         :showing="true"
-        :label="planName || 'Daten werden geladen'"
+        label="Plan wird erstellt..."
+        label-class="text-green text-italic"
+        class="bg-dark"
+        label-style="font-size: 1.5em"
+        color="white"
+        size="7em"
+      />
+    </div>
+<div v-else>
+      <q-inner-loading
+        :showing="true"
+        label="Daten werden geladen"
         label-class="text-white"
         class="bg-dark"
         label-style="font-size: 1.5em"
@@ -133,21 +147,75 @@
 <script>
 import PlanstateListItem from 'src/components/PlanstateListItem.vue'
 import { ref } from 'vue'
+import { usePlanEditorStore } from 'src/stores/editor_store.js'
+import { usePlanViewerStore } from 'src/stores/viewer_store'
 
 export default {
   name: 'CreatePlanPage',
   setup () {
     return {
-      loaded: ref(true),
+      loaded: ref(false),
+      creating: ref(false),
       planName: ref('Neuer Plan'),
-      planDescription: ref('Beschreibung des neuen Plans.')
+      planDescription: ref('Beschreibung des neuen Plans.'),
+      currentNumberOfNodes: ref(undefined),
+      currentNumberOfLines: ref(undefined),
+      currentNumberOfLabels: ref(undefined),
+      currentNumberOfEdges: ref(undefined),
+      colorTheme: ref('colorful-dl')
     }
+  },
+  created: async function () {
+    if (this.forked) {
+      let planDetails
+      if (this.$route?.params?.planstateid) {
+        const planstateid = this.$route.params.planstateid
+        const planid = this.$route.params.planid
+        const planEditorStore = usePlanEditorStore()
+        await planEditorStore.loadPlanState(planid, planstateid)
+        planDetails = planEditorStore.planStates[planid][planstateid]
+      } else {
+        const shortlink = this.$route.params.shortlink
+        const planViewerStore = usePlanViewerStore()
+        planDetails = planViewerStore.getPlanState(shortlink)
+      }
+      this.currentNumberOfNodes = planDetails?.currentNumberOfNodes
+      this.currentNumberOfLines = planDetails?.currentNumberOfLines
+      this.currentNumberOfLabels = planDetails?.currentNumberOfLabels
+      this.currentNumberOfEdges = planDetails?.currentNumberOfEdges
+    }
+    this.loaded = true
   },
   computed: {
     forked: function () {
       return !!(
         this.$route.params?.planstateid || this.$route.params?.shortlink
       )
+    }
+  },
+  methods: {
+    createPlan: async function () {
+      console.log('Creating plan...')
+      this.creating = true
+
+      const planEditorStore = usePlanEditorStore()
+      await planEditorStore.createNewPlan({
+        planName: this.planName,
+        planDescription: this.planDescription,
+        colorTheme: this.colorTheme,
+        forkFrom: this.forked ? {
+          planstateID: this.$route.params.planstateid,
+          planID: this.$route.params.planid,
+          shortlink: this.$route.params.shortlink
+        } : undefined
+      }).then((response) => {
+        console.log('Response: ', response)
+        const planId = response.data.planId
+
+        this.$router.push({
+          path: `/edit/${planId}`
+        })
+      })
     }
   },
   components: { PlanstateListItem }

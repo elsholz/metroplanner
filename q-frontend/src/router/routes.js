@@ -25,7 +25,7 @@ const routes = [
   },
   {
     path: '/create',
-    alias: ['/p/:shortlink/fork', '/edit/:planid/fork'],
+    alias: ['/p/:shortlink/fork', '/edit/:planid/:planstateid/fork'],
     component: () => import('src/layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('src/pages/CreatePlanPage.vue') }
@@ -35,7 +35,7 @@ const routes = [
     path: '/edit/:planid/:planstateid',
     component: () => import('src/layouts/EditorLayout.vue'),
     children: [
-      { path: '', component: () => import('src/pages/PlanStateEditor.vue') }
+      { path: '', component: () => import('src/pages/EditorCanvas.vue') }
     ]
   },
   {

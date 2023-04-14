@@ -17,11 +17,12 @@ export default {
   },
   props: {
     planstateid: String,
+    planid: String,
     shortlink: String
   },
   computed: {
     linkTo: function () {
-      return this.planstateid ? `/edit/${this.planstateid}/fork` : `/p/${this.shortlink}/fork`
+      return this.planid ? `/edit/${this.planid}/${this.planstateid}/fork` : `/p/${this.shortlink}/fork`
     }
   }
 }

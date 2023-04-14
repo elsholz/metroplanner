@@ -96,7 +96,7 @@
           >
               Von hier bearbeiten
           </q-btn>
-          <ForkButton class="q-mt-sm q-mx-sm" :planstateid="this.planstateId"></ForkButton>
+          <ForkButton class="q-mt-sm q-mx-sm" :planid="this.planId" :planstateid="this.planstateId"></ForkButton>
         </div>
       </div>
     </q-item>
