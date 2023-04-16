@@ -2,37 +2,15 @@
   <div class="row q-my-sm justify-center text-h6 absolute-top">
     <div class="col col-grow q-px-sm">Kontext-Menü: Haltestellen</div>
     <div class="col col-shrink">
-      <q-btn
-        icon="add"
-        dense
-        size="md"
-        outline
-        color="green"
-        @click="createNode"
-      >
+      <q-btn class="q-mr-md" icon="add" dense size="md" outline color="green" @click="createNode">
         <q-tooltip class="text-body1 no-wrap ">
           Neue Haltestelle
         </q-tooltip>
       </q-btn>
-      <q-btn
-        icon="expand_less"
-        dense
-        size="md"
-        class="q-mx-md"
-        outline
-        @click="collapseAll"
-      >
+      <!--<q-btn icon="expand_less" dense size="md" class="q-mx-md" outline @click="collapseAll">
         <q-tooltip class="text-body1 no-wrap">Alles einklappen </q-tooltip>
-      </q-btn>
-      <q-btn
-        icon="delete"
-        dense
-        size="md"
-        outline
-        color="red"
-        class="q-mr-md"
-        @click="deleteEverything"
-      >
+      </q-btn>-->
+      <q-btn icon="delete" dense size="md" outline color="red" class="q-mr-md" @click="deleteEverything">
         <q-tooltip class="text-body1 no-wrap ">Alles löschen </q-tooltip>
       </q-btn>
     </div>
@@ -40,35 +18,19 @@
       <div class="text-h6">Auswahl bearbeiten</div>
       <div class="row items-center no-wrap">
         <div class="col col-3">
-          <q-btn
-            icon="layers_clear"
-            @click.left="emptySelection"
-            no-caps
-            color="orange"
-            >Auswahl leeren</q-btn
-          >
+          <q-btn icon="layers_clear" @click.left="emptySelection" no-caps color="orange">Auswahl leeren</q-btn>
         </div>
         <div class="col col-3">
-          <q-btn icon="content_copy" @click.left="duplicateSelection" no-caps
-            >Duplizieren</q-btn
-          >
+          <q-btn icon="content_copy" @click.left="duplicateSelection" no-caps>Duplizieren</q-btn>
         </div>
         <div class="col col-3">
-          <q-btn icon="polyline" no-caps
-            >Verbinden
+          <q-btn icon="polyline" no-caps>Verbinden
             <q-menu> Test </q-menu>
           </q-btn>
         </div>
         <div class="col col-grow"></div>
         <div class="col col-2">
-          <q-btn
-            icon="delete"
-            no-caps
-            color="red"
-            round
-            size="md"
-            @click.left="deleteSelection"
-          >
+          <q-btn icon="delete" no-caps color="red" round size="md" @click.left="deleteSelection">
           </q-btn>
         </div>
       </div>
@@ -78,13 +40,11 @@
       </template>-->
     </template>
   </div>
-  <q-scroll-area
-    :style="`
-      height: calc(100% - 150px);
-      margin-top: 150px;
-      border-right: 1px solid #ddd;
-    `"
-  >
+  <q-scroll-area :style="`
+          height: calc(100% - ${selectedNodeIDs.length ? 170 : 50}px);
+          margin-top: ${selectedNodeIDs.length ? 170:50}px;
+          border-right: 1px solid #ddd;
+        `">
     <q-list dark class="text-body1 text-white">
       <q-item class="q-mx-sm">
         <q-item-section>
@@ -93,13 +53,7 @@
               <div class="text-h6">Filter:</div>
             </div>
             <div class="col col-10">
-              <q-input
-                v-model="searchTerm"
-                dense
-                clearable
-                color="white"
-                outlined
-              >
+              <q-input debounce v-model="searchTerm" dense clearable color="white" outlined>
               </q-input>
             </div>
           </div>
@@ -126,6 +80,7 @@
 <script>
 import { usePlanEditorStore } from 'src/stores/editor_store'
 import { storeToRefs } from 'pinia'
+// import { toRefs } from 'vue'
 import NodeListItem from './NodeListItem.vue'
 
 const planEditorStore = usePlanEditorStore()
@@ -168,6 +123,12 @@ export default {
     emptySelection: function () {
       this.selectedNodeIDs = []
     },
+    //     collapseAll: function () {
+    //       for (const nodeid of this.nodes.keys()) {
+    //         const reactiveNode = toRefs(this.nodes[nodeid])
+    //         reactiveNode.expanded = false
+    //       }
+    //     },
     deleteEverything: function () {
       if (
         window.confirm(
@@ -178,7 +139,7 @@ export default {
         this.planState.nodes = {}
       }
     },
-    duplicateSelection: function () {}
+    duplicateSelection: function () { }
   },
   components: { NodeListItem }
 }

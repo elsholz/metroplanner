@@ -22,6 +22,7 @@ export const usePlanEditorStore = defineStore('editorStore', {
     const searchTerm = ref('')
     const contextMenuOpen = ref(false)
     const lines = ref([])
+    const editorMode = ref('viewer')
 
     return {
       planState,
@@ -39,7 +40,8 @@ export const usePlanEditorStore = defineStore('editorStore', {
       labels,
       coordinateScalar,
       searchTerm,
-      contextMenuOpen
+      contextMenuOpen,
+      editorMode
     }
   },
 
@@ -85,7 +87,19 @@ export const usePlanEditorStore = defineStore('editorStore', {
           this.globalOffsetX = this.planState.globalOffsetX
           this.globalOffsetY = this.planState.globalOffsetY
           this.nodes = this.planState.nodes
-          this.lines = this.planState.lines
+
+          if (Array.isArray(this.planState.lines)) {
+            const obj = {}
+            for (const line of this.planState.lines) {
+              obj[line.symbol] = line
+              delete line.symbol
+            }
+            this.lines = obj
+          } else {
+            this.lines = this.planState.lines
+          }
+          delete this.planState.lines
+
           for (const k of Object.keys(this.nodes)) {
             const [x, y] = this.nodes[k].location
 
@@ -96,6 +110,8 @@ export const usePlanEditorStore = defineStore('editorStore', {
             this.nodes[k].locationY = y
             this.nodes[k].labelVisible = true
             this.nodes[k].nodeVisible = true
+            this.nodes[k].newNodeID = k
+            this.nodes[k].selected = false
 
             if (!(typeof this.nodes[k].label === 'object')) {
               const labelKey = this.nodes[k].label
@@ -122,6 +138,7 @@ export const usePlanEditorStore = defineStore('editorStore', {
           }
           this.labels = this.planState.labels
           this.selectedNodeIDs = []
+          delete this.planState.nodes
         })
     },
 

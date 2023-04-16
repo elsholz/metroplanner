@@ -27,7 +27,7 @@
 <script>
 import { storeToRefs } from 'pinia'
 import { usePlanEditorStore } from 'src/stores/editor_store'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 
 const planEditorStore = usePlanEditorStore()
 
@@ -55,17 +55,9 @@ export default {
     this.fromNode = this.nodes[this.from.node] ?? this.from
     this.toNode = this.nodes[this.to.node] ?? this.to
 
-    if (this.fromNode.locationX === undefined || this.toNode.locationX === undefined) {
-      console.log('FROM Node, TO Node', this.fromNode, this.toNode)
-    }
-
-    // const from = this.getConnectionPoint({ ...this.from, node: this.fromNode })
-    // const to = this.getConnectionPoint({ ...this.to, node: this.toNode })
-
-    // const dx = to[0] - from[0]
-    // const dy = to[1] - from[1]
-
-    // // const direction = (360 + 90 - (Math.atan2(dx, dy)) * (180 / Math.PI)) % 360
+    // if (this.fromNode.locationX === undefined || this.toNode.locationX === undefined) {
+    //   console.log('FROM Node, TO Node', this.fromNode, this.toNode)
+    // }
   },
   computed: {
     length: function () {
@@ -129,7 +121,8 @@ export default {
       return x / (180 / Math.PI)
     },
     getConnectionPoint: function (anchor) {
-      if (!Array.isArray(anchor.node)) {
+      // console.log('Anchor:', anchor, anchor.node.locationX)
+      if (anchor.node.locationX !== undefined) {
       // if (anchor.node in this.nodes) {
       // const nodeId = anchor.node
         const conPX = anchor.xShift || 0
@@ -154,8 +147,7 @@ export default {
         return [locX, locY]
       // }
       } else {
-        console.log('ANCHOR is array:', anchor)
-        return [anchor.node[0] + (anchor.xShift || 0), anchor.node[1] + (anchor.yShift || 0)]
+        return [toRaw(anchor.node).node[0], toRaw(anchor.node).node[1]]
       }
     }
   },

@@ -6,37 +6,41 @@
   ">
     <q-item-section>
       <div class="row items-center no-wrap">
-        <div class="col col-shrink">
-          <q-btn :icon="'expand_' + (expanded ? 'less' : 'more')" round dense size="md" glossy outline
-            @click="toggleExpanded">
-          </q-btn>
-        </div>
-        <div class="col col-shrink text-left text-body1 q-ml-sm">
-          <q-btn dense no-caps glossy push @click="toggleSelected" :class="selected ? 'bg-secondary' : ''">
-            {{ nodeid }}
-            <q-tooltip>
+        <div class="col col-auto">
+          <q-btn rounded v-model="selected" :color="selected ? 'secondary' : ''" dense flat size="md"
+            :icon="selected ? 'radio_button_checked': 'radio_button_unchecked'" @click="toggleSelected">
+            <q-tooltip anchor="top middle" self="bottom middle">
               {{ selected ? "Unselect" : "Select" }} {{ nodeName }}
             </q-tooltip>
           </q-btn>
         </div>
-        <div class="col col-grow text-right q-mx-sm">
+        <div class="col col-3 text-left text-body1">
+          <q-input autogrow dark outlined dense color="white" input-class="text-center text-body2" v-model="newNodeID">
+          </q-input>
+        </div>
+        <div class="col col-6 text-right q-mx-sm">
           <q-input autogrow dark outlined dense color="white" input-class="text-center text-h6" v-model="nodeName">
           </q-input>
         </div>
-        <div class="col col-shrink text-left text-body1">
+        <div class="col col-shrink q-mr-sm text-left text-body1">
           <q-btn icon="settings" dense round size="md">
             <q-menu fit>
               <q-list style="min-width: 150px" bordered>
                 <q-item clickable @click.left="duplicateElement">
-                  <q-item-section class="text-h6">Duplizieren</q-item-section>
+                  <q-item-section class="text-body1">Duplizieren</q-item-section>
                 </q-item>
                 <q-separator />
                 <q-item clickable @click.left="deleteElement">
-                  <q-item-section class="text-h6 text-negative">Löschen</q-item-section>
+                  <q-item-section class="text-body1 text-negative">Löschen</q-item-section>
                 </q-item>
                 <q-separator />
               </q-list>
             </q-menu>
+          </q-btn>
+        </div>
+        <div class="col col-shrink">
+          <q-btn :icon="'expand_' + (expanded ? 'less' : 'more')" round dense size="md" glossy outline
+            @click="toggleExpanded">
           </q-btn>
         </div>
       </div>
@@ -65,14 +69,14 @@
               label="Markierung" size="lg" class="text-body2" />
           </div>
           <div class="column col-4 items-center">
-            <q-toggle dense v-model="diagonalStretch" color="green" :disable="!nodeVisible"
-              label="Diagonal" size="lg" class="text-body2" />
+            <q-toggle dense v-model="diagonalStretch" color="green" :disable="!nodeVisible" label="Diagonal" size="lg"
+              class="text-body2" />
           </div>
         </div>
 
         <template v-if="nodeVisible">
           <div class="text-caption text-uppercase text-weight-light">
-          Markierung:
+            Markierung:
           </div>
 
           <div class="row items-center q-mb-sm">
@@ -95,17 +99,17 @@
         </template>
         <template v-if="labelVisible">
           <div class="text-caption text-uppercase text-weight-light">
-          Beschriftung:
+            Beschriftung:
           </div>
           <div class="row items-center">
             <div class="col col-8" style="height: 170px">
               <q-btn no-caps round size="25px" outline :color="labelClass === 'center' ? 'info' : ''"
                 @click.left="setLabelClass('center')" style="
-                          width: 40px;
-                          height: 40px;
-                          transform: translateX(110px) translateY(47.5px);
-                          transform-origin: middle left;
-                        ">
+                    width: 40px;
+                    height: 40px;
+                    transform: translateX(110px) translateY(47.5px);
+                    transform-origin: middle left;
+                  ">
                 center
               </q-btn>
               <q-btn no-caps size="15px" outline :color="labelClass === 'left' ? 'info' : ''"
@@ -114,16 +118,16 @@
               </q-btn>
               <q-btn no-caps size="15px" outline :color="labelClass === 'left_descending' ? 'info' : ''"
                 @click.left="setLabelClass('left_descending')" style="
-                          width: 50px;
-                          transform: translateX(-50px) translateY(-5px) rotate(45deg);
-                        ">
+                    width: 50px;
+                    transform: translateX(-50px) translateY(-5px) rotate(45deg);
+                  ">
                 l-desc
               </q-btn>
               <q-btn no-caps size="15px" outline :color="labelClass === 'left_ascending' ? 'info' : ''"
                 @click.left="setLabelClass('left_ascending')" style="
-                          width: 50px;
-                          transform: translateX(-100px) translateY(100px) rotate(-45deg);
-                        ">
+                    width: 50px;
+                    transform: translateX(-100px) translateY(100px) rotate(-45deg);
+                  ">
                 l-asc
               </q-btn>
 
@@ -133,16 +137,16 @@
               </q-btn>
               <q-btn no-caps size="15px" outline :color="labelClass === 'right_ascending' ? 'info' : ''"
                 @click.left="setLabelClass('right_ascending')" style="
-                          width: 50px;
-                          transform: translateX(170px) translateY(-60px) rotate(-45deg);
-                        ">
+                    width: 50px;
+                    transform: translateX(170px) translateY(-60px) rotate(-45deg);
+                  ">
                 r-asc
               </q-btn>
               <q-btn no-caps size="15px" outline :color="labelClass === 'right_descending' ? 'info' : ''"
                 @click.left="setLabelClass('right_descending')" style="
-                          width: 50px;
-                          transform: translateX(120px) translateY(45px) rotate(45deg);
-                        ">
+                    width: 50px;
+                    transform: translateX(120px) translateY(45px) rotate(45deg);
+                  ">
                 r-desc
               </q-btn>
             </div>
@@ -219,10 +223,12 @@ export default {
       labelClass: undefined,
       shiftX: undefined,
       shiftY: undefined,
-      selected: ref(false),
+      selected: undefined,
       searchTerm,
       labelVisible: ref(undefined),
-      nodeVisible: undefined
+      nodeVisible: undefined,
+      idFieldOpen: ref(false),
+      newNodeID: ref(undefined)
     }
   },
   props: {
@@ -236,11 +242,13 @@ export default {
     const reactiveNode = toRefs(this.nodes[this.nodeid])
     const reactiveLabel = toRefs(this.nodes[this.nodeid].label)
 
+    this.newNodeID = reactiveNode.newNodeID
     this.nodeName = reactiveLabel.text
     this.expanded = reactiveNode.expanded
     this.labelClass = reactiveLabel.class
     this.labelVisible = reactiveNode.labelVisible
     this.nodeVisible = reactiveNode.nodeVisible
+    this.selected = reactiveNode.selected
 
     this.locY = reactiveNode.locationY
     this.locX = reactiveNode.locationX
@@ -268,6 +276,7 @@ export default {
     toggleExpanded: function () {
       this.expanded = !this.expanded
     },
+    openIdMenu: function () { this.idFieldOpen = true },
     toggleSelected: function () {
       if (this.selected) {
         this.selected = false

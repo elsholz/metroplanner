@@ -1,18 +1,22 @@
 <template>
+  <div :class="'elabel e' + this.labelClass" v-if="labelVisible" :style="`
+        border-radius: 0;
+        top: ${topLabel};
+        left: ${leftLabel};
+        ${(selected && editorMode !== 'viewer' && editorMode!=='settings') ? 'font-weight: bold; color: #31ccec' : ''}
+      `">
+    {{ nodeName }}
+  </div>
   <div class="text-white emarker" :style="`
         top: ${topNode};
         left: ${leftNode};
         transform: rotate(${-rotation}deg);
         width: ${widthPixels};
         height: ${heightPixels};
-      `" v-if="nodeVisible">
-  </div>
-  <div :class="'elabel e' + this.labelClass" v-if="labelVisible" :style="`
-        border-radius: 0;
-        top: ${topLabel};
-        left: ${leftLabel};
-      `">
-    {{ nodeName }}
+        ${(selected && editorMode !== 'viewer' && editorMode !=='settings') ? 'background-color: #31ccec;' : ''}
+        ${(editorMode==='nodes') ? 'cursor: pointer;' : ''}
+      `" v-if="nodeVisible"
+      @click.left.prevent="handleClick">
   </div>
 </template>
 
@@ -49,21 +53,16 @@
 
 .elabel {
   transform-origin: right center;
-  line-height: 12px;
-  font-size: 11px;
-  height: 12px;
+  font-size: 12px;
   vertical-align: middle;
   white-space: nowrap;
-  top: 0px;
   width: 0px;
-  border-radius: 0px;
 }
 
 .eleft,
 .eleft_ascending,
 .eleft_descending {
   direction: rtl;
-
   height: 15px;
   line-height: 15px;
   padding-right: 10px;
@@ -71,15 +70,11 @@
 }
 
 .eleft_ascending {
-  left: -3px;
-  top: 2px;
   direction: rtl;
   transform: translateX(-10px) rotate(-45deg);
 }
 
 .eleft_descending {
-  left: -3px;
-  top: -2px;
   transform: translateX(-10px) rotate(45deg);
   text-align: right;
   direction: rtl;
@@ -90,9 +85,6 @@
 .eright_descending {
   transform-origin: left center;
   width: 10px;
-
-  left: 0;
-  top: 0;
   padding-left: 10px;
   height: 15px;
   line-height: 15px;
@@ -116,12 +108,13 @@ import { usePlanEditorStore } from 'src/stores/editor_store'
 
 const planEditorStore = usePlanEditorStore()
 
-const { nodes, searchTerm, coordinateScalar, globalOffsetX, globalOffsetY } =
+const { nodes, searchTerm, editorMode, coordinateScalar, globalOffsetX, selectedNodeIDs, globalOffsetY } =
   storeToRefs(planEditorStore)
 
 export default {
   setup () {
     return {
+      editorMode,
       nodes,
       globalOffsetX,
       globalOffsetY,
@@ -134,12 +127,13 @@ export default {
       labelClass: undefined,
       shiftX: undefined,
       shiftY: undefined,
-      selected: ref(false),
+      selected: undefined,
       diagonalStretch: undefined,
       searchTerm,
       coordinateScalar,
       labelVisible: ref(undefined),
-      nodeVisible: ref(undefined)
+      nodeVisible: ref(undefined),
+      selectedNodeIDs
     }
   },
   props: {
@@ -154,6 +148,7 @@ export default {
     this.labelClass = reactiveLabel.class
     this.labelVisible = reactiveNode.labelVisible
     this.nodeVisible = reactiveNode.nodeVisible
+    this.selected = reactiveNode.selected
 
     this.locY = reactiveNode.locationY
     this.locX = reactiveNode.locationX
@@ -248,6 +243,32 @@ export default {
     },
     getY (y) {
       return ((this.globalOffsetY) + y) * this.coordinateScalar
+    },
+    handleClick (event) {
+      if (this.editorMode === 'nodes') {
+        if (!event.shiftKey && !event.ctrlKey) {
+        // create a new selection
+          for (const nodeid of this.selectedNodeIDs) {
+            this.nodes[nodeid].selected = false
+          }
+          this.selectedNodeIDs = [this.nodeid]
+          this.selected = true
+        } else if (event.shiftKey && !event.ctrlKey) {
+        // expand selection to this node following paths
+          console.log('Not implemented: following paths')
+        } else if (!event.shiftKey && event.ctrlKey) {
+        // add node to selection
+          if (this.selected) {
+            this.selected = false
+            this.selectedNodeIDs = this.selectedNodeIDs.filter(
+              (v) => v !== this.nodeid
+            )
+          } else {
+            this.selectedNodeIDs.push(this.nodeid)
+            this.selected = true
+          }
+        }
+      }
     }
   }
 }

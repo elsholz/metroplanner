@@ -79,7 +79,7 @@
         </EditorCanvas>
       </q-page-container>
 
-      <q-drawer v-model="contextMenuOpen" side="right" bordered dark width="500">
+      <q-drawer v-model="contextMenuOpen" side="right" bordered dark :width="500">
         <keep-alive>
           <component :is="this.contextMenu"></component>
         </keep-alive>
@@ -110,12 +110,11 @@ import { storeToRefs } from 'pinia'
 export default {
   setup () {
     const planEditorStore = usePlanEditorStore()
-    const { contextMenuOpen, planDetails } = storeToRefs(planEditorStore)
+    const { contextMenuOpen, planDetails, editorMode } = storeToRefs(planEditorStore)
     const leftDrawerOpen = ref(true)
     const leftDrawerMini = ref(false)
     const saving = ref(false)
     const loaded = ref(false)
-    const editorMode = ref('viewer')
     const planstate = ref(undefined)
 
     return {
