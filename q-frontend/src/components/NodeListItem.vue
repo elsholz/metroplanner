@@ -250,8 +250,8 @@ export default {
     this.nodeVisible = reactiveNode.nodeVisible
     this.selected = reactiveNode.selected
 
-    this.locY = reactiveNode.locationY
-    this.locX = reactiveNode.locationX
+    this.locY = reactiveNode.locY
+    this.locX = reactiveNode.locX
 
     if (this.nodes[this.nodeid].marker.width === undefined) {
       this.nodes[this.nodeid].marker.width = 1

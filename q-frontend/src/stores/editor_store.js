@@ -106,12 +106,13 @@ export const usePlanEditorStore = defineStore('editorStore', {
             this.nodes[k].marker.diagonalStretch = (this.nodes[k].marker.sizeFactor > 1) ?? false
             delete this.nodes[k].marker.sizeFactor
 
-            this.nodes[k].locationX = x
-            this.nodes[k].locationY = y
+            this.nodes[k].locX = x
+            this.nodes[k].locY = y
             this.nodes[k].labelVisible = true
             this.nodes[k].nodeVisible = true
             this.nodes[k].newNodeID = k
             this.nodes[k].selected = false
+            this.nodes[k].initialLocation = [x, y]
 
             if (!(typeof this.nodes[k].label === 'object')) {
               const labelKey = this.nodes[k].label

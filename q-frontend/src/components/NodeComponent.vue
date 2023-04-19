@@ -1,22 +1,21 @@
 <template>
   <div :class="'elabel e' + this.labelClass" v-if="labelVisible" :style="`
-        border-radius: 0;
-        top: ${topLabel};
-        left: ${leftLabel};
-        ${(selected && editorMode !== 'viewer' && editorMode!=='settings') ? 'font-weight: bold; color: #31ccec' : ''}
-      `">
+                        border-radius: 0;
+                        top: ${topLabel};
+                        left: ${leftLabel};
+                ${(selected && editorMode !== 'viewer' && editorMode !== 'settings') ? 'font-weight: bold; color: #31ccec' : ''}
+              `">
     {{ nodeName }}
   </div>
   <div class="text-white emarker" :style="`
-        top: ${topNode};
-        left: ${leftNode};
-        transform: rotate(${-rotation}deg);
-        width: ${widthPixels};
-        height: ${heightPixels};
-        ${(selected && editorMode !== 'viewer' && editorMode !=='settings') ? 'background-color: #31ccec;' : ''}
-        ${(editorMode==='nodes') ? 'cursor: pointer;' : ''}
-      `" v-if="nodeVisible"
-      @click.left.prevent="handleClick">
+                        top: ${topNode};
+                        left: ${leftNode};
+                        transform: rotate(${-rotation}deg);
+                        width: ${widthPixels};
+                        height: ${heightPixels};
+                        ${(selected && editorMode !== 'viewer' && editorMode !== 'settings') ? 'background-color: #31ccec;' : ''}
+                ${(editorMode === 'nodes') ? 'cursor: ' + cursor + ';' : ''}
+                      `" v-if="nodeVisible" @mousedown.left.prevent="handleMouseDown">
   </div>
 </template>
 
@@ -133,7 +132,11 @@ export default {
       coordinateScalar,
       labelVisible: ref(undefined),
       nodeVisible: ref(undefined),
-      selectedNodeIDs
+      selectedNodeIDs,
+      dragInitialCoords: ref({}),
+      initialLocation: ref(undefined),
+      moved: false,
+      cursor: ref('pointer')
     }
   },
   props: {
@@ -149,9 +152,10 @@ export default {
     this.labelVisible = reactiveNode.labelVisible
     this.nodeVisible = reactiveNode.nodeVisible
     this.selected = reactiveNode.selected
+    this.initialLocation = reactiveNode.initialLocation
 
-    this.locY = reactiveNode.locationY
-    this.locX = reactiveNode.locationX
+    this.locX = reactiveNode.locX
+    this.locY = reactiveNode.locY
 
     if (this.nodes[this.nodeid].marker.width === undefined) {
       this.nodes[this.nodeid].marker.width = 1
@@ -244,20 +248,72 @@ export default {
     getY (y) {
       return ((this.globalOffsetY) + y) * this.coordinateScalar
     },
-    handleClick (event) {
-      if (this.editorMode === 'nodes') {
+    handleDrag (event) {
+      const diff = {
+        x: Math.round((event.clientX - this.dragInitialCoords.x) / 15),
+        y: Math.round((event.clientY - this.dragInitialCoords.y) / 15)
+      }
+      if (diff.x || diff.y) {
+        this.moved = true
+        console.log(diff)
+      }
+
+      for (const nodeid of this.selectedNodeIDs) {
+        console.log(this.selectedNodeIDs, nodeid, this.nodes[nodeid])
+        const newLoc = {
+          x: this.nodes[nodeid].initialLocation[0] + diff.x,
+          y: this.nodes[nodeid].initialLocation[1] + diff.y
+        }
+        this.nodes[nodeid].locX = newLoc.x
+        this.nodes[nodeid].locY = newLoc.y
+        console.log('New location for node', nodeid, ':', this.nodes[nodeid].locX)
+      }
+    },
+    handleMouseDown (event) {
+      this.cursor = 'move'
+      console.log('adding event listener', event)
+      this.dragInitialCoords = {
+        x: event.clientX,
+        y: event.clientY
+      }
+      // for (let nodeid of this.selectedNodeIDs){
+      //   this.nodes[nodeid].initialLocation
+      // }
+      addEventListener('mousemove', this.handleDrag)
+      addEventListener('mouseup', this.handleMouseUp)
+    },
+    handleMouseUp (event) {
+      console.log('deregistering event handler', event)
+      this.cursor = 'pointer'
+      removeEventListener('mousemove', this.handleDrag)
+      removeEventListener('mouseup', this.handleMouseUp)
+
+      for (const nodeid of this.selectedNodeIDs) {
+        this.nodes[nodeid].initialLocation = [
+          this.nodes[nodeid].locX,
+          this.nodes[nodeid].locY
+        ]
+      }
+
+      if (this.editorMode === 'nodes' && !this.moved) {
         if (!event.shiftKey && !event.ctrlKey) {
-        // create a new selection
+          // create a new selection
+          const unselect = this.selected
           for (const nodeid of this.selectedNodeIDs) {
             this.nodes[nodeid].selected = false
           }
-          this.selectedNodeIDs = [this.nodeid]
-          this.selected = true
+          if (unselect && this.selectedNodeIDs.length === 1) {
+            this.selectedNodeIDs = []
+            this.selected = false
+          } else {
+            this.selectedNodeIDs = [this.nodeid]
+            this.selected = true
+          }
         } else if (event.shiftKey && !event.ctrlKey) {
-        // expand selection to this node following paths
+          // expand selection to this node following paths
           console.log('Not implemented: following paths')
         } else if (!event.shiftKey && event.ctrlKey) {
-        // add node to selection
+          // add node to selection
           if (this.selected) {
             this.selected = false
             this.selectedNodeIDs = this.selectedNodeIDs.filter(
@@ -269,6 +325,7 @@ export default {
           }
         }
       }
+      this.moved = false
     }
   }
 }

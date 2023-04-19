@@ -122,7 +122,7 @@ export default {
     },
     getConnectionPoint: function (anchor) {
       // console.log('Anchor:', anchor, anchor.node.locationX)
-      if (anchor.node.locationX !== undefined) {
+      if (anchor.node.locX !== undefined) {
       // if (anchor.node in this.nodes) {
       // const nodeId = anchor.node
         const conPX = anchor.xShift || 0
@@ -131,8 +131,8 @@ export default {
         const node = anchor.node // this.nodes[nodeId]
         // let locX = node.location[0]
         // let locY = node.location[1]
-        let locX = node?.locationX || 0
-        let locY = node?.locationY || 0
+        let locX = node?.locX || 0
+        let locY = node?.locY || 0
         const rotation = node?.marker?.rotation || 0
         const sizeFactor = node?.marker?.diagonalStretch ? Math.SQRT2 : 1
 
