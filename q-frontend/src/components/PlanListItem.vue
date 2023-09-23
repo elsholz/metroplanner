@@ -39,7 +39,7 @@
           </div>
           <div class="col-xs-6 col-md-2 col-sm-2 q-py-md">
             <template v-if="planShortlink">
-              <q-btn no-caps class="bg-blue q-my-sm q-mx-sm" :to="'/details/' + planShortlink" v-if="planShortlink">
+              <q-btn no-caps class="bg-blue q-my-sm q-mx-sm" :to="'/p/' + planShortlink" v-if="planShortlink">
                 <q-item-label class="text-white" caption>Details</q-item-label>
               </q-btn>
             </template>
