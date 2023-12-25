@@ -219,6 +219,22 @@
                         "anchor"
                     ]
                 }
+            },
+            "globalOffsetX": {
+                "bsonType": "int",
+                "description": "Global offset for coordinates in X direction"
+            },
+            "globalOffsetY": {
+                "bsonType": "int",
+                "description": "Global offset for coordinates in Y direction"
+            },
+            "planWidth": {
+                "bsonType": "int",
+                "description": "Width of the plan (in units)"
+            },
+            "planHeight": {
+                "bsonType": "int",
+                "description": "Height of the plan (in units)"
             }
         },
         "required": [

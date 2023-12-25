@@ -349,6 +349,22 @@ def schema_plan_history_state():
                     "type": "object",
                     "additionalProperties": label_basics,
                 },
+                "globalOffsetX": {
+                    "bsonType": "int",
+                    "description": "Global offset for coordinates in X direction"
+                },
+                "globalOffsetY": {
+                    "bsonType": "int",
+                    "description": "Global offset for coordinates in Y direction"
+                },
+                "planWidth": {
+                    "bsonType": "int",
+                    "description": "Width of the plan (in units)"
+                },
+                "planHeight": {
+                    "bsonType": "int",
+                    "description": "Height of the plan (in units)"
+                },
             },
             "required": ["nodes", "lines", "labels"],
         }
