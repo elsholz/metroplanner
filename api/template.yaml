@@ -1,0 +1,459 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Description: Lambda Function and API Gateway for metroplanner.
+
+Mappings:
+  EnvMap:
+    prod:
+      CertificateArn: ""
+      Domain: "api.ich-hab-plan.de"
+      FunctionName: "MetroplannerFuncProd"
+      ApiName: "MetroplannerApiProd"
+      QueueName: "MetroplannerQueueProd"
+      LogFunctionName: "MetroplannerLogFuncProd"
+      SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:PROD_Metroplanner"
+      LambdaConcurrencyLimit: 1
+      MemorySize: 512
+      Timeout: 5
+    dev:
+      CertificateArn: "arn:aws:acm:eu-central-1:891666753558:certificate/cf2cffe9-92c6-44d6-b0f0-6efabebd537a"
+      Domain: "api.dev.ich-hab-plan.de"
+      FunctionName: "MetroplannerFuncDev"
+      ApiName: "MetroplannerApiDev"
+      QueueName: "MetroplannerQueueDev"
+      LogFunctionName: "MetroplannerLogFuncDev"
+      SnsTopicArn: "arn:aws:sns:eu-central-1:891666753558:DEV_Metroplanner"
+      LambdaConcurrencyLimit: 1
+      MemorySize: 128
+      Timeout: 7
+
+Parameters:
+  env:
+    Type: String
+    Description: Environment of the deployment (Lowercase)
+
+Resources:
+  LogFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 100
+      FunctionName: !FindInMap [EnvMap, !Ref env, LogFunctionName]
+      CodeUri: log_func/
+      Handler: log_func.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Policies:
+        - Statement:
+            - Sid: MetroplannerReadFromLogQueue
+              Effect: Allow
+              Action:
+                - sqs:ReceiveMessage
+              Resource: !GetAtt LogQueue.Arn
+        - Statement:
+            - Sid: MetroplannerPushToSNSTopic
+              Effect: Allow
+              Action: 
+                - sns:publish
+              Resource: !FindInMap [EnvMap, !Ref env, SnsTopicArn]
+      Events:
+        ScheduledFunctionInvocation:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: "cron(30 9,21 * * ? *)"
+      Tags:
+        App: metroplanner
+        Environment: !Ref env
+  MetroplannerFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !FindInMap [EnvMap, !Ref env, FunctionName]
+      MemorySize: !FindInMap [EnvMap, !Ref env, MemorySize]
+      Timeout: !FindInMap [EnvMap, !Ref env, Timeout]
+      CodeUri: metroplanner_api/
+      Handler: metroplanner_api.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      ReservedConcurrentExecutions: !FindInMap [EnvMap, !Ref env, LambdaConcurrencyLimit]
+      Policies:
+        - Statement:
+            - Sid: MetroplannerAccessSecretsManager
+              Effect: Allow
+              Action:
+                - secretsmanager:GetResourcePolicy
+                - secretsmanager:GetSecretValue
+                - secretsmanager:DescribeSecret
+                - secretsmanager:ListSecretVersionIds
+              Resource: "arn:aws:secretsmanager:eu-central-1:891666753558:secret:MetroplannerKeys-xR1Pb5"
+        - Statement:
+            - Sid: MetroplannerWriteToLogQueue
+              Effect: Allow
+              Action:
+                - sqs:SendMessage
+              Resource: !GetAtt LogQueue.Arn
+      Events: 
+        FunctionWarmup:
+          Type: ScheduleV2
+          Properties:
+            # Trigger Lambda every 2 minutes to reuse container
+            ScheduleExpression: "cron(/2 * * * ? *)"
+        # PUBLIC API
+        # plans
+        PublicGetPlan:
+          Type: HttpApi
+          Properties:
+            Path: /api/plans/{shortlink}
+            Method: get
+            ApiId: !Ref MetroplannerApi
+        # planstates
+        PublicGetPlanstate:
+          Type: HttpApi
+          Properties:
+            Path: /api/planstates/{shortlink}
+            Method: get
+            ApiId: !Ref MetroplannerApi
+        # users
+        PublicGetUser:
+          Type: HttpApi
+          Properties:
+            Path: /api/users/{userID}
+            Method: get
+            ApiId: !Ref MetroplannerApi
+        # colorthemes
+        PublicGetColortheme:
+          Type: HttpApi
+          Properties:
+            Path: /api/colorthemes/{colorThemeID}
+            Method: get
+            ApiId: !Ref MetroplannerApi
+        # PRIVATE API
+        # user
+        PrivateGetUser:
+          Type: HttpApi
+          Properties:
+            Path: /api/_user
+            Method: get
+            ApiId: !Ref MetroplannerApi
+        PrivatePatchUser:
+          Type: HttpApi
+          Properties:
+            Path: /api/_user
+            Method: patch
+            ApiId: !Ref MetroplannerApi
+        # plans
+        PrivatePostPlan:
+          Type: HttpApi
+          Properties:
+            Path: /api/_plans
+            Method: post
+            ApiId: !Ref MetroplannerApi
+        PrivateGetPlan:
+          Type: HttpApi
+          Properties:
+            Path: /api/_plans/{planID}
+            Method: get
+            ApiId: !Ref MetroplannerApi
+        PrivatePatchPlan:
+          Type: HttpApi
+          Properties:
+            Path: /api/_plans/{planID}
+            Method: patch
+            ApiId: !Ref MetroplannerApi
+        PrivateDeletePlan:
+          Type: HttpApi
+          Properties:
+            Path: /api/_plans/{planID}
+            Method: delete 
+            ApiId: !Ref MetroplannerApi
+        # links
+        PrivatePostLink:
+          Type: HttpApi
+          Properties:
+            Path: /api/_links
+            Method: post
+            ApiId: !Ref MetroplannerApi
+        PrivatePatchLink:
+          Type: HttpApi
+          Properties:
+            Path: /api/_links/{shortlink}
+            Method: patch
+            ApiId: !Ref MetroplannerApi
+        PrivateDeleteLink:
+          Type: HttpApi
+          Properties:
+            Path: /api/_links/{shortlink}
+            Method: delete
+            ApiId: !Ref MetroplannerApi
+        # planstates
+        PrivatePostPlanstate:
+          Type: HttpApi
+          Properties:
+            Path: /api/_plans/{planID}/_planstates
+            Method: post
+            ApiId: !Ref MetroplannerApi
+        PrivateGetPlanstate:
+          Type: HttpApi
+          Properties:
+            Path: /api/_plans/{planID}/_planstates/{planstateID}
+            Method: get
+            ApiId: !Ref MetroplannerApi
+      Tags:
+        App: metroplanner
+        Environment: !Ref env
+  LogQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: !FindInMap [EnvMap, !Ref env, QueueName]
+      MessageRetentionPeriod: 43200
+      Tags: 
+        - Key: App
+          Value: metroplanner
+        - Key: Environment
+          Value: !Ref env
+  MetroplannerApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref env
+      Name: !FindInMap [EnvMap, !Ref env, ApiName]
+      DefinitionBody:
+        # API Spec for Metroplanner including AWS API Gateway Integration
+        openapi: 3.0.0
+        info:
+          version: "0.0.1"
+          title: !Ref AWS::StackName
+          description: API for the Metroplanner project
+        paths:
+          # PUBLIC API
+          /api/plans/{shortlink}:
+            get:
+              tags:
+                - Public API
+              description: Get plan info of a metroplan identified by its shortlink
+              parameters:
+                - in: path
+                  name: shortlink
+                  schema:
+                    type: string
+                  required: true
+                  description: Public shortlink of the plan
+              responses:
+                '200':
+                  description: OK
+          /api/planstates/{shortlink}:
+            get:
+              tags:
+                - Public API
+              description: Get latest plan state of a metroplan identified by its shortlink
+              parameters:
+                - in: path
+                  name: shortlink
+                  schema:
+                    type: string
+                  required: true
+                  description: Public shortlink of the plan
+              responses:
+                '200':
+                  description: OK
+          /api/users/{userID}:
+            get:
+              tags:
+                - Public API
+              description: Get publicly accessible parts of a user profile
+              parameters:
+                - in: path
+                  name: userID
+                  schema:
+                    type: string
+                  required: true
+                  description: ID of the user to get
+              responses:
+                '200':
+                  description: OK
+          /api/colorthemes/{colorThemeID}:
+            get:
+              tags:
+                - Public API
+              description: Get color theme # might be integrated in planstate in the future
+              parameters:
+                - in: path
+                  name: colorThemeID
+                  schema:
+                    type: string
+                  required: true
+                  description: ID of the color theme
+              responses:
+                '200':
+                  description: OK
+          # PRIVATE API
+          /api/_user:
+            get:
+              tags:
+                - Private API
+              description: Get profile of the authenticated user. If Profile doesn't exist, a new one is created.
+              responses:
+                '200':
+                  description: OK
+                # maybe:
+                '201':
+                  description: Created
+            patch:
+              tags:
+                - Private API
+              description: Update profile of the authenticated user
+              responses:
+                '200':
+                  description: OK
+          /api/_plans:
+            post:
+              tags:
+                - Private API
+              description: Create a new plan
+              responses:
+                '201':
+                  description: Created
+          /api/_plans/{planID}:
+            get:
+              tags:
+                - Private API
+              description: Get info about a plan
+              parameters:
+                - in: path
+                  name: planID
+                  schema:
+                    type: string
+                  required: true
+                  description: Plan UUID
+              responses:
+                '200':
+                  description: OK
+            patch:
+              tags:
+                - Private API
+              description: Update a plan's info
+              parameters:
+                - in: path
+                  name: planID
+                  schema:
+                    type: string
+                  required: true
+                  description: Plan UUID
+              responses:
+                '200':
+                  description: OK
+            delete:
+              tags:
+                - Private API
+              description: Delete a plan
+              parameters:
+                - in: path
+                  name: planID
+                  schema:
+                    type: string
+                  required: true
+                  description: Plan UUID
+              responses:
+                '204':
+                  description: No Content
+          /api/_links:
+            post:
+              tags:
+                - Private API
+              description: Create a new shortlink for a plan
+              responses:
+                '201':
+                  description: Created
+          /api/_links/{shortlink}:
+            patch:
+              tags:
+                - Private API
+              description: Update an existing shortlink's data
+              parameters:
+                - in: path
+                  name: shortlink
+                  schema:
+                    type: string
+                  required: true
+                  description: Plan UUID
+              responses:
+                '200':
+                  description: OK
+            delete: 
+              tags:
+                - Private API
+              description: Delete a shortlink
+              parameters:
+                - in: path
+                  name: shortlink
+                  schema:
+                    type: string
+                  required: true
+                  description: Plan UUID
+              responses:
+                '204':
+                  description: No Content
+          /api/_plans/{planID}/_planstates:
+            post:
+              tags:
+                - Private API
+              description: Create a new plan
+              parameters:
+                - in: path
+                  name: planID 
+                  schema:
+                    type: string
+                  required: true
+                  description: ID of the plan this planstate is to be created for
+              responses:
+                '201':
+                  description: Created
+          /api/_plans/{planID}/_planstates/{planstateID}:
+            get:
+              tags:
+                - Private API
+              description: Get a plan state
+              parameters:
+                - in: path
+                  name: planID 
+                  schema:
+                    type: string
+                  required: true
+                  description: ID of the plan this planstate is from
+                - in: path
+                  name: planstateID
+                  schema:
+                    type: string
+                  required: true
+                  description: Planstate UUID
+              responses:
+                '200':
+                  description: OK
+      Domain:
+        DomainName: !FindInMap [EnvMap, !Ref env, Domain]
+        CertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
+        Route53:
+          HostedZoneId: "Z06561501FFWOSR6LVUYR"
+      Tags:
+        App: metroplanner
+        Environment: !Ref env
+Outputs:
+  MetroplannerApiId:
+    Description: Api ID of MetroplannerApi
+    Value:
+      Ref: MetroplannerApi
+  MetroplannerFunc:
+    Description: "Metroplanner Function ARN"
+    Value: !GetAtt MetroplannerFunc.Arn
+  MetroplannerFuncIamRole:
+    Description: "Implicit IAM Role created for Metroplanner function"
+    Value: !GetAtt MetroplannerFuncRole.Arn
+  LogFunc:
+    Description: "Function for collection statistics from the logs from SQS"
+    Value: !GetAtt LogFunc.Arn
+  LogFuncIamRole:
+    Description: "Implicit IAM Role created for Log function"
+    Value: !GetAtt LogFuncRole.Arn
+
+
+

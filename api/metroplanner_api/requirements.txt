@@ -1,0 +1,7 @@
+jsonschema
+boto3
+auth0-python
+pymongo
+python-jose[cryptography]
+pydantic
+pydantic-extra-types

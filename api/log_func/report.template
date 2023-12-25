@@ -1,0 +1,16 @@
+Report for $app in the $env environment.
+
+Requests in the last 24h:
+    Total: $total
+    Successful (2xx): $successful
+    Client Error (4xx): $clienterror
+    Server Error (5xx): $servererror
+
+Average Processing Time: $avgtime milliseconds
+
+Detailed Response Codes:
+$detailed
+
+
+Beste Grüße
+

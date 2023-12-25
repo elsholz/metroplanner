@@ -1,0 +1,117 @@
+// app global css in SCSS form
+
+.right_ascending {
+    left: -0px;
+    top: -15px;
+    white-space: nowrap;
+    transform: rotate(-45deg);
+    transform-origin: middle left;
+    width: 0px;
+    height: 0px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-align: left
+}
+
+.right_descending {
+    left: -35 + px;
+    top: 105 + px;
+    transform: rotate(45deg);
+    width: 300px;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-align: left
+}
+
+.left_ascending {
+    left: -264 + px;
+    top: 106 + px;
+    transform: rotate(-45deg);
+    width: 300px;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-align: right
+}
+
+.left_descending {
+    left: -265 + px;
+    top: -127 + px;
+    transform: rotate(45deg);
+    width: 300px;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-align: right
+}
+
+.right {
+    left: 13 + px;
+    top: -10 + px;
+    width: 300px;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-align: left
+}
+
+.left {
+    left: -313 + px;
+    top: -10 + px;
+    width: 300px;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: middle;
+    text-align: right
+}
+
+.marker {
+    border: 2px solid white;
+    position: absolute;
+    border-radius: 7px;
+}
+
+.marker,
+.line_segment,
+.label,
+.wrapper,
+.regularStop {
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.line_segment,
+.marker {
+    transform-origin: top left;
+}
+
+#canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: auto;
+}
+
+.label {
+    text-shadow: 0 0 10px black, 0px 0px 10px black, 0px 0px 10px black;
+    font-size: 10px;
+}
+
+.label.centered {
+    text-shadow: none;
+}
+
+.marker {
+    border-style: solid;
+    border-color: #eef;
+    color: #000;
+    background-color: #004;
+    transform-origin: top left;
+    box-shadow: 0px 0px 3px 1px #aaf;
+    box-sizing: border-box;
+}

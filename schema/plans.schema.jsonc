@@ -1,0 +1,88 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "description": "Document containing a metro plans basic information, excluding state info.",
+        "properties": {
+            "forkedFrom": {
+                "description": "UUID of the plan this one has been forked from. If not forked from another plan, this value is set to null.",
+                "oneOf": [
+                    {
+                        "type": "null"
+                    },
+                    {
+                        "bsonType": "objectId"
+                    }
+                ]
+            },
+            "ownedBy": {
+                "bsonType": "objectId",
+                "description": "User who owns this plan."
+            },
+            "planName": {
+                "type": "string",
+                "description": "Display name of this plan."
+            },
+            "createdAt": {
+                "type": "string",
+                "description": "Datetime when this plan was first created."
+            },
+            "lastModifiedAt": {
+                "type": "string",
+                "description": "Datetime when this plan was last modified"
+            },
+            "currentState": {
+                "bsonType": "objectId",
+                "description": "The current state that is to be displayed for this plan"
+            },
+            "currentNumberOfLabels": {
+                "type": "number",
+                "description": "The number of nodes in the current state."
+            },
+            "currentNumberOfNodes": {
+                "type": "number",
+                "description": "The number of nodes in the current state."
+            },
+            "currentNumberOfLines": {
+                "type": "number",
+                "description": "The number of lines in the current state."
+            },
+            "currentNumberOfEdges": {
+                "type": "number",
+                "description": "The number of edges between nodes in the current state."
+            },
+            "currentColorTheme": {
+                "bsonType": "objectId",
+                "description": "ID of the plan's color theme."
+            },
+            "likeCount": {
+                "type": "number",
+                "description": "The number of users who've liked this plan."
+            },
+            "history": {
+                "type": "array",
+                "items": {
+                    "bsonType": "objectId",
+                    "description": "The states of this plan in history. First item is the latest state."
+                }
+            },
+            "deleted": {
+                "description": "Wheter this plan has been marked for deletion. If so, the date of deletion is saved.",
+                "oneOf": [
+                    {
+                        "type": "null",
+                        "description": "Plan not marked for deletion."
+                    },
+                    {
+                        "type": "string",
+                        "description": "Datetime of the deletion."
+                    }
+                ]
+            }
+        },
+        "required": [
+            "planName",
+            "history",
+            "currentState"
+        ]
+    }
+}

@@ -1,0 +1,170 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: S3 bucket for Frontend Deployment
+
+Mappings:
+  EnvMap:
+    prod:
+      Domain: "ich-hab-plan.de"
+      CertificateArn: ""
+      OriginId: prod-bucket
+      Comment: PROD Metroplanner Distro
+      OriginAclName: OriginAccessControlProd
+      ApiDomain: api.ich-hab-plan.de
+      ApiOriginId: dev-api
+    dev:
+      Domain: "dev.ich-hab-plan.de"
+      CertificateArn: "arn:aws:acm:us-east-1:891666753558:certificate/0ac972dd-2275-42be-b5c6-055edfd1dd60"
+      OriginId: dev-bucket
+      Comment: Metroplanner Distro DEV
+      OriginAclName: OriginAccessControlDev
+      ApiDomain: api.dev.ich-hab-plan.de
+      ApiOriginId: dev-api
+
+Parameters:
+  env:
+    Type: String
+    Description: Environment of the deployment (Lowercase)
+
+Conditions:
+  # IsStaging: !Equals [!Ref env, dev]
+  IsProd: !Equals [!Ref env, prod]
+
+Resources:
+  ApiCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Comment: "Cache policy to enable authorization header forward"
+        Name: ApiCachePolicy
+        DefaultTTL: 0
+        MaxTTL: 1
+        MinTTL: 0
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          CookiesConfig:
+            CookieBehavior: all
+          HeadersConfig:
+            HeaderBehavior: whitelist
+            Headers:
+              - Authorization
+          QueryStringsConfig:
+            QueryStringBehavior: all
+  MetroplannerCfDistro:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !FindInMap [EnvMap, !Ref env, Domain]
+        Comment: !FindInMap [EnvMap, !Ref env, Comment]
+        # Staging: !If [IsStaging, false, true]
+        PriceClass: PriceClass_100
+        Enabled: true
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          Compress: true
+          TargetOriginId: !FindInMap [EnvMap, !Ref env, OriginId]
+          ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - PUT
+              - POST
+              - PATCH
+              - DELETE
+            CachePolicyId: !Ref ApiCachePolicy
+            PathPattern: "/api/_*"
+            Compress: true
+            TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
+            ViewerProtocolPolicy: redirect-to-https
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+              - PUT
+              - POST
+              - PATCH
+              - DELETE
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            PathPattern: "/api/*"
+            Compress: true
+            TargetOriginId: !FindInMap [EnvMap, !Ref env, ApiOriginId]
+            ViewerProtocolPolicy: redirect-to-https
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: "200"
+            ResponsePagePath: "/index.html"
+        Origins:
+          - CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+            DomainName: !FindInMap [EnvMap, !Ref env, ApiDomain]
+            Id: !FindInMap [EnvMap, !Ref env, ApiOriginId]
+          - CustomOriginConfig:
+              OriginProtocolPolicy: "http-only"
+            DomainName: !Join [ '', !Split [ 'http://', !GetAtt MetroplannerBucket.WebsiteURL] ]
+            Id: !FindInMap [EnvMap, !Ref env, OriginId]
+        ViewerCertificate:
+          AcmCertificateArn: !FindInMap [EnvMap, !Ref env, CertificateArn]
+          MinimumProtocolVersion: TLSv1.2_2021
+          SslSupportMethod: sni-only
+        DefaultRootObject: index.html
+      Tags:
+        - Key: App
+          Value: metroplanner
+        - Key: Environment
+          Value: !Ref env
+  MetroplannerBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !FindInMap [EnvMap, !Ref env, Domain]
+      Tags:
+        - Key: App
+          Value: metroplanner
+        - Key: Environment
+          Value: !Ref env
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      PolicyDocument:
+        Id: metroplannerPublicReadPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Join
+              - ""
+              - - "arn:aws:s3:::"
+                - !Ref MetroplannerBucket
+                - /*
+      Bucket: !Ref MetroplannerBucket
+
+  MetroplannerDNSEntry:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: "ich-hab-plan.de."
+      Comment: Alias for CF Distro
+      Name: !FindInMap [EnvMap, !Ref env, Domain]
+      Type: A
+      AliasTarget:
+        HostedZoneId: "Z2FDTNDATAQYW2"
+        DNSName: !Join ['cloudfront.net', !Split ['cloudfront.net.', !GetAtt MetroplannerCfDistro.DomainName]]
+
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt MetroplannerBucket.WebsiteURL
+    Description: URL for website hosted on S3
