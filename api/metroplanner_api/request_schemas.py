@@ -94,7 +94,8 @@ anchor = {
                     "description": "unique node identifier",
                     "maxLength": 50,
                 },
-            ]
+                # TODO: Add Line Ending/ Starting Point as an option
+            ],
         },
         "xShift": {"type": "number"},
         "yShift": {"type": "number"},
@@ -103,31 +104,6 @@ anchor = {
     },
 }
 
-label_basics = {
-    "type": "object",
-    "properties": {
-        "class": {
-            "type": "string",
-            "enum": [
-                "centered",
-                "left_ascending",
-                "right_ascending",
-                "left_descending",
-                "right_descending",
-                "left",
-                "right",
-            ],
-        },
-        "text": {
-            "type": "string",
-            "minLength": 0,
-            "maxLength": 100,
-        },
-        "anchor": anchor,
-        "styling": styling,
-    },
-    "required": ["class", "text", "anchor"],
-}
 
 patch_user_schema = {
     "type": "object",
@@ -221,8 +197,6 @@ patch_plan_schema = {
 }
 
 
-
-
 post_planstate_schema = {
     "type": "object",
     "description": "Document describing the state of a metro plan in its history",
@@ -271,13 +245,43 @@ post_planstate_schema = {
                         },
                     },
                     "label": {
-                        "type": "string",
-                        "description": "UUID of the node's label.",
-                        "maxLength": 36,
+                        "type": "object",
+                        "properties": {
+                            "type": "object",
+                            "properties": {
+                                # "class": {
+                                #     "type": "string",
+                                #     "enum": [
+                                #         "centered",
+                                #         "left_ascending",
+                                #         "right_ascending",
+                                #         "left_descending",
+                                #         "right_descending",
+                                #         "left",
+                                #         "right",
+                                #     ],
+                                # },
+                                "text": {
+                                    "type": "string",
+                                    "minLength": 0,
+                                    "maxLength": 100,
+                                },
+                                "anchor": anchor,
+                                "styling": styling,
+                            },
+                            "required": ["text"],
+                        },
                     },
                 },
                 "required": ["location"],
             },
+        },
+        "nodesOrdering": {
+            "description": "Defines the order in which the nodes are presented",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "lines": {
             "type": "object",
@@ -318,16 +322,83 @@ post_planstate_schema = {
                                     "items": anchor,
                                 }
                             },
+                            "additionalProperties": False,
+                        },
+                    },
+                    "labels": {
+                        "description": "Labels that show this line's name, to be placed e.g. at stations this line originates from/ terminates at.",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "arrangement": {
+                                    "type": "string",
+                                    "enum": [
+                                        "left",
+                                        "right",
+                                        "bottom",
+                                        "top",
+                                        "at"
+                                    ],
+                                },
+                                "anchor": anchor,
+                                "styling": styling,
+                            },
+                            "additionalProperties": False,
+                            "required": ['arrangement', 'anchor'],
                         },
                     },
                 },
+                "additionalProperties": False,
                 "required": ["symbol", "name", "color", "connections"],
             },
         },
-        "labels": {
-            # label objects mapped by a unique id that is randomly generated at creation
+        "linesOrdering": {
+            "description": "Defines the order in which the lines are presented",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "independentLabels": {
+            "description": "Labels that are not bound to a node or a line",
             "type": "object",
-            "additionalProperties": label_basics,
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    # "class": {
+                    #     "type": "string",
+                    #     "enum": [
+                    #         "centered",
+                    #         "left_ascending",
+                    #         "right_ascending",
+                    #         "left_descending",
+                    #         "right_descending",
+                    #         "left",
+                    #         "right",
+                    #     ],
+                    # },
+                    "text": {
+                        "type": "string",
+                        "minLength": 0,
+                        "maxLength": 100,
+                    },
+                    "anchor": anchor,
+                    "styling": styling,
+                    "required": [],
+                    "width": {},
+                    "height": {},
+                    "styling": {},
+                },
+                "additionalProperties": False,
+            },
+        },
+        "labelsOrdering": {
+            "description": "Defines the order in which the independent labels are presented",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "globalOffsetX": {
             "type": "number",
@@ -350,8 +421,11 @@ post_planstate_schema = {
     },
     "required": [
         "nodes",
+        "nodesOrdering",
         "lines",
+        "linesOrdering",
         "labels",
+        "labelsOrdering",
         "planWidth",
         "planHeight",
         "globalOffsetX",
@@ -359,3 +433,5 @@ post_planstate_schema = {
     ],
     "additionalProperties": False,
 }
+
+
