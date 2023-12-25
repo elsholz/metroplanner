@@ -4,7 +4,7 @@
       elevated
       class="bg-dark text-white"
       dark
-      style="box-shadow: 0 0 5px 3px white"
+      style="box-shadow: none; border-width: 0 0 2px 0; border-style: solid; border-color: #31ccec;"
     >
       <q-toolbar>
         <q-btn

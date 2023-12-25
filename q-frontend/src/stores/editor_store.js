@@ -134,8 +134,8 @@ export const usePlanEditorStore = defineStore('editorStore', {
                 text: k
               }
             }
-            this.nodes[k].label.shiftX = this.nodes[k].label.anchor?.shiftX ?? 0
-            this.nodes[k].label.shiftY = this.nodes[k].label.anchor?.shiftY ?? 0
+            this.nodes[k].label.shiftX = this.nodes[k].label.anchor?.shiftX ?? this.nodes[k].label.anchor?.xShift ?? 0
+            this.nodes[k].label.shiftY = this.nodes[k].label.anchor?.shiftY ?? this.nodes[k].label.anchor?.yShift ?? 0
           }
           this.labels = this.planState.labels
           this.selectedNodeIDs = []

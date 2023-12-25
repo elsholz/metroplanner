@@ -1,7 +1,7 @@
 <template>
   <q-page padding dark>
     <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels"
-      :style="'background-color: ' + (colorTheme?.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
+      :style="'padding-left: 10px; padding-top: 10px; padding-bottom: 10px; background-color: ' + (colorTheme?.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
       <div :style="`transform: scale(${planState.scaleFactor || 0.8}); height: ${planState.planHeight * coordinateScalar}px; width: ${planState.planWidth * coordinateScalar}px; border: 1px solid white;`">
         <div id="lines">
           <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
