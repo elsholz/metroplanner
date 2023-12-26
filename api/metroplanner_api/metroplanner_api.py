@@ -1,76 +1,26 @@
-import json
-import endpoints
-import responses
-import environment
+from fastapi import FastAPI, APIRouter, HTTPException
+import type_definitions
+from mangum import Mangum
 from datetime import datetime
-
-ENV = environment.Environment()
-
-
-def private_handler(route, method, event, context, env: environment.Environment):
-    try:
-        sub = env.check_auth(event)
-        try:
-            endpoint: endpoints.EndpointCollection = endpoints.PrivateEndpoint.children[
-                route
-            ]
-            try:
-                endpoint_method: endpoints.EndpointMethod = endpoint.children[method]
-                try:
-                    action = endpoint_method(event, context, env, sub)
-                    return action()
-                except Exception as e:
-                    print("Exception calling endpoint method:", e)
-                    return responses.internal_server_error_500()
-            except KeyError as e:
-                return responses.method_not_allowed_405()
-            except Exception as e:
-                print("Exception getting endpoint method:", e)
-                return responses.internal_server_error_500()
-        except KeyError as e:
-            print("Exception in private handler:", e)
-            return responses.bad_request_400()
-        except Exception as e:
-            print("Exception in private handler:", e)
-            return responses.internal_server_error_500()
-    except environment.BadRequestError as e:
-        print("Exception in private handler:", e)
-        return responses.bad_request_400()
-    except environment.InvalidTokenError as e:
-        print("Exception in private handler:", e)
-        return responses.unauthorized_401()
-    except Exception as e:
-        print("Exception in private handler:", e)
-        return responses.internal_server_error_500()
+import responses
+import json
+from environment import ENV, initialize_environment
 
 
-def public_handler(route, method, event, context, env: environment.Environment):
-    try:
-        endpoint: endpoints.EndpointCollection = endpoints.PublicEndpoint.children[
-            route
-        ]
-        try:
-            endpoint_method: endpoints.EndpointMethod = endpoint.children[method]
-            try:
-                action = endpoint_method(event, context, env)
-                return action()
-            except Exception as e:
-                print("Exception calling endpoint method:", e)
-                return responses.internal_server_error_500()
-        except KeyError as e:
-            return responses.method_not_allowed_405()
-        except Exception as e:
-            print("Exception getting endpoint method:", e)
-            return responses.internal_server_error_500()
-    except KeyError as e:
-        return responses.bad_request_400()
-    except Exception as e:
-        print("Exception in public handler:", e)
-        return responses.internal_server_error_500()
+app = FastAPI()
+
+from . import v1
+
+router = APIRouter(prefix="/")
+router.include_router(router=v1.router)  # TODO: , prefix='/v1')
+
+app.include_router(router)
 
 
 def lambda_handler(event, context):
     started_at = datetime.now()
+    asgi_handler = Mangum(app, api_gateway_base_path="/api")
+
     try:
         print("Event:", event)
         print("Context:", context)
@@ -79,9 +29,9 @@ def lambda_handler(event, context):
 
         if not ENV.is_initialized:
             print("Initializing Environment")
-            ENV.initialize_environment(env)
+            initialize_environment(env)
 
-        if event.get('source', None) == 'aws.scheduler':
+        if event.get("source", None) == "aws.scheduler":
             print("Scheduled invocation at", datetime.now().isoformat())
             return
 
@@ -100,12 +50,14 @@ def lambda_handler(event, context):
         print("Method:", method)
         print("RoutePath:", route_path)
 
-        if route_path.startswith("/api/_"):
-            print("Calling private handler")
-            res = private_handler(route_path, method, event, context, ENV)
-        else:
-            print("Calling public handler")
-            res = public_handler(route_path, method, event, context, ENV)
+        # if route_path.startswith("/api/_"):
+        #     print("Calling private handler")
+        #     res = private_handler(route_path, method, event, context, ENV)
+        # else:
+        #     print("Calling public handler")
+        #     res = public_handler(route_path, method, event, context, ENV)
+
+        res = asgi_handler(event, context)  # Call the instance with the event arguments
     except Exception as e:
         print("Exception handling request:", e)
         res = responses.internal_server_error_500()
@@ -118,7 +70,8 @@ def lambda_handler(event, context):
                 {"code": str(res["statusCode"])}
                 | {
                     "timestamp": datetime.now().isoformat(),
-                    "execution_time": (datetime.now() - started_at).total_seconds() * 1000,
+                    "execution_time": (datetime.now() - started_at).total_seconds()
+                    * 1000,
                     "route_key": route_key,
                     "source_ip": source_ip,
                     "user_agent": user_agent,
@@ -136,3 +89,6 @@ def lambda_handler(event, context):
         print(e, res)
 
     return res
+
+
+# lambda_handler = Mangum(app, lifespan="off", api_gateway_base_path="/api")
