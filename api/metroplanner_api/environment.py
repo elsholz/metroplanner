@@ -13,6 +13,7 @@ from urllib.request import urlopen
 from typing import Optional
 from dataclasses import dataclass
 from jose import jwt
+from fastapi import Request, HTTPException
 
 
 class BadRequestError(Exception):
@@ -43,72 +44,58 @@ class Environment:
     database: Optional[object] = None
     sqs_client: Optional[object] = None
 
+    def initialize_environment(self, env: str) -> None:
+        print("Getting Secrets from Secrets Manager")
+        self.is_initialized = True
+        session = boto3.session.Session()
+        client = session.client(
+            service_name="secretsmanager",
+            region_name=REGION,
+        )
+
+        secret_value = json.loads(
+            client.get_secret_value(SecretId="MetroplannerKeys")["SecretString"]
+        )
+
+        self.DB_USER = secret_value[f"DB_USER_{env.upper()}"]
+        self.DB_PASSWORD = secret_value[f"DB_PASSWORD_{env.upper()}"]
+        self.DB_ADDRESS = secret_value[f"DB_INSTANCE_URL_{env.upper()}"]
+        self.DB_NAME = secret_value[f"DB_NAME_{env.upper()}"]
+
+        print("Secrets received, DB Name:", self.DB_NAME)
+
+        self.AUTH0_DOMAIN = secret_value[f"AUTH0_DOMAIN_{env.upper()}"]
+        self.API_AUDIENCE = secret_value[f"AUTH0_AUDIENCE_{env.upper()}"]
+        self.ALGORITHMS = ["RS256"]
+
+        print("Connecting to MongoDB")
+
+        client = MongoClient(
+            f"mongodb+srv://{self.DB_USER}:{self.DB_PASSWORD}@"
+            f"{self.DB_ADDRESS}/{self.DB_NAME}?retryWrites=true&w=majority"
+        )
+
+        db = client[self.DB_NAME]
+
+        self.database = db
+
+        print("Connecting to SQS")
+        self.sqs_client = boto3.client("sqs")
+        self.SQS_URL = {
+            "dev": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueDev",
+            "prod": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueProd",
+        }[env]
+        print("Finished Connecting to services")
+
 
 ENV = Environment()
 
 
-def initialize_environment(env: str) -> None:
-    print("Getting Secrets from Secrets Manager")
-    ENV.is_initialized = True
-    session = boto3.session.Session()
-    client = session.client(
-        service_name="secretsmanager",
-        region_name=REGION,
-    )
-
-    secret_value = json.loads(
-        client.get_secret_value(SecretId="MetroplannerKeys")["SecretString"]
-    )
-
-    ENV.DB_USER = secret_value[f"DB_USER_{env.upper()}"]
-    ENV.DB_PASSWORD = secret_value[f"DB_PASSWORD_{env.upper()}"]
-    ENV.DB_ADDRESS = secret_value[f"DB_INSTANCE_URL_{env.upper()}"]
-    ENV.DB_NAME = secret_value[f"DB_NAME_{env.upper()}"]
-
-    print("Secrets received, DB Name:", ENV.DB_NAME)
-
-    ENV.AUTH0_DOMAIN = secret_value[f"AUTH0_DOMAIN_{env.upper()}"]
-    ENV.API_AUDIENCE = secret_value[f"AUTH0_AUDIENCE_{env.upper()}"]
-    ENV.ALGORITHMS = ["RS256"]
-
-    print("Connecting to MongoDB")
-
-    client = MongoClient(
-        f"mongodb+srv://{ENV.DB_USER}:{ENV.DB_PASSWORD}@"
-        f"{ENV.DB_ADDRESS}/{ENV.DB_NAME}?retryWrites=true&w=majority"
-    )
-
-    db = client[ENV.DB_NAME]
-
-    ENV.database = db
-
-    # jwks_url = f"https://{self.AUTH0_DOMAIN}/.well-known/jwks.json"
-    # issuer = f"https://{self.AUTH0_DOMAIN}/"
-
-    # sv = AsymmetricSignatureVerifier(jwks_url)  # Reusable instance
-    # self.verifier = TokenVerifier(
-    #     signature_verifier=sv, issuer=issuer, audience=self.API_AUDIENCE
-    # )
-
-    print("Connecting to SQS")
-    ENV.sqs_client = boto3.client("sqs")
-    ENV.SQS_URL = {
-        "dev": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueDev",
-        "prod": "https://sqs.eu-central-1.amazonaws.com/891666753558/MetroplannerQueueProd",
-    }[env]
-    print("Finished Connecting to services")
-
-
-def get_database():
-    return ENV.database
-
-
-def check_auth(event):
-    headers = event.get("headers", {})
-    auth_header = headers.get("Authorization", headers.get("authorization", None))
+def check_auth(request: Request):
+    auth_header = request.headers.get("Authorization", request.headers.get("authorization", None))
 
     if not auth_header or not isinstance(auth_header, str):
-        raise BadRequestError("Missing auth header or in invalid format")
+        raise HTTPException(status_code=400, detail="Missing authorization header or in invalid format")
 
     try:
         token = auth_header.split(" ")[-1]
@@ -138,13 +125,13 @@ def check_auth(event):
                 )
             except jwt.ExpiredSignatureError as e:
                 print("Error: Expired Signature:", e)
-                raise e
+                raise HTTPException(status_code=401, detail="Expired Signature")
             except jwt.JWTClaimsError as e:
                 print("Error, JWT Claims Error")
-                raise e
+                raise HTTPException(status_code=401, detail="Claims Error")
             except Exception as e:
                 print("Error:", e)
-                raise e
+                raise HTTPException(status_code=401, detail="Authentication Failure")
 
             if ENV.API_AUDIENCE in payload.get("aud", []):
                 sub = payload["sub"]
