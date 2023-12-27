@@ -1,7 +1,7 @@
 import pydantic
 from datetime import datetime
 import pydantic_extra_types.color
-from typing import List, Dict, Set, Tuple, Union, Optional, Annotated, BeforeValidator
+from typing import List, Dict, Set, Tuple, Union, Optional, Annotated
 from abc import ABC
 from humps import camelize
 
@@ -15,7 +15,7 @@ class BaseModel(pydantic.BaseModel):
 """
 Basic Types
 """
-ObjectId = Annotated[str, BeforeValidator(str)]
+ObjectId = Annotated[str, pydantic.BeforeValidator(str)]
 NonNegativeInt = Annotated[int, pydantic.Field(ge=0)]
 IntOrFloat = Union[int, float]
 PositiveIntOrFloat = Annotated[Union[int, float], pydantic.Field(gt=0)]
