@@ -41,7 +41,7 @@ Resources:
       FunctionName: !FindInMap [EnvMap, !Ref env, LogFunctionName]
       CodeUri: log_func/
       Handler: log_func.lambda_handler
-      Runtime: python3.9
+      Runtime: python3.12
       Architectures:
         - arm64
       Policies:
@@ -73,7 +73,7 @@ Resources:
       Timeout: !FindInMap [EnvMap, !Ref env, Timeout]
       CodeUri: metroplanner_api/
       Handler: metroplanner_api.lambda_handler
-      Runtime: python3.9
+      Runtime: python3.12
       Architectures:
         - arm64
       ReservedConcurrentExecutions: !FindInMap [EnvMap, !Ref env, LambdaConcurrencyLimit]
