@@ -4,7 +4,7 @@ from mangum import Mangum
 from datetime import datetime
 import responses
 import json
-from environment import ENV, initialize_environment
+from environment import ENV
 
 
 app = FastAPI()
@@ -29,7 +29,7 @@ def lambda_handler(event, context):
 
         if not ENV.is_initialized:
             print("Initializing Environment")
-            initialize_environment(env)
+            ENV.initialize_environment(env)
 
         if event.get("source", None) == "aws.scheduler":
             print("Scheduled invocation at", datetime.now().isoformat())
