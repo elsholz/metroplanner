@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from metroplanner_api.environment import check_auth
+from environment import check_auth
 import responses
 
 

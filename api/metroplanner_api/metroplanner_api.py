@@ -1,10 +1,9 @@
-from fastapi import FastAPI, APIRouter, HTTPException
-import type_definitions
+from fastapi import FastAPI, APIRouter
 from mangum import Mangum
 from datetime import datetime
-import responses
 import json
 from environment import ENV
+import responses
 
 
 app = FastAPI()
