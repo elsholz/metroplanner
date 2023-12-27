@@ -1,4 +1,4 @@
-jsonschema
+# jsonschema
 boto3
 auth0-python
 pymongo
