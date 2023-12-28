@@ -58,6 +58,12 @@ class Styling(BaseModel):
     font_size: pydantic.confloat(gt=0.1, lt=10)
 
 
+class Span(BaseModel):
+    coords: Point
+    width: NonNegativeIntOrFloat
+    height: NonNegativeIntOrFloat
+
+
 class Label(BaseModel):
     label_class: pydantic.constr(
         pattern=(
@@ -71,8 +77,9 @@ class Label(BaseModel):
         )
     ) = "right"
     text: str
-    anchor: Anchor
-    styling: Optional[Styling]
+    ## anchor: Anchor
+    anchor: Union[Span, Anchor]
+    styling: Optional[Styling] = None
 
 
 class Marker(BaseModel):
@@ -101,12 +108,6 @@ class Line(BaseModel):
     border_color: Color
     width: PositiveIntOrFloat
     connections: List[Connection]
-
-
-class Span(BaseModel):
-    coords: Point
-    width: NonNegativeIntOrFloat
-    height: NonNegativeIntOrFloat
 
 
 class IndependentLabel(BaseModel):
