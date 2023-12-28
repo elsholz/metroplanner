@@ -6,11 +6,14 @@ from .environment import ENV, send_log_message
 from . import responses
 
 
-app = FastAPI(servers=[{"url": ENV.api_url, "description": "CloudFront URL"}])
+app = FastAPI(
+    servers=[{"url": ENV.api_url, "description": "CloudFront URL"}],
+    root_path_in_servers=False,
+)
 
 from . import v1
 
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/dev/api")
 router.include_router(v1.router)
 
 app.include_router(router)
