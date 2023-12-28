@@ -61,28 +61,26 @@ def get_plans(shortlink, request: Request) -> type_definitions.Plan:
                         plan_result.pop("history", None)
                         plan_result.pop("_id", None)
                         plan_result: dict
-                        return responses.ok_200(
-                            {
-                                k: v
-                                for k, v in plan_result.items()
-                                if k
-                                in [
-                                    "planName",
-                                    "forkedFrom",
-                                    "ownedBy",
-                                    "createdAt",
-                                    "lastModifiedAt",
-                                    "likeCount",
-                                    "currentColorTheme",
-                                    "currentNumberOfEdges",
-                                    "currentNumberOfLabels",
-                                    "currentNumberOfLines",
-                                    "currentNumberOfNodes",
-                                    "totalViewCount",
-                                    "planDescription",
-                                ]
-                            }
-                        )
+                        return {
+                            k: v
+                            for k, v in plan_result.items()
+                            if k
+                            in [
+                                "planName",
+                                "forkedFrom",
+                                "ownedBy",
+                                "createdAt",
+                                "lastModifiedAt",
+                                "likeCount",
+                                "currentColorTheme",
+                                "currentNumberOfEdges",
+                                "currentNumberOfLabels",
+                                "currentNumberOfLines",
+                                "currentNumberOfNodes",
+                                "totalViewCount",
+                                "planDescription",
+                            ]
+                        }
                 else:
                     print(
                         f"Error: Plan with ID {plan_id} for "
