@@ -40,7 +40,7 @@ def get_planstates(shortlink) -> type_definitions.Planstate:
                             {"_id": plan_result["currentState"]}, {"_id": 0}
                         )
                         print("Found latest state:", latest_state)
-                        latest_state["colorTheme"] = str(latest_state["colorTheme"])
+                        # latest_state["colorTheme"] = str(latest_state["colorTheme"])
 
                         time_to_hour = datetime.now().isoformat().split(":")[0]
 
@@ -65,7 +65,7 @@ def get_planstates(shortlink) -> type_definitions.Planstate:
                         except Exception as e:
                             print("Error updating statistics:", e)
 
-                        return responses.ok_200(latest_state)
+                        return latest_state
                 else:
                     print(f"Plan with ID {plan_id} not found")
                     return responses.gone_410()

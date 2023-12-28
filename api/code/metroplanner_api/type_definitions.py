@@ -135,14 +135,16 @@ Planstate
 
 
 class CreatePlanstate(BaseModel):
-    color_theme: Optional[ObjectId]
+    color_theme: Optional[Union[str, ObjectId]]
 
     nodes: Dict[Identifier, Node]
-    nodes_ordering: List[Identifier]
-    lines: Dict[Identifier, Line]
-    lines_ordering: List[Identifier]
-    independent_labels: Dict[Identifier, IndependentLabel]
-    labels_ordering: List[Identifier]
+    ## nodes_ordering: List[Identifier] = []
+    ## lines: Dict[Identifier, Line]
+    lines: List[Line]
+    ## lines_ordering: List[Identifier] = []
+    ## independent_labels: Dict[Identifier, IndependentLabel]
+    labels: Dict[Identifier, Label]
+    ## labels_ordering: List[Identifier] = []
 
     global_offset_x: Union[float, int]
     global_offset_y: Union[float, int]
