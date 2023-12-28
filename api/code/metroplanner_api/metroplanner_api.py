@@ -6,7 +6,7 @@ from .environment import ENV, send_log_message
 from . import responses
 
 
-app = FastAPI()
+app = FastAPI(servers={"url": ENV.api_url, "description": "CloudFront URL"})
 
 from . import v1
 

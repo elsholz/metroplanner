@@ -53,6 +53,11 @@ class Environment:
             region_name=REGION,
         )
 
+        self.api_url = {
+            "dev": "https://dev.ich-hab-plan.de",
+            "prod": "https://ich-hab-plan.de",
+        }[env]
+
         secret_value = json.loads(
             client.get_secret_value(SecretId="MetroplannerKeys")["SecretString"]
         )
@@ -92,10 +97,14 @@ ENV = Environment()
 
 
 def check_auth(request: Request):
-    auth_header = request.headers.get("Authorization", request.headers.get("authorization", None))
+    auth_header = request.headers.get(
+        "Authorization", request.headers.get("authorization", None)
+    )
 
     if not auth_header or not isinstance(auth_header, str):
-        raise HTTPException(status_code=400, detail="Missing authorization header or in invalid format")
+        raise HTTPException(
+            status_code=400, detail="Missing authorization header or in invalid format"
+        )
 
     try:
         token = auth_header.split(" ")[-1]
@@ -136,7 +145,7 @@ def check_auth(request: Request):
             if ENV.API_AUDIENCE in payload.get("aud", []):
                 sub = payload["sub"]
                 # auth0|... google-oauth|...
-                return sub.split('|')[-1]
+                return sub.split("|")[-1]
         raise Exception()
     except Exception as e:
         print("Error in check_auth:", e)
