@@ -13,7 +13,7 @@ class BaseModel(pydantic.BaseModel):
 
 def check_object_id(oid: str) -> str:
     if not BsonObjectId.is_valid(oid):
-        raise ValueError('Invalid ObjectId')
+        raise ValueError("Invalid ObjectId")
     return oid
 
 
@@ -194,12 +194,10 @@ class Plan(PlanCommons):
     owned_by: ObjectId
     created_at: datetime
     last_modified_at: datetime
-    history: List[ObjectId]
     like_count: NonNegativeInt
-    likes_received: List[str]
-    deleted: Optional[datetime]
+    # likes_received: List[str]
 
-    current_tate: ObjectId
+    current_state: ObjectId
     current_number_of_labels: NonNegativeInt
     current_number_of_nodes: NonNegativeInt
     current_number_of_lines: NonNegativeInt
@@ -207,8 +205,14 @@ class Plan(PlanCommons):
     # current_color_theme: ObjectId
 
 
+class RetrievePlan(Plan):
+    total_view_count: NonNegativeInt
+
+
 class PlanInDB(Plan):
     _id: ObjectId
+    history: List[ObjectId]
+    deleted: Optional[datetime]
 
 
 """
