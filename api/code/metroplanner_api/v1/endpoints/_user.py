@@ -9,7 +9,7 @@ from ...environment import check_auth, ENV
 router = APIRouter()
 
 
-@router.get("/", include_in_schema=False)
+@router.get("", include_in_schema=False)
 @router.get("/")
 def get_user(
     request: Request, sub: str = Depends(check_auth)
@@ -79,7 +79,7 @@ def get_user(
         raise responses.internal_server_error_500()
 
 
-@router.get("/", include_in_schema=False)
+@router.get("", include_in_schema=False)
 @router.patch("/")
 def patch_user(
     user_data: type_definitions.UpdateUser, req: Request, sub: str = Depends(check_auth)

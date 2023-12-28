@@ -20,34 +20,34 @@ def no_content_204():
 
 ### 4xx
 def bad_request_400():
-    raise HTTPException(status_code=400, detail="Bad Request")
+    return HTTPException(status_code=400, detail="Bad Request")
 
 
 def unauthorized_401():
-    raise HTTPException(status_code=401, detail="Unauthorized")
+    return HTTPException(status_code=401, detail="Unauthorized")
 
 
 def forbidden_403():
-    raise HTTPException(status_code=403, detail="Forbidden")
+    return HTTPException(status_code=403, detail="Forbidden")
 
 
 # using 410 over 404 as a workaround, since AWS CloudFront will return index.html on 404 errors
 def gone_410():
-    raise HTTPException(status_code=410, detail="Gone")
+    return HTTPException(status_code=410, detail="Gone")
 
 
 def method_not_allowed_405():
-    raise HTTPException(status_code=405, detail="Method Not Allowed")
+    return HTTPException(status_code=405, detail="Method Not Allowed")
 
 
 def not_acceptable_406():
-    raise HTTPException(status_code=406, detail="Not Acceptable")
+    return HTTPException(status_code=406, detail="Not Acceptable")
 
 
 ### 5xx
 def internal_server_error_500():
-    raise HTTPException(status_code=500, detail="Internal Server Error")
+    return HTTPException(status_code=500, detail="Internal Server Error")
 
 
 def not_implemented_501():
-    raise HTTPException(status_code=501, detail="Not Implemented")
+    return HTTPException(status_code=501, detail="Not Implemented")
