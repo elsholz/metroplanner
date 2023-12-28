@@ -103,10 +103,10 @@ class Connection(BaseModel):
 class Line(BaseModel):
     name: str
     color: Color
-    border_width: PositiveIntOrFloat
+    border_width: Optional[NonNegativeIntOrFloat] = None
     border_style: str  # TODO: constrain
     border_color: Color
-    width: PositiveIntOrFloat
+    width: NonNegativeIntOrFloat
     connections: List[Connection]
 
 
