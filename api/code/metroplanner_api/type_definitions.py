@@ -144,6 +144,7 @@ class User(UpdateUser):
 
 class UserInDB(User):
     _id: str  # User ID from OAuth
+    plans_created: List[ObjectId] = []
 
 
 """

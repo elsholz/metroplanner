@@ -135,7 +135,8 @@ def check_auth(request: Request):
 
             if ENV.API_AUDIENCE in payload.get("aud", []):
                 sub = payload["sub"]
-                return sub.removeprefix("auth0|")
+                # auth0|... google-oauth|...
+                return sub.split('|')[-1]
         raise Exception()
     except Exception as e:
         print("Error in check_auth:", e)
