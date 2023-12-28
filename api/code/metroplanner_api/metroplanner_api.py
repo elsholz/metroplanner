@@ -4,6 +4,8 @@ from datetime import datetime
 import json
 from .environment import ENV, send_log_message
 from . import responses
+from os import environ
+
 
 
 app = FastAPI(servers={"url": ENV.api_url, "description": "CloudFront URL"})
@@ -34,12 +36,6 @@ def lambda_handler(event, context):
     try:
         print("Event:", event)
         print("Context:", context)
-
-        env = context.function_name.removeprefix("MetroplannerFunc").lower()
-
-        if not ENV.is_initialized:
-            print("Initializing Environment")
-            ENV.initialize_environment(env)
 
         if event.get("source", None) == "aws.scheduler":
             print("Scheduled invocation at", datetime.now().isoformat())

@@ -8,12 +8,10 @@ and exposes
 from pymongo import MongoClient
 import json
 import boto3
-from botocore.exceptions import ClientError
 from urllib.request import urlopen
-from typing import Optional
-from dataclasses import dataclass
 from jose import jwt
 from fastapi import Request, HTTPException
+from os import environ
 
 
 class BadRequestError(Exception):
@@ -29,22 +27,14 @@ PROD = "prod"
 REGION = "eu-central-1"
 
 
-@dataclass
 class Environment:
     is_initialized: bool = False
-    DB_USER: Optional[str] = None
-    DB_PASSWORD: Optional[str] = None
-    DB_ADDRESS: Optional[str] = None
-    DB_NAME: Optional[str] = None
-    AUTH0_DOMAIN: Optional[str] = None
-    API_AUDIENCE: Optional[str] = None
-    ALGORITHMS: Optional[str] = None
-    SQS_URL: Optional[str] = None
 
-    database: Optional[object] = None
-    sqs_client: Optional[object] = None
+    def __init__(self) -> None:
+        env = (
+            environ["AWS_LAMBDA_FUNCTION_NAME"].removeprefix("MetroplannerFunc").lower()
+        )
 
-    def initialize_environment(self, env: str) -> None:
         print("Getting Secrets from Secrets Manager")
         self.is_initialized = True
         session = boto3.session.Session()
@@ -96,6 +86,7 @@ class Environment:
 ENV = Environment()
 
 
+# TODO: Move to class Environment
 def check_auth(request: Request):
     auth_header = request.headers.get(
         "Authorization", request.headers.get("authorization", None)
