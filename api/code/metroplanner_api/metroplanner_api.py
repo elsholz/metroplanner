@@ -8,12 +8,13 @@ from . import responses
 
 app = FastAPI(
     servers=[{"url": ENV.api_url, "description": "CloudFront URL"}],
+    root_path="/dev",
     root_path_in_servers=False,
 )
 
 from . import v1
 
-router = APIRouter(prefix="/dev/api")
+router = APIRouter(prefix="/api")
 router.include_router(v1.router)
 
 app.include_router(router)
