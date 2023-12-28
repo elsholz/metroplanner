@@ -55,7 +55,7 @@ def get_user(
             print("plans as list: ", plans_created)
             user_result["plansCreated"] = plans_created
 
-            return responses.ok_200(user_result)
+            return user_result
         else:
             print("User profile not found, creating profile.")
             user_creation_result = db.users.insert_one(
@@ -73,7 +73,7 @@ def get_user(
             user_data["plansCreated"] = []
 
             print("User Creation result", user_creation_result)
-            return responses.ok_200(user_data)
+            return user_data
     except Exception as e:
         print("Exception!!:", e)
         raise responses.internal_server_error_500()
@@ -96,7 +96,7 @@ def patch_user(
         )
         print("Updated result:", updated_result)
         if updated_result:
-            return responses.ok_200(updated_result)
+            updated_result
         else:
             return responses.internal_server_error_500()
     except KeyError as e:
