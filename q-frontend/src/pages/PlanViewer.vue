@@ -21,11 +21,11 @@
         <div id="labels">
           <div v-for="(lbl, lblKey) in planState.labels" :key="lblKey">
             <div v-if="lbl.anchor.node" :style="getLabelStyle(lbl.anchor.node, planState.nodes[lbl.anchor.node])">
-              <div :class="'label ' + lbl.labelClass">
+              <div :class="'label ' + lbl.class">
                 {{ lbl.text }}
               </div>
             </div>
-            <div v-else :class="'label ' + lbl.labelClass" :style="getIndependentLabelStyle(lbl)">
+            <div v-else :class="'label ' + lbl.class" :style="getIndependentLabelStyle(lbl)">
               {{ lbl.text }}
             </div>
           </div>
@@ -128,12 +128,12 @@ export default {
       return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
     },
     getIndependentLabelStyle (lbl) {
-      if (['left', 'right', 'left_ascending', 'right_ascending', 'left_descending', 'left_ascending'].includes(lbl.labelClass)) {
+      if (['left', 'right', 'left_ascending', 'right_ascending', 'left_descending', 'left_ascending'].includes(lbl.class)) {
         const conP = this.getConnectionPoint(lbl.anchor)
         const locX = conP[0]
         const locY = conP[1]
         return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
-      } else if (['span'].includes(lbl.labelClass)) {
+      } else if (['span'].includes(lbl.class)) {
         if (lbl.anchor.coords) {
           return `
           top: ${this.getY(lbl.anchor.coords[1])}px;
