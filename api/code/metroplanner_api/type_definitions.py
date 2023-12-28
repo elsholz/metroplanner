@@ -144,7 +144,7 @@ class User(UpdateUser):
 
 class UserInDB(User):
     _id: str  # User ID from OAuth
-    plans_created: List[ObjectId] = []
+    plans_created: List["PlanPrivateView"] = []
 
 
 """
@@ -201,6 +201,11 @@ class ForkFromShortlink(BaseModel):
 class ForkFromPrivatePlan(BaseModel):
     plan_id: ObjectId
     planstate_id: ObjectId
+
+
+class PlanPrivateView(PlanCommons):
+    plan_id: ObjectId
+    plan_shortlink: ShortText
 
 
 class CreatePlan(PlanCommons):
