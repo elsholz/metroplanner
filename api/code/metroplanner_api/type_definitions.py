@@ -48,7 +48,8 @@ Point = Tuple[IntOrFloat, IntOrFloat]
 
 
 class Anchor(BaseModel):
-    node: Union[Point, Identifier]
+    ## node: Union[Point, Identifier]
+    node: Union[Point, str]
     x_shift: IntOrFloat
     y_shift: IntOrFloat
 
@@ -136,14 +137,16 @@ Planstate
 
 class CreatePlanstate(BaseModel):
     color_theme: Optional[Union[str, ObjectId]]
+    nodes: Dict[str, Node]
+    labels: Dict[str, Label]
 
-    nodes: Dict[Identifier, Node]
+    ## nodes: Dict[Identifier, Node]
     ## nodes_ordering: List[Identifier] = []
     ## lines: Dict[Identifier, Line]
     lines: List[Line]
     ## lines_ordering: List[Identifier] = []
     ## independent_labels: Dict[Identifier, IndependentLabel]
-    labels: Dict[Identifier, Label]
+    ## labels: Dict[Identifier, Label]
     ## labels_ordering: List[Identifier] = []
 
     global_offset_x: Union[float, int]
