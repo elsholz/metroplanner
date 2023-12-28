@@ -126,28 +126,6 @@ class IndependentLabel(BaseModel):
 
 
 """
-User
-"""
-
-
-class UpdateUser(BaseModel):
-    bio: LongText
-    display_name: ShortText
-    # public: bool
-    profile_picture: Optional[str] = None
-
-
-class User(UpdateUser):
-    profile_views: NonNegativeInt = 0
-    likes_given: List[ObjectId] = []
-
-
-class UserInDB(User):
-    _id: str  # User ID from OAuth
-    plans_created: List["PlanPrivateView"] = []
-
-
-"""
 Planstate
 """
 
@@ -240,6 +218,28 @@ class PlanInDB(Plan):
     current_state: ObjectId
     history: List[ObjectId]
     deleted: Optional[datetime]
+
+
+"""
+User
+"""
+
+
+class UpdateUser(BaseModel):
+    bio: LongText
+    display_name: ShortText
+    # public: bool
+    profile_picture: Optional[str] = None
+
+
+class User(UpdateUser):
+    profile_views: NonNegativeInt = 0
+    likes_given: List[ObjectId] = []
+    plans_created: Optional[List[PlanPrivateView]] = None
+
+
+class UserInDB(User):
+    _id: str  # User ID from OAuth
 
 
 """
