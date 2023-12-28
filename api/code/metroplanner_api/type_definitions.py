@@ -65,7 +65,7 @@ class Span(BaseModel):
 
 
 class Label(BaseModel):
-    label_class: pydantic.Field(
+    label_class: Annotated[
         pydantic.constr(
             pattern=(
                 "centered"
@@ -77,9 +77,11 @@ class Label(BaseModel):
                 "|right"
             )
         ),
-        alias="class",
-        alias_priority=2,
-    ) = "right"
+        pydantic.Field(
+            alias="class",
+            alias_priority=2,
+        ),
+    ] = "right"
     text: str
     ## anchor: Anchor
     anchor: Union[Span, Anchor]
