@@ -2,7 +2,7 @@ from fastapi import FastAPI, APIRouter
 from mangum import Mangum
 from datetime import datetime
 import json
-from .environment import ENV
+from .environment import ENV, send_log_message
 from . import responses
 
 
@@ -17,7 +17,7 @@ app.include_router(router)
 
 def lambda_handler(event, context):
     started_at = datetime.now()
-    asgi_handler = Mangum(app, api_gateway_base_path="/api")
+    asgi_handler = Mangum(app)
 
     try:
         print("Event:", event)
@@ -63,7 +63,7 @@ def lambda_handler(event, context):
     print("Result to be returned:", res)
 
     try:
-        ENV.send_log_message(
+        send_log_message(
             json.dumps(
                 {"code": str(res["statusCode"])}
                 | {
