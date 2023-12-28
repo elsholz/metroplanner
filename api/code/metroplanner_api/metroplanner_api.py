@@ -10,7 +10,7 @@ app = FastAPI(servers=[{"url": ENV.api_url, "description": "CloudFront URL"}])
 
 from . import v1
 
-router = APIRouter(prefix="/dev/api")
+router = APIRouter(prefix="/api")
 router.include_router(v1.router)
 
 app.include_router(router)
