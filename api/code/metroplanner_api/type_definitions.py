@@ -11,16 +11,11 @@ class BaseModel(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(alias_generator=camelize, populate_by_name=True)
 
 
-class ObjectId(BsonObjectId):
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+def check_object_id(oid: str) -> str:
+    return str(BsonObjectId(oid))
 
-    @classmethod
-    def validate(cls, v):
-        if not isinstance(v, BsonObjectId):
-            raise TypeError("ObjectId required")
-        return str(v)
+
+MyNumber = Annotated[int, pydantic.AfterValidator(check_object_id)]
 
 
 """
