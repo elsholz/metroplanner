@@ -12,7 +12,9 @@ class BaseModel(pydantic.BaseModel):
 
 
 def check_object_id(oid: str) -> str:
-    return str(BsonObjectId(oid))
+    if not BsonObjectId.is_valid(oid):
+        raise ValueError('Invalid ObjectId')
+    return oid
 
 
 ObjectId = Annotated[str, pydantic.AfterValidator(check_object_id)]
