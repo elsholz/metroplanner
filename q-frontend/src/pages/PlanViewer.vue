@@ -239,7 +239,7 @@ export default {
           return [locX, locY]
         }
       } else {
-        return [anchor[0], anchor[1]]
+        return [(anchor.node || anchor)[0], (anchor.node || anchor)[1]]
       }
     },
     getTopShift (direction, width) {
