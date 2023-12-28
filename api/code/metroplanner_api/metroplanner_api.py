@@ -10,7 +10,8 @@ app = FastAPI()
 
 from . import v1
 
-router = v1.router
+router = APIRouter(prefix="/dev/api")
+router.include_router(v1.router)
 
 app.include_router(router)
 
@@ -55,7 +56,9 @@ def lambda_handler(event, context):
         #     print("Calling public handler")
         #     res = public_handler(route_path, method, event, context, ENV)
 
+        print('Handling request to asgi_handler')
         res = asgi_handler(event, context)  # Call the instance with the event arguments
+        print('Response from asgi_handler:', res)
     except Exception as e:
         print("Exception handling request:", e)
         res = responses.internal_server_error_500()
