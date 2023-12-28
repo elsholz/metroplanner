@@ -76,10 +76,10 @@ class Label(BaseModel):
 
 
 class Marker(BaseModel):
-    width: IntOrFloat
-    height: IntOrFloat
-    size_factor: Union[IntOrFloat, str]  # TODO: Add constrain
-    rotation: IntOrFloat
+    width: IntOrFloat = 1
+    height: IntOrFloat = 1
+    size_factor: Union[IntOrFloat, str] = 1  # TODO: Add constrain
+    rotation: IntOrFloat = 0
 
 
 class Node(BaseModel):
