@@ -65,16 +65,19 @@ class Span(BaseModel):
 
 
 class Label(BaseModel):
-    label_class: pydantic.constr(
-        pattern=(
-            "centered"
-            "|left_ascending"
-            "|right_ascending"
-            "|left_descending"
-            "|right_descending"
-            "|left"
-            "|right"
-        )
+    label_class: pydantic.Field(
+        pydantic.constr(
+            pattern=(
+                "centered"
+                "|left_ascending"
+                "|right_ascending"
+                "|left_descending"
+                "|right_descending"
+                "|left"
+                "|right"
+            )
+        ),
+        serialization_alias="class",
     ) = "right"
     text: str
     ## anchor: Anchor

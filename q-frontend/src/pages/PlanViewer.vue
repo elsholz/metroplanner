@@ -1,8 +1,9 @@
 <template>
   <q-page padding dark>
     <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels"
-      :style="'padding-left: 10px; padding-top: 10px; padding-bottom: 10px; background-color: ' + (colorTheme?.themeData || {backgroundColor: '#001'}).backgroundColor  + '; '">
-      <div :style="`transform: scale(${planState.scaleFactor || 0.8}); height: ${planState.planHeight * coordinateScalar}px; width: ${planState.planWidth * coordinateScalar}px; border: 1px solid white;`">
+      :style="'padding-left: 10px; padding-top: 10px; padding-bottom: 10px; background-color: ' + (colorTheme?.themeData || { backgroundColor: '#001' }).backgroundColor + '; '">
+      <div
+        :style="`transform: scale(${planState.scaleFactor || 0.8}); height: ${planState.planHeight * coordinateScalar}px; width: ${planState.planWidth * coordinateScalar}px; border: 1px solid white;`">
         <div id="lines">
           <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
             <div v-for="(segment, segmentKey) in line.segments" v-bind:key="segmentKey"
@@ -20,11 +21,11 @@
         <div id="labels">
           <div v-for="(lbl, lblKey) in planState.labels" :key="lblKey">
             <div v-if="lbl.anchor.node" :style="getLabelStyle(lbl.anchor.node, planState.nodes[lbl.anchor.node])">
-              <div :class="'label ' + lbl.class">
+              <div :class="'label ' + lbl.labelClass">
                 {{ lbl.text }}
               </div>
             </div>
-            <div v-else :class="'label ' + lbl.class" :style="getIndependentLabelStyle(lbl)">
+            <div v-else :class="'label ' + lbl.labelClass" :style="getIndependentLabelStyle(lbl)">
               {{ lbl.text }}
             </div>
           </div>
@@ -127,12 +128,12 @@ export default {
       return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
     },
     getIndependentLabelStyle (lbl) {
-      if (['left', 'right', 'left_ascending', 'right_ascending', 'left_descending', 'left_ascending'].includes(lbl.class)) {
+      if (['left', 'right', 'left_ascending', 'right_ascending', 'left_descending', 'left_ascending'].includes(lbl.labelClass)) {
         const conP = this.getConnectionPoint(lbl.anchor)
         const locX = conP[0]
         const locY = conP[1]
         return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
-      } else if (['span'].includes(lbl.class)) {
+      } else if (['span'].includes(lbl.labelClass)) {
         if (lbl.anchor.coords) {
           return `
           top: ${this.getY(lbl.anchor.coords[1])}px;
@@ -175,7 +176,9 @@ export default {
           mapstyle.innerText += text
         }
 
+        console.log('adding label types', this.labelTypes)
         for (const [lbl, style] of Object.entries(this.labelTypes)) {
+          console.log(lbl, style)
           const stl = style.style
 
           mapstyle.innerText += `
@@ -236,7 +239,7 @@ export default {
           return [locX, locY]
         }
       } else {
-        return [anchor.node[0] + (anchor.xShift || 0), anchor.node[1] + (anchor.yShift || 0)]
+        return [anchor[0], anchor[1]]
       }
     },
     getTopShift (direction, width) {
