@@ -71,8 +71,8 @@ Resources:
       FunctionName: !FindInMap [EnvMap, !Ref env, FunctionName]
       MemorySize: !FindInMap [EnvMap, !Ref env, MemorySize]
       Timeout: !FindInMap [EnvMap, !Ref env, Timeout]
-      CodeUri: metroplanner_api/
-      Handler: metroplanner_api.lambda_handler
+      CodeUri: code/
+      Handler: metroplanner_api/metroplanner_api.lambda_handler
       Runtime: python3.11
       Architectures:
         - arm64
