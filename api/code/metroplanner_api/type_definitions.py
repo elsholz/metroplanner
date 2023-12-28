@@ -50,8 +50,8 @@ Point = Tuple[IntOrFloat, IntOrFloat]
 class Anchor(BaseModel):
     ## node: Union[Point, Identifier]
     node: Union[Point, str]
-    x_shift: IntOrFloat
-    y_shift: IntOrFloat
+    x_shift: IntOrFloat = 0
+    y_shift: IntOrFloat = 0
 
 
 class Styling(BaseModel):
@@ -69,7 +69,7 @@ class Label(BaseModel):
             "|left"
             "|right"
         )
-    )
+    ) = "right"
     text: str
     anchor: Anchor
     styling: Optional[Styling]
@@ -103,8 +103,15 @@ class Line(BaseModel):
     connections: List[Connection]
 
 
+class Span(BaseModel):
+    coords: Point
+    width: NonNegativeIntOrFloat
+    height: NonNegativeIntOrFloat
+
+
 class IndependentLabel(BaseModel):
-    anchor: Anchor
+    ## anchor: Anchor
+    anchor: Union[Span, Anchor]
     text: str
     width: NonNegativeIntOrFloat
     height: NonNegativeIntOrFloat
