@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends, Response
 from datetime import datetime
 
 from ... import type_definitions
@@ -96,7 +96,7 @@ def get_planstate(
 
                     if planstate:
                         print("Found planstate with id", planstate_id)
-                        return responses.ok_200(planstate)
+                        return planstate
                     else:
                         print(
                             f"Planstate with id {planstate_id} not found",

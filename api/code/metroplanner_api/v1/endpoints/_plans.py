@@ -289,7 +289,7 @@ def get_plan(
             plan_details["shortlinks"] = shortlinks_with_stats
             print("Plan Details:", plan_details)
 
-            return responses.ok_200(plan_details)
+            plan_details
         else:
             return responses.unauthorized_401()
     except Exception as e:
