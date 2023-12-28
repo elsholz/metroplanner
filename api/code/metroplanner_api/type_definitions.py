@@ -112,7 +112,7 @@ class Line(BaseModel):
     color: Color
     border_width: Optional[NonNegativeIntOrFloat] = None
     border_style: str  # TODO: constrain
-    border_color: Color
+    border_color: Optional[Color] = None
     width: NonNegativeIntOrFloat
     connections: List[Connection]
 
