@@ -15,7 +15,7 @@ def check_object_id(oid: str) -> str:
     return str(BsonObjectId(oid))
 
 
-ObjectId = Annotated[int, pydantic.AfterValidator(check_object_id)]
+ObjectId = Annotated[str, pydantic.AfterValidator(check_object_id)]
 
 
 """
