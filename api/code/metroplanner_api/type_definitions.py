@@ -85,7 +85,8 @@ class Marker(BaseModel):
 class Node(BaseModel):
     location: Point
     marker: Marker
-    label: Label
+    ## label: Label
+    label: Union[str, Label]
 
 
 class Connection(BaseModel):
