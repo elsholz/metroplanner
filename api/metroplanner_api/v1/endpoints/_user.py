@@ -1,18 +1,18 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from environment import check_auth, ENV
-import responses
-import json
 from pymongo import ReturnDocument
-import type_definitions
 
-# import jsonschema
+from ... import type_definitions
+from ... import responses
+from ...environment import check_auth, ENV
 
 
 router = APIRouter()
 
 
 @router.get("/")
-def get_user(request: Request, sub: Depends(check_auth)) -> type_definitions.UserInDB:
+def get_user(
+    request: Request, sub: str = Depends(check_auth)
+) -> type_definitions.UserInDB:
     try:
         db = ENV.database
         user_result = db.users.find_one({"_id": sub})
@@ -80,7 +80,7 @@ def get_user(request: Request, sub: Depends(check_auth)) -> type_definitions.Use
 
 @router.patch("/")
 def patch_user(
-    user_data: type_definitions.UpdateUser, req: Request, sub: Depends(check_auth)
+    user_data: type_definitions.UpdateUser, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.UserInDB:
     try:
         # jsonschema.validate(instance=data, schema=request_schemas.patch_user_schema)

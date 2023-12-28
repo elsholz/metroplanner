@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from environment import check_auth, ENV
-from pymongo import ObjectId
-import responses
-import type_definitions
 from datetime import datetime
+
+from ... import type_definitions
+from ... import responses
+from ...environment import check_auth, ENV
 
 
 router = APIRouter()
@@ -14,13 +14,13 @@ def post_planstate(
     plan_id,
     planstate_data: type_definitions.CreatePlanstate,
     req: Request,
-    sub: Depends(check_auth),
+    sub: str = Depends(check_auth),
 ) -> type_definitions.PlanInDB:
     try:
         # make_current = "makeCurrent" in self.event.get("queryStringParameters", {})
         db = ENV.database
         plan_details = db.plans.find_one(
-            {"_id": ObjectId(plan_id)},
+            {"_id": type_definitions.ObjectId(plan_id)},
             {
                 "_id": 0,
                 "ownedBy": 1,
@@ -56,7 +56,7 @@ def post_planstate(
                 set_plan_data["numberOfLabels"] = planstate_data["numberOfLabels"]
 
             db.plans.update_one(
-                {"_id": ObjectId(plan_id)},
+                {"_id": type_definitions.ObjectId(plan_id)},
                 {
                     "$push": {
                         "history": created_result.inserted_id,
@@ -77,20 +77,20 @@ def post_planstate(
 
 @router.get("/{plan_id}/_planstates/{planstate_id}")
 def get_planstate(
-    plan_id, planstate_id, req: Request, sub: Depends(check_auth)
+    plan_id, planstate_id, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanstateInDB:
     try:
         db = ENV.database
         plan_details = db.plans.find_one(
-            {"_id": ObjectId(plan_id)},
+            {"_id": type_definitions.ObjectId(plan_id)},
             {"_id": 0, "ownedBy": 1, "history": 1},
         )
 
         if plan_details:
             if plan_details["ownedBy"] == sub:
-                if ObjectId(planstate_id) in plan_details["history"]:
+                if type_definitions.ObjectId(planstate_id) in plan_details["history"]:
                     planstate = db.planstates.find_one(
-                        {"_id": ObjectId(planstate_id)},
+                        {"_id": type_definitions.ObjectId(planstate_id)},
                         {"_id": 0},
                     )
 

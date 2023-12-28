@@ -2,16 +2,15 @@ from fastapi import FastAPI, APIRouter
 from mangum import Mangum
 from datetime import datetime
 import json
-from environment import ENV
-import responses
+from .environment import ENV
+from . import responses
 
 
 app = FastAPI()
 
 from . import v1
 
-router = APIRouter(prefix="/")
-router.include_router(router=v1.router)  # TODO: , prefix='/v1')
+router = v1.router
 
 app.include_router(router)
 

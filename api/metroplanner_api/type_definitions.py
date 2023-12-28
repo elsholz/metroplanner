@@ -4,18 +4,31 @@ import pydantic_extra_types.color
 from typing import List, Dict, Set, Tuple, Union, Optional, Annotated
 from abc import ABC
 from humps import camelize
+from bson.objectid import ObjectId as BsonObjectId
 
 
 class BaseModel(pydantic.BaseModel):
-    class Config:
-        alias_generator = camelize
-        allow_population_by_field_name = True
+    model_config = pydantic.ConfigDict(alias_generator=camelize, populate_by_name=True)
+
+
+class ObjectId(BsonObjectId):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not isinstance(v, BsonObjectId):
+            raise TypeError("ObjectId required")
+        return str(v)
 
 
 """
 Basic Types
 """
-ObjectId = Annotated[str, pydantic.BeforeValidator(str)]
+# ObjectId = Annotated[str, pydantic.BeforeValidator(str)]
+
+
 NonNegativeInt = Annotated[int, pydantic.Field(ge=0)]
 IntOrFloat = Union[int, float]
 PositiveIntOrFloat = Annotated[Union[int, float], pydantic.Field(gt=0)]

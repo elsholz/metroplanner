@@ -1,14 +1,37 @@
-from fastapi import APIRouter, Request, Depends
-
-
-from . import private
-from . import public
+from fastapi import APIRouter
 
 router = APIRouter()
-router.include_router(
-    private.router,
-    prefix="/_",
-    tags=["Private"],
-    # dependencies=[Depends(check_auth)],  # TODO
-)
-router.include_router(public.router, prefix="/", tags=["Public"])
+
+
+from . import _links
+
+router.include_router(_links.router, prefix="/_links", tags=["Private"])
+
+from . import _plans
+
+router.include_router(_plans.router, prefix="/_plans", tags=["Private"])
+
+from . import _planstates
+
+router.include_router(_planstates.router, prefix="/_planstates", tags=["Private"])
+
+from . import _user
+
+router.include_router(_user.router, prefix="/_user", tags=["Private"])
+
+
+from . import colorthemes
+
+router.include_router(colorthemes.router, prefix="/colorthemes", tags=["Public"])
+
+from . import plans
+
+router.include_router(plans.router, prefix="/plans", tags=["Public"])
+
+from . import planstates
+
+router.include_router(planstates.router, prefix="/planstates", tags=["Public"])
+
+from . import users
+
+router.include_router(users.router, prefix="/users", tags=["Public"])

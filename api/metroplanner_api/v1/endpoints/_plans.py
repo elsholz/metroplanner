@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from environment import check_auth, ENV
-import responses
-from pymongo import ObjectId
-import json
 from datetime import datetime
-import type_definitions
 import random
+
+from ... import type_definitions
+from ... import responses
+from ...environment import check_auth, ENV
 
 
 router = APIRouter()
@@ -13,7 +12,7 @@ router = APIRouter()
 
 @router.post("/")
 def post_plan(
-    plan_data: type_definitions.CreatePlan, req: Request, sub: Depends(check_auth)
+    plan_data: type_definitions.CreatePlan, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanInDB:
     try:
         print("Received request to create a new plan. Validating JSON data...")
@@ -49,7 +48,7 @@ def post_plan(
                 else:
                     return responses.gone_410()
             else:
-                planid = ObjectId(fork_from.get("planID", None))
+                planid = type_definitions.ObjectId(fork_from.get("planID", None))
 
             plan_details = db.plans.find_one(
                 {
@@ -60,7 +59,7 @@ def post_plan(
             if plan_details:
                 if shortlink or plan_details["ownedBy"] == sub:
                     planstateid = (
-                        ObjectId(fork_from["planstateID"])
+                        type_definitions.ObjectId(fork_from["planstateID"])
                         if not shortlink
                         else plan_details["currentState"]
                     )
@@ -144,13 +143,13 @@ def patch_plan(
     plan_id,
     plan_data: type_definitions.UpdatePlan,
     req: Request,
-    sub: Depends(check_auth),
+    sub: str = Depends(check_auth),
 ) -> type_definitions.PlanInDB:
     try:
         db = ENV.database
         plan_details = db.plans.find_one(
             {
-                "_id": ObjectId(plan_id),
+                "_id": type_definitions.ObjectId(plan_id),
             },
             {
                 "_id": 0,
@@ -171,7 +170,7 @@ def patch_plan(
                     print("Can't change color theme atm")
                     return responses.not_implemented_501()
                 if k == "currentState":
-                    new_id = ObjectId(plan_data["currentState"])
+                    new_id = type_definitions.ObjectId(plan_data["currentState"])
                     get_planstate_result = db.planstates.find_one(
                         {"_id": new_id}, {"_id": 1}
                     )
@@ -194,7 +193,7 @@ def patch_plan(
 
             db.plans.update_one(
                 {
-                    "_id": ObjectId(plan_id),
+                    "_id": type_definitions.ObjectId(plan_id),
                 },
                 {
                     "$set": set_data,
@@ -211,12 +210,12 @@ def patch_plan(
 
 @router.get("/{plan_id}")
 def get_plan(
-    plan_id, req: Request, sub: Depends(check_auth)
+    plan_id, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanInDB:
     try:
         db = ENV.database
         plan_details = db.plans.find_one(
-            {"_id": ObjectId(plan_id)},
+            {"_id": type_definitions.ObjectId(plan_id)},
             {
                 "_id": 0,
             },
@@ -231,7 +230,7 @@ def get_plan(
                 plan_details["currentState"] = str(current_state)
             if isinstance(
                 current_colortheme := plan_details["colorTheme"],
-                ObjectId,
+                type_definitions.ObjectId,
             ):
                 plan_details["colorTheme"] = str(current_colortheme)
 
@@ -260,7 +259,9 @@ def get_plan(
             print("states:", states)
             plan_details["history"] = states
 
-            shortlinks = list(db.links.find({"plan": ObjectId(plan_id)}, {"plan": 0}))
+            shortlinks = list(
+                db.links.find({"plan": type_definitions.ObjectId(plan_id)}, {"plan": 0})
+            )
 
             shortlinks_with_stats = []
 
@@ -270,7 +271,7 @@ def get_plan(
                     shortlink_stats = db.stats.find_one(
                         {
                             "_id": {
-                                "plan": ObjectId(plan_id),
+                                "plan": type_definitions.ObjectId(plan_id),
                                 "link": shortlink["_id"],
                             }
                         },
@@ -297,5 +298,5 @@ def get_plan(
 
 
 @router.delete("/{plan_id}")
-def delete_plan(req: Request, sub: Depends(check_auth)):
+def delete_plan(req: Request, sub: str = Depends(check_auth)):
     raise responses.not_implemented_501()
