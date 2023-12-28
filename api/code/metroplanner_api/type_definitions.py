@@ -75,6 +75,7 @@ class Label(BaseModel):
                 "|right_descending"
                 "|left"
                 "|right"
+                "|span"
             )
         ),
         pydantic.Field(
