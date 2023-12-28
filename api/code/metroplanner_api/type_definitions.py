@@ -197,7 +197,6 @@ class Plan(PlanCommons):
     like_count: NonNegativeInt
     # likes_received: List[str]
 
-    current_state: ObjectId
     current_number_of_labels: NonNegativeInt
     current_number_of_nodes: NonNegativeInt
     current_number_of_lines: NonNegativeInt
@@ -211,6 +210,7 @@ class RetrievePlan(Plan):
 
 class PlanInDB(Plan):
     _id: ObjectId
+    current_state: ObjectId
     history: List[ObjectId]
     deleted: Optional[datetime]
 
