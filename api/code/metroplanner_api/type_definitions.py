@@ -77,7 +77,8 @@ class Label(BaseModel):
                 "|right"
             )
         ),
-        serialization_alias="class",
+        alias="class",
+        alias_priority=2,
     ) = "right"
     text: str
     ## anchor: Anchor
