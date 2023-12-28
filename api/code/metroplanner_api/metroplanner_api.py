@@ -10,6 +10,7 @@ app = FastAPI(
     servers=[{"url": ENV.api_url, "description": "CloudFront URL"}],
     root_path="",
     root_path_in_servers=False,
+    redirect_slashes=False,
 )
 
 from . import v1
