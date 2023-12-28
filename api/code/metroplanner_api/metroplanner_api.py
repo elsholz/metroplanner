@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Request
 from mangum import Mangum
 from datetime import datetime
 import json
@@ -14,6 +14,17 @@ router = APIRouter(prefix="/dev/api")
 router.include_router(v1.router)
 
 app.include_router(router)
+
+
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, _):
+    print(
+        "Handling 404 for request to",
+        request.url,
+        request.path_params,
+        request.query_params,
+    )
+    raise responses.gone_410()
 
 
 def lambda_handler(event, context):
@@ -56,9 +67,9 @@ def lambda_handler(event, context):
         #     print("Calling public handler")
         #     res = public_handler(route_path, method, event, context, ENV)
 
-        print('Handling request to asgi_handler')
+        print("Handling request to asgi_handler")
         res = asgi_handler(event, context)  # Call the instance with the event arguments
-        print('Response from asgi_handler:', res)
+        print("Response from asgi_handler:", res)
     except Exception as e:
         print("Exception handling request:", e)
         res = responses.internal_server_error_500()
