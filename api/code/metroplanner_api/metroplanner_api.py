@@ -8,7 +8,7 @@ from . import responses
 
 app = FastAPI(
     servers=[{"url": ENV.api_url, "description": "CloudFront URL"}],
-    root_path="/dev/api",
+    root_path="",
     root_path_in_servers=False,
 )
 
