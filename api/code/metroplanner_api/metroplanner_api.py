@@ -8,13 +8,13 @@ from . import responses
 
 app = FastAPI(
     servers=[{"url": ENV.api_url, "description": "CloudFront URL"}],
-    root_path="/dev",
+    root_path="/dev/api",
     root_path_in_servers=False,
 )
 
 from . import v1
 
-router = APIRouter(prefix="/api")
+router = APIRouter(prefix="/dev/api")
 router.include_router(v1.router)
 
 app.include_router(router)
@@ -99,6 +99,3 @@ def lambda_handler(event, context):
         print(e, res)
 
     return res
-
-
-# lambda_handler = Mangum(app, lifespan="off", api_gateway_base_path="/api")
