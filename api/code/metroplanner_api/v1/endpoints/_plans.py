@@ -301,7 +301,7 @@ def delete_plan(
 ):
     db = ENV.database
     plan_details = db.plans.find_one(
-        {"_id": plan_id},
+        {"_id": type_definitions.ObjectId(plan_id)},
         {
             "_id": 0,
             "ownedBy": 1,
@@ -321,5 +321,5 @@ def delete_plan(
     shortlinks = list(db.links.find({"plan": plan_id}))
 
     for shortlink in shortlinks:
-        if shortlink["active"]:
-            print("Shortlink: ", shortlink)
+        print("Shortlink", shortlink, "will be removed")
+        db.links.delete_one({"_id": shortlink["_id"]})
