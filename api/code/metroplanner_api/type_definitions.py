@@ -228,7 +228,7 @@ User
 class UpdateUser(BaseModel):
     bio: LongText
     display_name: ShortText
-    # public: bool
+    public: bool = True
     profile_picture: Optional[str] = None
 
 

@@ -79,13 +79,12 @@ def get_user(
         raise responses.internal_server_error_500()
 
 
-@router.get("", include_in_schema=False)
+@router.patch("", include_in_schema=False)
 @router.patch("/")
 def patch_user(
     user_data: type_definitions.UpdateUser, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.UserInDB:
     try:
-        # jsonschema.validate(instance=data, schema=request_schemas.patch_user_schema)
         db = ENV.database
         updated_result = db.users.find_one_and_update(
             {
