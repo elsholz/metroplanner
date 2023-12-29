@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
+import { Notify } from 'quasar'
 
 export const useUserStore = defineStore('userStore', {
   state: () => {
@@ -62,9 +63,49 @@ export const useUserStore = defineStore('userStore', {
           const data = response.data
           this.displayName = data.displayName
           this.bio = data.bio
+          Notify.create({
+            message: 'Profil erfolgreich gespeichert',
+            timeout: 3000,
+            type: 'info'
+          })
         })
         .catch((reason) => {
           console.log('error saving user data, reason: ', reason)
+          Notify.create({
+            message: `Fehler beim Speichern des Profils: ${reason}`,
+            timeout: 5000,
+            type: 'warning'
+          })
+        })
+    },
+    deletePlan: async function (planId, planName) {
+      const token = await this.auth.getAccessTokenSilently()
+      await axios
+        .delete('/api/_plans/' + planId, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(response => {
+          this.plansCreated.forEach((element, index, array) => {
+            if (element.planId === planId) {
+              this.plansCreated.splice(index, 1)
+              Notify.create(
+                {
+                  message: `»${this.planName}« wurde gelöscht.`,
+                  timeout: 5000,
+                  type: 'info'
+                }
+              )
+            }
+          })
+        })
+        .catch((reason) => {
+          Notify.create(
+            {
+              message: `Fehler beim löschen von »${planName}«! ${reason}`,
+              timeout: 10000,
+              type: 'warning'
+            }
+          )
         })
     }
   }

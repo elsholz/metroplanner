@@ -133,7 +133,7 @@
               v-model="tab"
               animated
               dark
-              class="bg-primary q-mb-sm"
+              class="bg-primary"
             >
               <q-tab-panel name="created">
                 <div class="row">
@@ -254,8 +254,10 @@ export default {
   },
   methods: {
     loadPlans: async function () {
-      for (const planId of this.plansCreated) {
-        console.log('Loading plan with uuid ', planId)
+      if (this.plansCreated) {
+        for (const planId of this.plansCreated) {
+          console.log('Loading plan with uuid ', planId)
+        }
       }
     },
     changeProfile: function () {
