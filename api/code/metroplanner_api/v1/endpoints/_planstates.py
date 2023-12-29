@@ -9,6 +9,7 @@ from ...environment import check_auth, ENV
 router = APIRouter()
 
 
+@router.post("", include_in_schema=False, status_code=201)
 @router.post("/{plan_id}/_planstates")
 def post_planstate(
     plan_id,
