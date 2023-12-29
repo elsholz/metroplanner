@@ -84,23 +84,16 @@ def get_user(
 def patch_user(
     user_data: type_definitions.UpdateUser, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.UserInDB:
-    try:
-        db = ENV.database
-        updated_result = db.users.find_one_and_update(
-            {
-                "_id": sub,
-            },
-            {"$set": user_data.get_existing_fields()},
-            return_document=ReturnDocument.AFTER,
-        )
-        print("Updated result:", updated_result)
-        if updated_result:
-            updated_result
-        else:
-            return responses.internal_server_error_500()
-    except KeyError as e:
-        print(e)
-        return responses.bad_request_400()
-    except Exception as e:
-        print(e)
-        return responses.internal_server_error_500()
+    db = ENV.database
+    updated_result = db.users.find_one_and_update(
+        {
+            "_id": sub,
+        },
+        {"$set": user_data.get_existing_fields()},
+        return_document=ReturnDocument.AFTER,
+    )
+    print("Updated result:", updated_result)
+    if updated_result:
+        updated_result
+    else:
+        raise responses.internal_server_error_500()

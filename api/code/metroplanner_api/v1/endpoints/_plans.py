@@ -11,132 +11,120 @@ from ...environment import check_auth, ENV
 router = APIRouter()
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def post_plan(
     plan_data: type_definitions.CreatePlan, req: Request, sub: str = Depends(check_auth)
-) -> type_definitions.PlanInDB:
-    try:
-        print("Received request to create a new plan. Validating JSON data...")
-        print("Data successfully validated:", plan_data)
+) -> type_definitions.PlanId:
+    print("Received request to create a new plan. Validating JSON data...")
+    print("Data successfully validated:", plan_data)
 
-        db = ENV.database
+    db = ENV.database
 
-        new_plan_data = {
-            "planName": plan_data["planName"],
-            "planDescription": plan_data["planName"],
-            "forkedFrom": None,
-            "deleted": None,
-            "createdAt": (now := datetime.now().isoformat()),
-            "lastModifiedAt": now,
-            "likeCount": 0,
-            "ownedBy": sub,
-            "colorTheme": (theme := "colorful-dl"),
-            "currentNumberOfEdges": 0,
-            "currentNumberOfLines": 0,
-            "currentNumberOfNodes": 0,
-            "currentNumberOfLabels": 0,
-        }
+    new_plan_data = {
+        "planName": plan_data["planName"],
+        "planDescription": plan_data["planName"],
+        "forkedFrom": None,
+        "deleted": None,
+        "createdAt": (now := datetime.now().isoformat()),
+        "lastModifiedAt": now,
+        "likeCount": 0,
+        "ownedBy": sub,
+        "colorTheme": (theme := "colorful-dl"),
+        "currentNumberOfEdges": 0,
+        "currentNumberOfLines": 0,
+        "currentNumberOfNodes": 0,
+        "currentNumberOfLabels": 0,
+    }
 
-        print("initial data for new plan:", new_plan_data)
+    print("initial data for new plan:", new_plan_data)
 
-        if fork_from := plan_data.get("forkFrom", None):
-            print("Plan is to be forked from", fork_from)
-            if shortlink := fork_from.get("shortlink", None):
-                link_data = db.links.find_one({"_id": shortlink})
+    if fork_from := plan_data.get("forkFrom", None):
+        print("Plan is to be forked from", fork_from)
+        if shortlink := fork_from.get("shortlink", None):
+            link_data = db.links.find_one({"_id": shortlink})
 
-                if link_data and link_data["active"]:
-                    planid = link_data["plan"]
-                else:
-                    return responses.gone_410()
+            if link_data and link_data["active"]:
+                planid = link_data["plan"]
             else:
-                planid = BsonObjectId(fork_from.get("planID", None))
-
-            plan_details = db.plans.find_one(
-                {
-                    "_id": planid,
-                },
-            )
-
-            if plan_details:
-                if shortlink or plan_details["ownedBy"] == sub:
-                    planstateid = (
-                        BsonObjectId(fork_from["planstateID"])
-                        if not shortlink
-                        else plan_details["currentState"]
-                    )
-
-                    planstate = db.planstates.find_one(
-                        {
-                            "_id": planstateid,
-                        },
-                        {
-                            "_id": 0,
-                        },
-                    )
-
-                    if planstate:
-                        insert_planstate_res = db.planstates.insert_one(planstate)
-                        new_plan_data["currentNumberOfEdges"] = planstate[
-                            "numberOfEdges"
-                        ]
-                        new_plan_data["currentNumberOfLines"] = planstate[
-                            "numberOfLines"
-                        ]
-                        new_plan_data["currentNumberOfNodes"] = planstate[
-                            "numberOfNodes"
-                        ]
-                        new_plan_data["currentNumberOfLabels"] = planstate[
-                            "numberOfLabels"
-                        ]
-                        new_plan_data["colorTheme"] = plan_details["colorTheme"]
-                    else:
-                        return responses.gone_410()
-                else:
-                    raise responses.unauthorized_401()
-            else:
-                return responses.gone_410()
+                raise responses.gone_410()
         else:
-            print("Creating plan from scratch")
-            insert_planstate_res = db.planstates.insert_one(
-                {
-                    "createdAt": now,
-                    "numberOfEdges": 0,
-                    "numberOfLines": 0,
-                    "numberOfNodes": 0,
-                    "numberOfLabels": 0,
-                    "nodes": {},
-                    "lines": [],
-                    "labels": {},
-                    "globalOffsetX": 0,
-                    "globalOffsetY": 0,
-                    "planHeight": 10,
-                    "planWidth": 10,
-                    "colorTheme": theme,
-                }
-            )
-        print("Created plan, result:", insert_planstate_res)
-        new_plan_data["currentState"] = (
-            new_planstateid := insert_planstate_res.inserted_id
-        )
-        new_plan_data["history"] = [new_planstateid]
+            planid = BsonObjectId(fork_from.get("planID", None))
 
-        insert_res = db.plans.insert_one(new_plan_data)
-        print("After insertion, this is the result:", insert_res)
-
-        new_plan_id = insert_res.inserted_id
-        Σ = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ3456789-"
-        db.links.insert_one(
+        plan_details = db.plans.find_one(
             {
-                "_id": "".join([random.choice(Σ) for _ in range(8)]),
-                "plan": new_plan_id,
-                "active": True,
+                "_id": planid,
+            },
+        )
+
+        if plan_details:
+            if shortlink or plan_details["ownedBy"] == sub:
+                planstateid = (
+                    BsonObjectId(fork_from["planstateID"])
+                    if not shortlink
+                    else plan_details["currentState"]
+                )
+
+                planstate = db.planstates.find_one(
+                    {
+                        "_id": planstateid,
+                    },
+                    {
+                        "_id": 0,
+                    },
+                )
+
+                if planstate:
+                    insert_planstate_res = db.planstates.insert_one(planstate)
+                    new_plan_data["currentNumberOfEdges"] = planstate["numberOfEdges"]
+                    new_plan_data["currentNumberOfLines"] = planstate["numberOfLines"]
+                    new_plan_data["currentNumberOfNodes"] = planstate["numberOfNodes"]
+                    new_plan_data["currentNumberOfLabels"] = planstate["numberOfLabels"]
+                    new_plan_data["colorTheme"] = plan_details["colorTheme"]
+                else:
+                    raise responses.gone_410()
+            else:
+                raise responses.unauthorized_401()
+        else:
+            raise responses.gone_410()
+    else:
+        print("Creating plan from scratch")
+        insert_planstate_res = db.planstates.insert_one(
+            {
+                "createdAt": now,
+                "numberOfEdges": 0,
+                "numberOfLines": 0,
+                "numberOfNodes": 0,
+                "numberOfLabels": 0,
+                "nodes": {},
+                "lines": [],
+                "labels": {},
+                "globalOffsetX": 0,
+                "globalOffsetY": 0,
+                "planHeight": 10,
+                "planWidth": 10,
+                "colorTheme": theme,
             }
         )
+    print("Created plan, result:", insert_planstate_res)
+    new_plan_data["currentState"] = (
+        new_planstateid := insert_planstate_res.inserted_id
+    )
+    new_plan_data["history"] = [new_planstateid]
 
-        return responses.created_201({"planId": str(new_plan_id)})
-    except Exception as e:
-        print("Operation failed", e)
-        return responses.internal_server_error_500()
+    insert_res = db.plans.insert_one(new_plan_data)
+    print("After insertion, this is the result:", insert_res)
+
+    new_plan_id = insert_res.inserted_id
+    Σ = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ3456789-"
+    db.links.insert_one(
+        {
+            "_id": "".join([random.choice(Σ) for _ in range(8)]),
+            "plan": new_plan_id,
+            "active": True,
+        }
+    )
+
+    return {"planId": str(new_plan_id)}
 
 
 @router.patch("/{plan_id}")
@@ -146,65 +134,61 @@ def patch_plan(
     req: Request,
     sub: str = Depends(check_auth),
 ) -> type_definitions.PlanInDB:
-    try:
-        db = ENV.database
-        plan_details = db.plans.find_one(
+    db = ENV.database
+    plan_details = db.plans.find_one(
+        {
+            "_id": plan_id,
+        },
+        {
+            "_id": 0,
+            "ownedBy": 1,
+        },
+    )
+
+    if plan_details["ownedBy"] == sub:
+        set_data = {}
+
+        for k in [
+            "planName",
+            "planDescription",
+            "currentState",
+            "currentColorTheme",
+        ]:
+            if k == "currentColorTheme":
+                print("Can't change color theme atm")
+                return responses.not_implemented_501()
+            if k == "currentState":
+                new_id = BsonObjectId(plan_data["currentState"])
+                get_planstate_result = db.planstates.find_one(
+                    {"_id": new_id}, {"_id": 1}
+                )
+                if get_planstate_result:
+                    print(
+                        "Found corresponding planstate!",
+                        get_planstate_result,
+                    )
+                else:
+                    print(
+                        "Did not find corresponding planstate!",
+                        get_planstate_result,
+                    )
+                    return responses.bad_request_400()
+                set_data[k] = new_id
+            else:
+                set_data[k] = plan_data[k]
+
+        set_data["lastModifiedAt"] = datetime.now().isoformat()
+
+        db.plans.update_one(
             {
                 "_id": plan_id,
             },
             {
-                "_id": 0,
-                "ownedBy": 1,
+                "$set": set_data,
             },
         )
-
-        if plan_details["ownedBy"] == sub:
-            set_data = {}
-
-            for k in [
-                "planName",
-                "planDescription",
-                "currentState",
-                "currentColorTheme",
-            ]:
-                if k == "currentColorTheme":
-                    print("Can't change color theme atm")
-                    return responses.not_implemented_501()
-                if k == "currentState":
-                    new_id = BsonObjectId(plan_data["currentState"])
-                    get_planstate_result = db.planstates.find_one(
-                        {"_id": new_id}, {"_id": 1}
-                    )
-                    if get_planstate_result:
-                        print(
-                            "Found corresponding planstate!",
-                            get_planstate_result,
-                        )
-                    else:
-                        print(
-                            "Did not find corresponding planstate!",
-                            get_planstate_result,
-                        )
-                        return responses.bad_request_400()
-                    set_data[k] = new_id
-                else:
-                    set_data[k] = plan_data[k]
-
-            set_data["lastModifiedAt"] = datetime.now().isoformat()
-
-            db.plans.update_one(
-                {
-                    "_id": plan_id,
-                },
-                {
-                    "$set": set_data,
-                },
-            )
-        else:
-            return responses.unauthorized_401()
-    except Exception as e:
-        print("Patching plan failed", e)
-        return responses.internal_server_error_500()
+    else:
+        return responses.unauthorized_401()
 
 
 @router.get("/{plan_id}")
@@ -291,10 +275,10 @@ def get_plan(
 
         plan_details
     else:
-        return responses.unauthorized_401()
+        raise responses.unauthorized_401()
 
 
-@router.delete("/{plan_id}")
+@router.delete("/{plan_id}", status_code=204)
 def delete_plan(
     plan_id: type_definitions.ObjectId, req: Request, sub: str = Depends(check_auth)
 ):
@@ -309,16 +293,18 @@ def delete_plan(
     )
 
     print("Found plan Details: ", plan_details)
+    if plan_details:
+        if plan_details["ownedBy"] == sub:
+            if plan_details.get("deleted", None) is not None:
+                raise responses.gone_410()
+            db.plans.update_one(
+                {"_id": plan_id}, {"$set": {"deleted": datetime.now().isoformat()}}
+            )
 
-    if plan_details["ownedBy"] == sub:
-        if plan_details.get("deleted", None) is not None:
-            return responses.gone_410()
-        db.plans.update_one(
-            {"_id": plan_id}, {"$set": {"deleted": datetime.now().isoformat()}}
-        )
+        shortlinks = list(db.links.find({"plan": plan_id}))
 
-    shortlinks = list(db.links.find({"plan": plan_id}))
-
-    for shortlink in shortlinks:
-        print("Shortlink", shortlink, "will be removed")
-        db.links.delete_one({"_id": shortlink["_id"]})
+        for shortlink in shortlinks:
+            print("Shortlink", shortlink, "will be removed")
+            db.links.delete_one({"_id": shortlink["_id"]})
+    else:
+        raise responses.gone_410()

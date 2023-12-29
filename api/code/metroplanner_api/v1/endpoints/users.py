@@ -25,7 +25,7 @@ def get_user(user_id) -> type_definitions.User:
                 # TODO collect plans created
                 # TODO collect plans liked
                 print("User Profile is public")
-                return responses.ok(user_data)
+                return user_data
             else:
                 print("User Profile is not public")
                 raise responses.forbidden_403()
