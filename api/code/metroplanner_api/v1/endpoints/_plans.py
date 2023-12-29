@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
 from datetime import datetime
+from bson.objectid import ObjectId as BsonObjectId
 import random
 
 from ... import type_definitions
@@ -48,7 +49,7 @@ def post_plan(
                 else:
                     return responses.gone_410()
             else:
-                planid = type_definitions.ObjectId(fork_from.get("planID", None))
+                planid = BsonObjectId(fork_from.get("planID", None))
 
             plan_details = db.plans.find_one(
                 {
@@ -59,7 +60,7 @@ def post_plan(
             if plan_details:
                 if shortlink or plan_details["ownedBy"] == sub:
                     planstateid = (
-                        type_definitions.ObjectId(fork_from["planstateID"])
+                        BsonObjectId(fork_from["planstateID"])
                         if not shortlink
                         else plan_details["currentState"]
                     )
@@ -170,7 +171,7 @@ def patch_plan(
                     print("Can't change color theme atm")
                     return responses.not_implemented_501()
                 if k == "currentState":
-                    new_id = type_definitions.ObjectId(plan_data["currentState"])
+                    new_id = BsonObjectId(plan_data["currentState"])
                     get_planstate_result = db.planstates.find_one(
                         {"_id": new_id}, {"_id": 1}
                     )
@@ -212,7 +213,7 @@ def get_plan(
 ) -> type_definitions.PlanInDB:
     db = ENV.database
     plan_details = db.plans.find_one(
-        {"_id": type_definitions.ObjectId(plan_id)},
+        {"_id": BsonObjectId(plan_id)},
         {
             "_id": 0,
         },
@@ -230,7 +231,7 @@ def get_plan(
             plan_details["currentState"] = str(current_state)
         if isinstance(
             current_colortheme := plan_details["colorTheme"],
-            type_definitions.ObjectId,
+            BsonObjectId,
         ):
             plan_details["colorTheme"] = str(current_colortheme)
 
@@ -259,9 +260,7 @@ def get_plan(
         print("states:", states)
         plan_details["history"] = states
 
-        shortlinks = list(
-            db.links.find({"plan": type_definitions.ObjectId(plan_id)}, {"plan": 0})
-        )
+        shortlinks = list(db.links.find({"plan": BsonObjectId(plan_id)}, {"plan": 0}))
 
         shortlinks_with_stats = []
 
@@ -271,7 +270,7 @@ def get_plan(
                 shortlink_stats = db.stats.find_one(
                     {
                         "_id": {
-                            "plan": type_definitions.ObjectId(plan_id),
+                            "plan": BsonObjectId(plan_id),
                             "link": shortlink["_id"],
                         }
                     },
@@ -301,7 +300,7 @@ def delete_plan(
 ):
     db = ENV.database
     plan_details = db.plans.find_one(
-        {"_id": type_definitions.ObjectId(plan_id)},
+        {"_id": BsonObjectId(plan_id)},
         {
             "_id": 0,
             "ownedBy": 1,
