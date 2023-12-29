@@ -1,7 +1,7 @@
 import pydantic
 from datetime import datetime
 import pydantic_extra_types.color
-from typing import List, Dict, Set, Tuple, Union, Optional, Annotated
+from typing import List, Dict, Set, Tuple, Union, Optional, Annotated, get_args
 from abc import ABC
 from humps import camelize
 from bson.objectid import ObjectId as BsonObjectId
@@ -23,9 +23,13 @@ ObjectId = Annotated[str, pydantic.AfterValidator(check_object_id)]
 """
 Basic Types
 """
-# ObjectId = Annotated[str, pydantic.BeforeValidator(str)]
 
 
+class MissingValueBaseClass(BaseModel):
+    pass
+
+
+Missing = MissingValueBaseClass()
 NonNegativeInt = Annotated[int, pydantic.Field(ge=0)]
 IntOrFloat = Union[int, float]
 PositiveIntOrFloat = Annotated[Union[int, float], pydantic.Field(gt=0)]
@@ -45,6 +49,33 @@ Color = Union[ColorReference, ColorCSS]
 
 
 Point = Tuple[IntOrFloat, IntOrFloat]
+
+
+def MaybeMissing(t):
+    return Union[MissingValueBaseClass, t]
+
+
+class ModelMayMissFields(BaseModel):
+    def get_existing_fields(self):
+        """
+        Iterates over the Model's fields and returns a dict containing only values that are not Missing.
+        If field of type ModelMayMissFields is encountered, get_existing_fields is called recursively.
+        """
+        return {
+            field_name: (
+                field_value.get_existing_fields()
+                if isinstance(field_value, ModelMayMissFields)
+                else field_value
+            )
+            for field_name, field_spec in self.model_fields.items()
+            if MissingValueBaseClass in get_args(field_spec.annotation)
+            and (field_value := self.__getattribute__(field_name)) != Missing
+        }
+
+
+"""
+Submodels
+"""
 
 
 class Anchor(BaseModel):
@@ -225,14 +256,21 @@ User
 """
 
 
-class UpdateUser(BaseModel):
+class UserCommons(BaseModel):
     bio: LongText
     display_name: ShortText
-    public: bool = True
     profile_picture: Optional[str] = None
+    public: bool = True
 
 
-class User(UpdateUser):
+class UpdateUser(UserCommons, ModelMayMissFields):
+    bio: MaybeMissing(LongText) = Missing
+    display_name: MaybeMissing(ShortText) = Missing
+    profile_picture: MaybeMissing(Optional[str]) = Missing
+    public: MaybeMissing(bool) = Missing
+
+
+class User(UserCommons):
     profile_views: NonNegativeInt = 0
     likes_given: List[ObjectId] = []
     plans_created: Optional[List[PlanPrivateView]] = None

@@ -90,7 +90,7 @@ def patch_user(
             {
                 "_id": sub,
             },
-            {"$set": user_data},
+            {"$set": user_data.get_existing_fields()},
             return_document=ReturnDocument.AFTER,
         )
         print("Updated result:", updated_result)
