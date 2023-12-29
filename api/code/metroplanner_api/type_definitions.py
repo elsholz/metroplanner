@@ -244,8 +244,11 @@ class RetrievePlan(Plan):
     total_view_count: NonNegativeInt
 
 
-class PlanInDB(Plan):
+class PlanID(BaseModel):
     _id: ObjectId
+
+
+class PlanInDB(Plan, PlanID):
     current_state: ObjectId
     history: List[ObjectId]
     deleted: Optional[datetime]

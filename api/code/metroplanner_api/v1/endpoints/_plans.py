@@ -14,7 +14,7 @@ router = APIRouter()
 @router.post("/", status_code=201)
 def post_plan(
     plan_data: type_definitions.CreatePlan, req: Request, sub: str = Depends(check_auth)
-) -> type_definitions.PlanId:
+) -> type_definitions.PlanID:
     print("Received request to create a new plan. Validating JSON data...")
     print("Data successfully validated:", plan_data)
 
