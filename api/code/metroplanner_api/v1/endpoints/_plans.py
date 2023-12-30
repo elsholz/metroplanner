@@ -22,8 +22,8 @@ def post_plan(
     db = ENV.database
 
     new_plan_data = {
-        "planName": plan_data["planName"],
-        "planDescription": plan_data["planName"],
+        "planName": plan_data.plan_name,
+        "planDescription": plan_data.plan_description,
         "forkedFrom": None,
         "deleted": None,
         "createdAt": (now := datetime.now().isoformat()),
@@ -39,17 +39,24 @@ def post_plan(
 
     print("initial data for new plan:", new_plan_data)
 
-    if fork_from := plan_data.get("forkFrom", None):
+    if fork_from := plan_data.forkFrom:
         print("Plan is to be forked from", fork_from)
-        if shortlink := fork_from.get("shortlink", None):
-            link_data = db.links.find_one({"_id": shortlink})
+        link_is_active = False
+        planstate_id = None
+        if isinstance(fork_from, type_definitions.ForkFromShortlink):
+            link_data = db.links.find_one({"_id": fork_from.shortlink})
 
-            if link_data and link_data["active"]:
+            if link_data:
                 planid = link_data["plan"]
             else:
                 raise responses.gone_410()
+            if link_data.get("active"):
+                link_is_active = True
         else:
-            planid = BsonObjectId(fork_from.get("planID", None))
+            # ForkFromPrivatePlan
+            planid = BsonObjectId(fork_from.plan_id)
+            if fork_from.planstate_id:
+                planstate_id = BsonObjectId(fork_from.planstate_id)
 
         plan_details = db.plans.find_one(
             {
@@ -57,34 +64,27 @@ def post_plan(
             },
         )
 
-        if plan_details:
-            if shortlink or plan_details["ownedBy"] == sub:
-                planstateid = (
-                    BsonObjectId(fork_from["planstateID"])
-                    if not shortlink
-                    else plan_details["currentState"]
-                )
+        if plan_details and (link_is_active or sub == plan_details["ownedBy"]):
+            planstate_id = planstate_id or plan_details["currentState"]
 
-                planstate = db.planstates.find_one(
-                    {
-                        "_id": planstateid,
-                    },
-                    {
-                        "_id": 0,
-                    },
-                )
+            planstate = db.planstates.find_one(
+                {
+                    "_id": planstate_id,
+                },
+                {
+                    "_id": 0,
+                },
+            )
 
-                if planstate:
-                    insert_planstate_res = db.planstates.insert_one(planstate)
-                    new_plan_data["currentNumberOfEdges"] = planstate["numberOfEdges"]
-                    new_plan_data["currentNumberOfLines"] = planstate["numberOfLines"]
-                    new_plan_data["currentNumberOfNodes"] = planstate["numberOfNodes"]
-                    new_plan_data["currentNumberOfLabels"] = planstate["numberOfLabels"]
-                    new_plan_data["colorTheme"] = plan_details["colorTheme"]
-                else:
-                    raise responses.gone_410()
+            if planstate:
+                insert_planstate_res = db.planstates.insert_one(planstate)
+                new_plan_data["currentNumberOfEdges"] = planstate["numberOfEdges"]
+                new_plan_data["currentNumberOfLines"] = planstate["numberOfLines"]
+                new_plan_data["currentNumberOfNodes"] = planstate["numberOfNodes"]
+                new_plan_data["currentNumberOfLabels"] = planstate["numberOfLabels"]
+                new_plan_data["colorTheme"] = plan_details["colorTheme"]
             else:
-                raise responses.unauthorized_401()
+                raise responses.gone_410()
         else:
             raise responses.gone_410()
     else:
