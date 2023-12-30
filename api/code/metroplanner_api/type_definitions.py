@@ -209,7 +209,7 @@ class ForkFromShortlink(BaseModel):
 
 class ForkFromPrivatePlan(BaseModel):
     plan_id: ObjectId
-    planstate_id: ObjectId
+    planstate_id: Optional[ObjectId] = None
 
 
 class PlanPrivateView(PlanCommons):
@@ -218,7 +218,7 @@ class PlanPrivateView(PlanCommons):
 
 
 class CreatePlan(PlanCommons):
-    forkFrom: Optional[Union[ForkFromPrivatePlan, ForkFromShortlink]]
+    forkFrom: Optional[Union[ForkFromPrivatePlan, ForkFromShortlink]] = None
 
 
 class UpdatePlan(PlanCommons):
