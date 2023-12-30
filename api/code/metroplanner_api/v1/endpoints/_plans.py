@@ -304,7 +304,7 @@ def delete_plan(
             if plan_details.get("deleted", None) is not None:
                 raise responses.gone_410()
             db.plans.update_one(
-                {"_id": plan_id}, {"$set": {"deleted": datetime.now().isoformat()}}
+                {"_id": BsonObjectId(plan_id)}, {"$set": {"deleted": datetime.now().isoformat()}}
             )
 
         shortlinks = list(db.links.find({"plan": plan_id}))

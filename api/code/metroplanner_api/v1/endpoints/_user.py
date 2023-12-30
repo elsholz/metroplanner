@@ -14,7 +14,6 @@ router = APIRouter()
 def get_user(
     request: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.UserInDB:
-    try:
         db = ENV.database
         user_result = db.users.find_one({"_id": sub})
         if user_result:
@@ -22,7 +21,7 @@ def get_user(
 
             plans_created = list(
                 db.plans.find(
-                    {"ownedBy": sub},
+                    {"ownedBy": sub, "deleted": None},
                     {
                         "planName": 1,
                         "planDescription": 1,
@@ -74,9 +73,6 @@ def get_user(
 
             print("User Creation result", user_creation_result)
             return user_data
-    except Exception as e:
-        print("Exception!!:", e)
-        raise responses.internal_server_error_500()
 
 
 @router.patch("", include_in_schema=False)
