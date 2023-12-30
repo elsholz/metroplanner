@@ -195,7 +195,7 @@ def patch_plan(
 @router.get("/{plan_id}")
 def get_plan(
     plan_id, req: Request, sub: str = Depends(check_auth)
-) -> type_definitions.PlanInDB:
+) -> type_definitions.PlanPrivateViewExtended:
     db = ENV.database
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},

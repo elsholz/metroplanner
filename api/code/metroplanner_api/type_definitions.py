@@ -181,12 +181,20 @@ class CreatePlanstate(BaseModel):
     plan_height: Union[float, int]
 
 
-class Planstate(CreatePlanstate):
+class PlanstateHistoryItem(BaseModel):
     created_at: datetime
     number_of_labels: NonNegativeInt
     number_of_nodes: NonNegativeInt
     number_of_lines: NonNegativeInt
     number_of_edges: NonNegativeInt
+
+
+class PlanstateHistoryItemWithID(PlanstateHistoryItem):
+    planstateid: ObjectId
+
+
+class Planstate(CreatePlanstate, PlanstateHistoryItem):
+    pass
 
 
 class PlanstateInDB(Planstate):
@@ -215,6 +223,32 @@ class ForkFromPrivatePlan(BaseModel):
 class PlanPrivateView(PlanCommons):
     plan_id: ObjectId
     plan_shortlink: ShortText
+
+
+class ShortlinkWithStats(BaseModel):
+    _id: str
+
+
+class PlanPrivateViewExtended(BaseModel):
+    plan_id: ObjectId
+    plan_name: ShortText
+    plan_description: LongText
+    history: List[PlanstateHistoryItemWithID]
+    shortlinks: List[ShortlinkWithStats]
+
+    color_theme: Optional[str]
+    current_state: ObjectId
+    forked_from: ObjectId
+    owned_by: str
+    deleted: Optional[str] = None
+    last_modified_at: datetime
+    like_count: NonNegativeInt = 0
+    created_at: datetime
+
+    current_number_of_labels: NonNegativeInt
+    current_number_of_nodes: NonNegativeInt
+    current_number_of_lines: NonNegativeInt
+    current_number_of_edges: NonNegativeInt
 
 
 class CreatePlan(PlanCommons):
