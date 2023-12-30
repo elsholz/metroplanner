@@ -209,7 +209,7 @@ def get_plan(
         if plan_details["ownedBy"] == sub:
             if plan_details.get("deleted", None) is not None:
                 # plan has been deleted
-                return responses.gone_410()
+                raise responses.gone_410()
 
             if forked_from := plan_details["forkedFrom"]:
                 plan_details["forkedFrom"] = str(forked_from)
@@ -281,7 +281,7 @@ def get_plan(
         else:
             raise responses.unauthorized_401()
     else:
-        return responses.gone_410()
+        raise responses.gone_410()
 
 
 @router.delete("/{plan_id}", status_code=204)

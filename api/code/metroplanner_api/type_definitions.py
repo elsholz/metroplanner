@@ -245,10 +245,11 @@ class RetrievePlan(Plan):
 
 
 class PlanID(BaseModel):
+    plan_id: ObjectId
+
+
+class PlanInDB(Plan):
     _id: ObjectId
-
-
-class PlanInDB(Plan, PlanID):
     current_state: ObjectId
     history: List[ObjectId]
     deleted: Optional[datetime]
