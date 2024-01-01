@@ -13,7 +13,7 @@ router.include_router(_plans.router, prefix="/_plans", tags=["Private"])
 
 from . import _planstates
 
-router.include_router(_planstates.router, prefix="/_planstates", tags=["Private"])
+router.include_router(_planstates.router, prefix="/_plans", tags=["Private"])
 
 from . import _user
 

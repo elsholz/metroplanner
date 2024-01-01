@@ -31,7 +31,7 @@ async def custom_404_handler(request: Request, _):
         request.path_params,
         request.query_params,
     )
-    return responses.gone_410()
+    raise responses.gone_410()
 
 
 def lambda_handler(event, context):

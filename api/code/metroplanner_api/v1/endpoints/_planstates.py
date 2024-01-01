@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException, Depends, Response
 from datetime import datetime
+from bson.objectid import ObjectId as BsonObjectId
 
 from ... import type_definitions
 from ... import responses
@@ -56,7 +57,7 @@ def post_planstate(
             set_plan_data["numberOfLabels"] = planstate_data["numberOfLabels"]
 
         db.plans.update_one(
-            {"_id": type_definitions.ObjectId(plan_id)},
+            {"_id": BsonObjectId(plan_id)},
             {
                 "$push": {
                     "history": created_result.inserted_id,
