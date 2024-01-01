@@ -138,7 +138,7 @@ def patch_plan(
     db = ENV.database
     plan_details = db.plans.find_one(
         {
-            "_id": plan_id,
+            "_id": BsonObjectId(plan_id),
         },
         {
             "_id": 0,
@@ -146,39 +146,42 @@ def patch_plan(
         },
     )
 
-    if plan_details["ownedBy"] == sub:
-        set_data = plan_data.get_existing_fields()
+    if plan_details:
+        if plan_details["ownedBy"] == sub:
+            set_data = plan_data.get_existing_fields()
 
-        if 'currentState' in set_data:
-                new_id = BsonObjectId(plan_data["currentState"])
-                get_planstate_result = db.planstates.find_one(
-                    {"_id": new_id}, {"_id": 1}
-                )
-                if get_planstate_result:
-                    print(
-                        "Found corresponding planstate!",
-                        get_planstate_result,
+            if 'currentState' in set_data:
+                    new_id = BsonObjectId(plan_data["currentState"])
+                    get_planstate_result = db.planstates.find_one(
+                        {"_id": new_id}, {"_id": 1}
                     )
-                else:
-                    print(
-                        "Did not find corresponding planstate!",
-                        get_planstate_result,
-                    )
-                    raise responses.bad_request_400()
-                set_data['currentState'] = new_id
+                    if get_planstate_result:
+                        print(
+                            "Found corresponding planstate!",
+                            get_planstate_result,
+                        )
+                    else:
+                        print(
+                            "Did not find corresponding planstate!",
+                            get_planstate_result,
+                        )
+                        raise responses.bad_request_400()
+                    set_data['currentState'] = new_id
 
-        set_data["lastModifiedAt"] = datetime.now().isoformat()
+            set_data["lastModifiedAt"] = datetime.now().isoformat()
 
-        db.plans.update_one(
-            {
-                "_id": plan_id,
-            },
-            {
-                "$set": set_data,
-            },
-        )
-    else:
-        raise responses.unauthorized_401()
+            db.plans.update_one(
+                {
+                    "_id": BsonObjectId(plan_id),
+                },
+                {
+                    "$set": set_data,
+                },
+            )
+        else:
+            raise responses.unauthorized_401()
+    else: 
+        raise responses.gone_410()
 
 
 @router.get("/{plan_id}")
