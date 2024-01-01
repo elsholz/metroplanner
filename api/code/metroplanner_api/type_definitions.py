@@ -308,7 +308,7 @@ class PlanPrivateGetResponse(PlanProfile, PlanStats):
     shortlinks: List[ShortlinkWithStats]
     color_theme: Optional[str] = None
     current_state: ObjectId
-    forked_from: ObjectId
+    forked_from: Optional[ObjectId] = None
     owned_by: str
     primary_shortlink: Optional[str] = None
 
