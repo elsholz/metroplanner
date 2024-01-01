@@ -7,13 +7,14 @@ from . import _links
 
 router.include_router(_links.router, prefix="/_links", tags=["Private"])
 
+from . import _planstates
+
+router.include_router(_planstates.router, tags=["Private"])
+
 from . import _plans
 
 router.include_router(_plans.router, tags=["Private"])
 
-from . import _planstates
-
-router.include_router(_planstates.router, tags=["Private"])
 
 from . import _user
 
