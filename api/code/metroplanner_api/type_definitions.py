@@ -36,6 +36,10 @@ PositiveIntOrFloat = Annotated[Union[int, float], pydantic.Field(gt=0)]
 NonNegativeIntOrFloat = Annotated[Union[int, float], pydantic.Field(ge=0)]
 ShortText = pydantic.constr(max_length=100)
 LongText = pydantic.constr(max_length=500)
+LocalizedShortText = Dict[str, ShortText]
+LocalizedLongText = Dict[str, LongText]
+MaybeLocalizedShortText = Union[LocalizedShortText, ShortText]
+MaybeLocalizedLongText = Union[LocalizedLongText, LongText]
 Identifier = pydantic.constr(min_length=36, max_length=36)
 ColorCSS = pydantic_extra_types.color.Color
 ColorReference = pydantic.constr(
@@ -161,32 +165,43 @@ Planstate
 """
 
 
-class CreatePlanstate(BaseModel):
-    color_theme: Optional[Union[str, ObjectId]]
-    nodes: Dict[str, Node]
-    labels: Dict[str, Label]
+class PlanstateStats(BaseModel):
+    created_at: datetime
+    number_of_labels: NonNegativeInt
+    number_of_nodes: NonNegativeInt
+    number_of_lines: NonNegativeInt
+    number_of_edges: NonNegativeInt
 
-    ## nodes: Dict[Identifier, Node]
-    ## nodes_ordering: List[Identifier] = []
-    ## lines: Dict[Identifier, Line]
-    lines: List[Line]
-    ## lines_ordering: List[Identifier] = []
-    ## independent_labels: Dict[Identifier, IndependentLabel]
-    ## labels: Dict[Identifier, Label]
-    ## labels_ordering: List[Identifier] = []
 
+class PlanstateDimensions(BaseModel):
     global_offset_x: Union[float, int]
     global_offset_y: Union[float, int]
     plan_width: Union[float, int]
     plan_height: Union[float, int]
 
 
-class PlanstateHistoryItem(BaseModel):
-    created_at: datetime
-    number_of_labels: NonNegativeInt
-    number_of_nodes: NonNegativeInt
-    number_of_lines: NonNegativeInt
-    number_of_edges: NonNegativeInt
+class PlanstateComponentOderings(BaseModel):
+    nodes_ordering: List[Identifier] = []
+    lines_ordering: List[Identifier] = []
+    labels_ordering: List[Identifier] = []
+
+
+class PlanstateComponents(BaseModel):
+    nodes: Union[Dict[str, Node], Dict[Identifier, Node]] = {}
+    lines: Union[List[Line], Dict[Identifier, Line]] = []
+    labels: Union[
+        Dict[str, Label], Dict[Identifier, Union[Label, IndependentLabel]]
+    ] = {}
+
+
+class CreatePlanstate(
+    PlanstateDimensions, PlanstateComponents, PlanstateComponentOderings
+):
+    color_theme: Optional[Union[str, ObjectId]] = None
+
+
+class PlanstateHistoryItem(PlanstateStats):
+    pass
 
 
 class PlanstateHistoryItemWithID(PlanstateHistoryItem):
@@ -201,65 +216,58 @@ class PlanstateInDB(Planstate):
     _id: ObjectId
 
 
+# class LineSegment(BaseModel):
+#     pass
+
+
+class PlanstateViewerResponse:
+    css: Optional[str] = None
+    hash: Optional[str] = None
+    nodes: Union[Dict[str, Node], Dict[Identifier, Node]] = {}
+    nodes_ordering: List[Identifier] = []
+    lines: Union[List[Line], Dict[Identifier, Line]] = []
+    # line_segments: Dict[Identifier, LineSegment] = []
+
+
 """
 Plan
 """
 
 
-class PlanCommons(BaseModel):
+class PlanProfile(BaseModel):
     plan_name: ShortText
     plan_description: LongText
 
 
-class ForkFromShortlink(BaseModel):
-    shortlink: ShortText
-
-
-class ForkFromPrivatePlan(BaseModel):
-    plan_id: ObjectId
-    planstate_id: Optional[ObjectId] = None
-
-
-class PlanPrivateView(PlanCommons):
+class PlanPrivateView(PlanProfile):
     plan_id: ObjectId
     plan_shortlink: ShortText
 
 
+class Stats(BaseModel):
+    total_count: NonNegativeInt
+    views: Dict[str, NonNegativeInt]
+
+
 class ShortlinkWithStats(BaseModel):
     _id: str
+    stats: Stats
 
 
-class PlanPrivateViewExtended(BaseModel):
-    plan_id: ObjectId
-    plan_name: ShortText
-    plan_description: LongText
-    history: List[PlanstateHistoryItemWithID]
-    shortlinks: List[ShortlinkWithStats]
-
-    color_theme: Optional[str]
-    current_state: ObjectId
-    forked_from: ObjectId
-    owned_by: str
-    deleted: Optional[str] = None
+class PlanTimings(BaseModel):
     last_modified_at: datetime
-    like_count: NonNegativeInt = 0
     created_at: datetime
 
+
+class PlanStats(BaseModel):
+    like_count: NonNegativeInt = 0
     current_number_of_labels: NonNegativeInt
     current_number_of_nodes: NonNegativeInt
     current_number_of_lines: NonNegativeInt
     current_number_of_edges: NonNegativeInt
 
 
-class CreatePlan(PlanCommons):
-    forkFrom: Optional[Union[ForkFromPrivatePlan, ForkFromShortlink]] = None
-
-
-class UpdatePlan(PlanCommons):
-    current_state: ObjectId
-
-
-class Plan(PlanCommons):
+class Plan(PlanProfile):
     forked_from: Optional[ObjectId]
     owned_by: ObjectId
     created_at: datetime
@@ -274,10 +282,6 @@ class Plan(PlanCommons):
     # current_color_theme: ObjectId
 
 
-class RetrievePlan(Plan):
-    total_view_count: NonNegativeInt
-
-
 class PlanID(BaseModel):
     plan_id: ObjectId
 
@@ -287,6 +291,35 @@ class PlanInDB(Plan):
     current_state: ObjectId
     history: List[ObjectId]
     deleted: Optional[datetime]
+
+
+class PlanPrivateGetResponse(PlanProfile, PlanStats):
+    history: List[PlanstateHistoryItemWithID]
+    shortlinks: List[ShortlinkWithStats]
+    color_theme: Optional[str] = None
+    current_state: ObjectId
+    forked_from: ObjectId
+    owned_by: str
+    primary_shortlink: Optional[str] = None
+
+
+class PlanPrivatePatchRequest(PlanProfile):
+    current_state: ObjectId
+
+
+class PlanPublicGetResponse(Plan):
+    total_view_count: NonNegativeInt
+
+
+class PlanPostRequest(PlanProfile):
+    class ForkFromShortlink(BaseModel):
+        shortlink: ShortText
+
+    class ForkFromPrivatePlan(BaseModel):
+        plan_id: ObjectId
+        planstate_id: Optional[ObjectId] = None
+
+    forkFrom: Optional[Union[ForkFromPrivatePlan, ForkFromShortlink]] = None
 
 
 """

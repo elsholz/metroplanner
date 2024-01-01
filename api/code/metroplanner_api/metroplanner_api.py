@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 from .environment import ENV, send_log_message
 from . import responses
+from .caching import ViewerCache
 
 
 app = FastAPI(
@@ -20,6 +21,7 @@ router.include_router(v1.router)
 
 app.include_router(router)
 
+cache = ViewerCache()
 
 @app.exception_handler(404)
 async def custom_404_handler(request: Request, _):

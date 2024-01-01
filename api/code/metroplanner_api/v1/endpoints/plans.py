@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("/{shortlink}")
-def get_plans(shortlink, request: Request) -> type_definitions.RetrievePlan:
+def get_plans(shortlink, request: Request) -> type_definitions.PlanPublicGetResponse:
     print(f"GET Request for plan for shortlink {shortlink}")
     db = ENV.database
     link_result = db.links.find_one({"_id": shortlink})

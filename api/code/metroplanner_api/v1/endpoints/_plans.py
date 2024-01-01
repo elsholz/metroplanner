@@ -14,7 +14,7 @@ router = APIRouter()
 @router.post("", include_in_schema=False, status_code=201)
 @router.post("/", status_code=201)
 def post_plan(
-    plan_data: type_definitions.CreatePlan, req: Request, sub: str = Depends(check_auth)
+    plan_data: type_definitions.PlanPostRequest, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanID:
     print("Received request to create a new plan. Validating JSON data...")
     print("Data successfully validated:", plan_data)
@@ -131,7 +131,7 @@ def post_plan(
 @router.patch("/{plan_id}")
 def patch_plan(
     plan_id: type_definitions.ObjectId,
-    plan_data: type_definitions.UpdatePlan,
+    plan_data: type_definitions.PlanPrivatePatchRequest,
     req: Request,
     sub: str = Depends(check_auth),
 ) -> type_definitions.PlanInDB:
@@ -194,8 +194,8 @@ def patch_plan(
 
 @router.get("/{plan_id}")
 def get_plan(
-    plan_id, req: Request, sub: str = Depends(check_auth)
-) -> type_definitions.PlanPrivateViewExtended:
+    plan_id: type_definitions.ObjectId, req: Request, sub: str = Depends(check_auth)
+) -> type_definitions.PlanPrivateGetResponse:
     db = ENV.database
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
@@ -208,18 +208,16 @@ def get_plan(
     if plan_details:
         if plan_details["ownedBy"] == sub:
             if plan_details.get("deleted", None) is not None:
-                # plan has been deleted
                 raise responses.gone_410()
-
             if forked_from := plan_details["forkedFrom"]:
                 plan_details["forkedFrom"] = str(forked_from)
-            if current_state := plan_details["currentState"]:
-                plan_details["currentState"] = str(current_state)
             if isinstance(
                 current_colortheme := plan_details["colorTheme"],
                 BsonObjectId,
             ):
                 plan_details["colorTheme"] = str(current_colortheme)
+
+            plan_details["currentState"] = str(plan_details["currentState"])
 
             states = []
             for planstateid in plan_details["history"]:
@@ -239,7 +237,7 @@ def get_plan(
                         f"Warning: Planstate details for planstateid {planstateid} not found."
                     )
                     continue
-                planstate_details["planstateid"] = str(planstateid)
+                planstate_details["planstateId"] = str(planstateid)
                 print("Found planstate details:", planstate_details)
                 states.append(planstate_details)
 
