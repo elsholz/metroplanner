@@ -14,7 +14,7 @@ router = APIRouter()
 @router.post("/_plans", include_in_schema=False, status_code=201)
 @router.post("/_plans/", status_code=201)
 def post_plan(
-    plan_data: type_definitions.PlanPostRequest,
+    plan_data: type_definitions.PlanPrivatePostRequest,
     req: Request,
     sub: str = Depends(check_auth),
 ) -> type_definitions.PlanID:

@@ -216,17 +216,25 @@ class PlanstateInDB(Planstate):
     _id: ObjectId
 
 
-# class LineSegment(BaseModel):
-#     pass
-
-
-class PlanstateViewerResponse:
+class PlanstatePublicGetResponse:
+    # class LineSegment(BaseModel):
+    #     pass
     css: Optional[str] = None
     hash: Optional[str] = None
     nodes: Union[Dict[str, Node], Dict[Identifier, Node]] = {}
     nodes_ordering: List[Identifier] = []
     lines: Union[List[Line], Dict[Identifier, Line]] = []
     # line_segments: Dict[Identifier, LineSegment] = []
+
+
+class PlanstatePrivateGetResponse(
+    PlanstateStats,
+    PlanstateDimensions,
+    PlanstateComponents,
+    PlanstateComponentOderings,
+):
+    color_theme: Optional[Union[str, ObjectId]] = None
+    pass
 
 
 """
@@ -244,17 +252,7 @@ class PlanPrivateView(PlanProfile):
     plan_shortlink: ShortText
 
 
-class Stats(BaseModel):
-    total_count: NonNegativeInt
-    views: Dict[str, NonNegativeInt]
-
-
-class ShortlinkWithStats(BaseModel):
-    _id: str
-    stats: Stats
-
-
-class PlanTimings(BaseModel):
+class PlanTimestamps(BaseModel):
     last_modified_at: datetime
     created_at: datetime
 
@@ -293,7 +291,19 @@ class PlanInDB(Plan):
     deleted: Optional[datetime]
 
 
+class PlanPublicGetResponse(Plan):
+    total_view_count: NonNegativeInt
+
+
 class PlanPrivateGetResponse(PlanProfile, PlanStats):
+    class ShortlinkWithStats(BaseModel):
+        class Stats(BaseModel):
+            total_count: NonNegativeInt
+            views: Dict[str, NonNegativeInt]
+
+        _id: str
+        stats: Stats
+
     history: List[PlanstateHistoryItemWithID]
     shortlinks: List[ShortlinkWithStats]
     color_theme: Optional[str] = None
@@ -303,18 +313,7 @@ class PlanPrivateGetResponse(PlanProfile, PlanStats):
     primary_shortlink: Optional[str] = None
 
 
-class PlanPrivatePatchRequest(ModelMayMissFields):
-    current_state: MaybeMissing(ObjectId) = Missing
-    plan_name: MaybeMissing(ShortText) = Missing
-    plan_description: MaybeMissing(LongText) = Missing
-    # TODO: Add color theme
-
-
-class PlanPublicGetResponse(Plan):
-    total_view_count: NonNegativeInt
-
-
-class PlanPostRequest(PlanProfile):
+class PlanPrivatePostRequest(PlanProfile):
     class ForkFromShortlink(BaseModel):
         shortlink: ShortText
 
@@ -323,6 +322,13 @@ class PlanPostRequest(PlanProfile):
         planstate_id: Optional[ObjectId] = None
 
     forkFrom: Optional[Union[ForkFromPrivatePlan, ForkFromShortlink]] = None
+
+
+class PlanPrivatePatchRequest(ModelMayMissFields):
+    current_state: MaybeMissing(ObjectId) = Missing
+    plan_name: MaybeMissing(ShortText) = Missing
+    plan_description: MaybeMissing(LongText) = Missing
+    # TODO: Add color theme
 
 
 """
