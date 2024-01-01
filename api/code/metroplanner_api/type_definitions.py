@@ -303,8 +303,11 @@ class PlanPrivateGetResponse(PlanProfile, PlanStats):
     primary_shortlink: Optional[str] = None
 
 
-class PlanPrivatePatchRequest(PlanProfile):
-    current_state: ObjectId
+class PlanPrivatePatchRequest(ModelMayMissFields):
+    current_state: MaybeMissing[ObjectId] = Missing
+    plan_name: MaybeMissing[ShortText] = Missing
+    plan_description: MaybeMissing[LongText] = Missing
+    # TODO: Add color theme
 
 
 class PlanPublicGetResponse(Plan):

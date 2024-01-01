@@ -147,18 +147,9 @@ def patch_plan(
     )
 
     if plan_details["ownedBy"] == sub:
-        set_data = {}
+        set_data = plan_data.get_existing_fields()
 
-        for k in [
-            "planName",
-            "planDescription",
-            "currentState",
-            "currentColorTheme",
-        ]:
-            if k == "currentColorTheme":
-                print("Can't change color theme atm")
-                return responses.not_implemented_501()
-            if k == "currentState":
+        if 'currentState' in set_data:
                 new_id = BsonObjectId(plan_data["currentState"])
                 get_planstate_result = db.planstates.find_one(
                     {"_id": new_id}, {"_id": 1}
@@ -173,10 +164,8 @@ def patch_plan(
                         "Did not find corresponding planstate!",
                         get_planstate_result,
                     )
-                    return responses.bad_request_400()
-                set_data[k] = new_id
-            else:
-                set_data[k] = plan_data[k]
+                    raise responses.bad_request_400()
+                set_data['currentState'] = new_id
 
         set_data["lastModifiedAt"] = datetime.now().isoformat()
 
@@ -189,7 +178,7 @@ def patch_plan(
             },
         )
     else:
-        return responses.unauthorized_401()
+        raise responses.unauthorized_401()
 
 
 @router.get("/{plan_id}")
