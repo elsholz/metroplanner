@@ -90,7 +90,7 @@ export const useUserStore = defineStore('userStore', {
               this.plansCreated.splice(index, 1)
               Notify.create(
                 {
-                  message: `»${this.planName}« wurde gelöscht.`,
+                  message: `»${planName}« wurde gelöscht.`,
                   timeout: 5000,
                   type: 'info'
                 }

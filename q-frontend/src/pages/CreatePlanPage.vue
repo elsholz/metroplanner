@@ -25,7 +25,7 @@
                   input-class="text-h6"
                   input-style="text-align: center"
                   :rules="[
-                    (val) => val.length <= 20 || 'Maximal 20 Zeichen erlaubt',
+                    (val) => val.length <= 50 || 'Maximal 50 Zeichen erlaubt',
                   ]"
                 />
               </div>

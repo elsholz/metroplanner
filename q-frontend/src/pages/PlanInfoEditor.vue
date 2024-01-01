@@ -20,7 +20,7 @@
               <div class="q-my-sm">
                 <q-input :oninput="changePlanInfo" dark color="white" outlined v-model="planName" input-class="text-h6"
                   input-style="text-align: center" :rules="[
-                    (val) => val.length <= 30 || 'Maximal 30 Zeichen erlaubt',
+                    (val) => val.length <= 50 || 'Maximal 50 Zeichen erlaubt',
                   ]" />
               </div>
             </div>
@@ -154,9 +154,9 @@
             <div class="row justify-center" style="width: 100%">
               <q-list padding separator class="text-white" style="width: 100%" v-if="planstates">
                 <PlanstateListItem v-for="planstate of planstates.slice().reverse()" :key="planstate"
-                  :planId="this.planId" :planstateId="planstate.planstateid" :numberOfEdges="planstate.numberOfEdges"
+                  :planId="this.planId" :planstateId="planstate.planstateId" :numberOfEdges="planstate.numberOfEdges"
                   :numberOfNodes="planstate.numberOfNodes" :numberOfLines="planstate.numberOfLines"
-                  :numberOfLabels="planstate.numberOfLabels" :isCurrentState="planstate.planstateid === currentState"
+                  :numberOfLabels="planstate.numberOfLabels" :isCurrentState="planstate.planstateId === currentState"
                   :createdAt="planstate.createdAt" style="width: 100%">
                 </PlanstateListItem>
               </q-list>
