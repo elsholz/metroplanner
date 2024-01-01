@@ -205,7 +205,7 @@ class PlanstateHistoryItem(PlanstateStats):
 
 
 class PlanstateHistoryItemWithID(PlanstateHistoryItem):
-    planstateid: ObjectId
+    planstate_id: ObjectId
 
 
 class Planstate(CreatePlanstate, PlanstateHistoryItem):
