@@ -10,8 +10,7 @@ from ...environment import check_auth, ENV
 router = APIRouter()
 
 
-@router.post("", include_in_schema=False, status_code=201)
-@router.post("/{plan_id}/_planstates")
+@router.post("/_plans/{plan_id}/_planstates")
 def post_planstate(
     plan_id,
     planstate_data: type_definitions.CreatePlanstate,
@@ -71,7 +70,7 @@ def post_planstate(
         raise responses.unauthorized_401()
 
 
-@router.get("/{plan_id}/_planstates/{planstate_id}")
+@router.get("/_plans/{plan_id}/_planstates/{planstate_id}")
 def get_planstate(
     plan_id, planstate_id, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanstateInDB:

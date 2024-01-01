@@ -11,10 +11,12 @@ from ...environment import check_auth, ENV
 router = APIRouter()
 
 
-@router.post("", include_in_schema=False, status_code=201)
-@router.post("/", status_code=201)
+@router.post("/_plans", include_in_schema=False, status_code=201)
+@router.post("/_plans/", status_code=201)
 def post_plan(
-    plan_data: type_definitions.PlanPostRequest, req: Request, sub: str = Depends(check_auth)
+    plan_data: type_definitions.PlanPostRequest,
+    req: Request,
+    sub: str = Depends(check_auth),
 ) -> type_definitions.PlanID:
     print("Received request to create a new plan. Validating JSON data...")
     print("Data successfully validated:", plan_data)
@@ -128,7 +130,7 @@ def post_plan(
     return {"planId": str(new_plan_id)}
 
 
-@router.patch("/{plan_id}")
+@router.patch("/_plans/{plan_id}")
 def patch_plan(
     plan_id: type_definitions.ObjectId,
     plan_data: type_definitions.PlanPrivatePatchRequest,
@@ -150,23 +152,23 @@ def patch_plan(
         if plan_details["ownedBy"] == sub:
             set_data = plan_data.get_existing_fields()
 
-            if 'currentState' in set_data:
-                    new_id = BsonObjectId(plan_data["currentState"])
-                    get_planstate_result = db.planstates.find_one(
-                        {"_id": new_id}, {"_id": 1}
+            if "currentState" in set_data:
+                new_id = BsonObjectId(plan_data["currentState"])
+                get_planstate_result = db.planstates.find_one(
+                    {"_id": new_id}, {"_id": 1}
+                )
+                if get_planstate_result:
+                    print(
+                        "Found corresponding planstate!",
+                        get_planstate_result,
                     )
-                    if get_planstate_result:
-                        print(
-                            "Found corresponding planstate!",
-                            get_planstate_result,
-                        )
-                    else:
-                        print(
-                            "Did not find corresponding planstate!",
-                            get_planstate_result,
-                        )
-                        raise responses.bad_request_400()
-                    set_data['currentState'] = new_id
+                else:
+                    print(
+                        "Did not find corresponding planstate!",
+                        get_planstate_result,
+                    )
+                    raise responses.bad_request_400()
+                set_data["currentState"] = new_id
 
             set_data["lastModifiedAt"] = datetime.now().isoformat()
 
@@ -180,11 +182,11 @@ def patch_plan(
             )
         else:
             raise responses.unauthorized_401()
-    else: 
+    else:
         raise responses.gone_410()
 
 
-@router.get("/{plan_id}")
+@router.get("/_plans/{plan_id}")
 def get_plan(
     plan_id: type_definitions.ObjectId, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanPrivateGetResponse:
@@ -274,7 +276,7 @@ def get_plan(
         raise responses.gone_410()
 
 
-@router.delete("/{plan_id}", status_code=204)
+@router.delete("/_plans/{plan_id}", status_code=204)
 def delete_plan(
     plan_id: type_definitions.ObjectId, req: Request, sub: str = Depends(check_auth)
 ):
@@ -294,7 +296,8 @@ def delete_plan(
             if plan_details.get("deleted", None) is not None:
                 raise responses.gone_410()
             db.plans.update_one(
-                {"_id": BsonObjectId(plan_id)}, {"$set": {"deleted": datetime.now().isoformat()}}
+                {"_id": BsonObjectId(plan_id)},
+                {"$set": {"deleted": datetime.now().isoformat()}},
             )
 
         shortlinks = list(db.links.find({"plan": plan_id}))
