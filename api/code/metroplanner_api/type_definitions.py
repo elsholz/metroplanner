@@ -304,9 +304,9 @@ class PlanPrivateGetResponse(PlanProfile, PlanStats):
 
 
 class PlanPrivatePatchRequest(ModelMayMissFields):
-    current_state: MaybeMissing[ObjectId] = Missing
-    plan_name: MaybeMissing[ShortText] = Missing
-    plan_description: MaybeMissing[LongText] = Missing
+    current_state: MaybeMissing(ObjectId) = Missing
+    plan_name: MaybeMissing(ShortText) = Missing
+    plan_description: MaybeMissing(LongText) = Missing
     # TODO: Add color theme
 
 
