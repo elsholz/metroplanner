@@ -136,7 +136,7 @@ def patch_plan(
     plan_data: type_definitions.PlanPrivatePatchRequest,
     req: Request,
     sub: str = Depends(check_auth),
-) -> responses.PlanPrivatePatchResponse:
+) -> type_definitions.PlanPrivatePatchResponse:
     db = ENV.database
     plan_details = db.plans.find_one(
         {
