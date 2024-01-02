@@ -17,7 +17,7 @@ def post_plan(
     plan_data: type_definitions.PlanPrivatePostRequest,
     req: Request,
     sub: str = Depends(check_auth),
-) -> type_definitions.PlanID:
+) -> type_definitions.PlanPrivatePostResponse:
     print("Received request to create a new plan. Validating JSON data...")
     print("Data successfully validated:", plan_data)
 
@@ -136,7 +136,7 @@ def patch_plan(
     plan_data: type_definitions.PlanPrivatePatchRequest,
     req: Request,
     sub: str = Depends(check_auth),
-) -> None:
+) -> responses.PlanPrivatePatchResponse:
     db = ENV.database
     plan_details = db.plans.find_one(
         {

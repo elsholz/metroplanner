@@ -212,19 +212,30 @@ class Planstate(CreatePlanstate, PlanstateHistoryItem):
     pass
 
 
-class PlanstateInDB(Planstate):
+class PlanstateID(BaseModel):
     _id: ObjectId
 
 
+class PlanstateInDB(Planstate, PlanstateID):
+    pass
+
+
 class PlanstatePublicGetResponse:
-    # class LineSegment(BaseModel):
-    #     pass
     css: Optional[str] = None
     hash: Optional[str] = None
     nodes: Union[Dict[str, Node], Dict[Identifier, Node]] = {}
-    nodes_ordering: List[Identifier] = []
     lines: Union[List[Line], Dict[Identifier, Line]] = []
-    # line_segments: Dict[Identifier, LineSegment] = []
+
+
+class PlanstatePublicGetResponseV2:
+    class LineSegment(BaseModel):
+        pass
+
+    css: Optional[str] = None
+    hash: Optional[str] = None
+    nodes: Union[Dict[str, Node], Dict[Identifier, Node]] = {}
+    lines: Union[List[Line], Dict[Identifier, Line]] = []
+    line_segments: Dict[Identifier, LineSegment] = []
 
 
 class PlanstatePrivateGetResponse(
@@ -235,12 +246,8 @@ class PlanstatePrivateGetResponse(
 ):
     color_theme: Optional[Union[str, ObjectId]] = None
 
-class PlanstatePrivatePostResponse(
-    PlanstateStats, PlanstateDimensions,
-    PlanstateComponents, PlanstateComponentOderings,
 
-):
-
+class PlanstatePrivatePostResponse(PlanstatePrivateGetResponse, PlanstateID):
     pass
 
 
@@ -331,11 +338,19 @@ class PlanPrivatePostRequest(PlanProfile):
     forkFrom: Optional[Union[ForkFromPrivatePlan, ForkFromShortlink]] = None
 
 
+class PlanPrivatePostResponse(PlanPrivateGetResponse, PlanID):
+    pass
+
+
 class PlanPrivatePatchRequest(ModelMayMissFields):
     current_state: MaybeMissing(ObjectId) = Missing
     plan_name: MaybeMissing(ShortText) = Missing
     plan_description: MaybeMissing(LongText) = Missing
     # TODO: Add color theme
+
+
+class PlanPrivatePatchResponse(PlanPrivateGetResponse):
+    pass
 
 
 """

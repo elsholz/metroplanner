@@ -17,7 +17,7 @@ def post_planstate(
     req: Request,
     sub: str = Depends(check_auth),
     make_current: bool = False,
-) -> responses.PlanstatePrivatePostResponse:
+) -> type_definitions.PlanstatePrivatePostResponse:
     db = ENV.database
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
