@@ -234,6 +234,13 @@ class PlanstatePrivateGetResponse(
     PlanstateComponentOderings,
 ):
     color_theme: Optional[Union[str, ObjectId]] = None
+
+class PlanstatePrivatePostResponse(
+    PlanstateStats, PlanstateDimensions,
+    PlanstateComponents, PlanstateComponentOderings,
+
+):
+
     pass
 
 

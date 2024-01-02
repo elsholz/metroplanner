@@ -16,58 +16,69 @@ def post_planstate(
     planstate_data: type_definitions.CreatePlanstate,
     req: Request,
     sub: str = Depends(check_auth),
-) -> None:
-    # make_current = "makeCurrent" in self.event.get("queryStringParameters", {})
+    make_current: bool = False,
+) -> responses.PlanstatePrivatePostResponse:
     db = ENV.database
     plan_details = db.plans.find_one(
-        {"_id": type_definitions.ObjectId(plan_id)},
+        {"_id": BsonObjectId(plan_id)},
         {
             "_id": 0,
             "ownedBy": 1,
         },
     )
 
-    if plan_details["ownedBy"] == sub:
-        number_of_edges = 0
+    if plan_details:
+        if plan_details["ownedBy"] == sub:
+            number_of_edges = 0
+            for ln in planstate_data["lines"]:
+                for cons in ln["connections"]:
+                    number_of_edges += len(cons["nodes"])
 
-        for ln in planstate_data["lines"]:
-            for cons in ln["connections"]:
-                number_of_edges += len(cons["nodes"])
+            planstate_data["numberOfEdges"] = number_of_edges
+            planstate_data["numberOfLines"] = len(planstate_data["lines"])
+            planstate_data["numberOfNodes"] = len(planstate_data["nodes"])
+            planstate_data["numberOfLabels"] = len(planstate_data["labels"])
 
-        planstate_data["numberOfEdges"] = number_of_edges
-        planstate_data["numberOfLines"] = len(planstate_data["lines"])
-        planstate_data["numberOfNodes"] = len(planstate_data["nodes"])
-        planstate_data["numberOfLabels"] = len(planstate_data["labels"])
+            planstate_data["createdAt"] = (now := datetime.now().isoformat())
 
-        planstate_data["createdAt"] = datetime.now().isoformat()
+            created_result = db.planstates.insert_one(planstate_data)
+            print("Created planstate:", created_result)
 
-        created_result = db.planstates.insert_one(planstate_data)
-        print("Created planstate:", created_result)
+            set_plan_data = {
+                "lastModifiedAt": now,
+            }
 
-        set_plan_data = {
-            "lastModifiedAt": planstate_data["createdAt"],
-        }
+            if make_current:
+                if planstate_data.make_current:
+                    set_plan_data["currentState"] = created_result.inserted_id
+                    set_plan_data["currentNumberOfEdges"] = planstate_data[
+                        "numberOfEdges"
+                    ]
+                    set_plan_data["currentNumberOfLines"] = planstate_data[
+                        "numberOfLines"
+                    ]
+                    set_plan_data["currentNumberOfNodes"] = planstate_data[
+                        "numberOfNodes"
+                    ]
+                    set_plan_data["currentNumberOfLabels"] = planstate_data[
+                        "numberOfLabels"
+                    ]
 
-        if planstate_data.make_current:
-            set_plan_data["currentState"] = (created_result.inserted_id,)
-            set_plan_data["numberOfEdges"] = planstate_data["numberOfEdges"]
-            set_plan_data["numberOfLines"] = planstate_data["numberOfLines"]
-            set_plan_data["numberOfNodes"] = planstate_data["numberOfNodes"]
-            set_plan_data["numberOfLabels"] = planstate_data["numberOfLabels"]
-
-        db.plans.update_one(
-            {"_id": BsonObjectId(plan_id)},
-            {
-                "$push": {
-                    "history": created_result.inserted_id,
+            db.plans.update_one(
+                {"_id": BsonObjectId(plan_id)},
+                {
+                    "$push": {
+                        "history": created_result.inserted_id,
+                    },
+                    "$set": set_plan_data,
                 },
-                "$set": set_plan_data,
-            },
-        )
+            )
 
-        return {"planstateID": str(created_result.inserted_id), **planstate_data}
+            return {"planstateId": str(created_result.inserted_id), **planstate_data}
+        else:
+            raise responses.unauthorized_401()
     else:
-        raise responses.unauthorized_401()
+        raise responses.bad_request_400()
 
 
 @router.get("/_plans/{plan_id}/_planstates/{planstate_id}")
