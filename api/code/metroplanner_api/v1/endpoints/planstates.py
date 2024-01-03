@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.get("/{shortlink}")
-def get_planstates(shortlink) -> type_definitions.Planstate:
+def get_planstates(shortlink) -> type_definitions.PlanstatePublicGetResponse:
     print(f"GET Request for planstate for shortlink {shortlink}")
 
     db = ENV.database

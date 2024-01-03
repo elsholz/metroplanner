@@ -82,21 +82,26 @@ Submodels
 """
 
 
-class Anchor(BaseModel):
-    ## node: Union[Point, Identifier]
-    node: Union[Point, str]
+class AnchorAtNode(BaseModel):
+    node: Identifier
     x_shift: IntOrFloat = 0
     y_shift: IntOrFloat = 0
 
 
+class AnchorAtInferredNode(BaseModel):
+    x_shift: IntOrFloat = 0
+    y_shift: IntOrFloat = 0
+
+
+class AnchorAtPoint(BaseModel):
+    coords: Point
+
+
+Anchor = Union[AnchorAtNode, AnchorAtPoint, AnchorAtInferredNode]
+
+
 class Styling(BaseModel):
     font_size: pydantic.confloat(gt=0.1, lt=10)
-
-
-class Span(BaseModel):
-    coords: Point
-    width: NonNegativeIntOrFloat
-    height: NonNegativeIntOrFloat
 
 
 class Label(BaseModel):
@@ -118,9 +123,8 @@ class Label(BaseModel):
             alias_priority=2,
         ),
     ] = "right"
-    text: str
-    ## anchor: Anchor
-    anchor: Union[Span, Anchor]
+    text: str = ""
+    anchor: Anchor = None
     styling: Optional[Styling] = None
 
 
@@ -134,8 +138,7 @@ class Marker(BaseModel):
 class Node(BaseModel):
     location: Point
     marker: Marker
-    ## label: Label
-    label: Union[str, Label]
+    label: Label = Label()
 
 
 class Connection(BaseModel):
@@ -153,11 +156,11 @@ class Line(BaseModel):
 
 
 class IndependentLabel(BaseModel):
-    ## anchor: Anchor
-    anchor: Union[Span, Anchor]
-    text: str
+    anchor: Anchor
+    text: ShortText
     width: NonNegativeIntOrFloat
     height: NonNegativeIntOrFloat
+    styling: Optional[Styling] = None
 
 
 """
@@ -174,10 +177,10 @@ class PlanstateStats(BaseModel):
 
 
 class PlanstateDimensions(BaseModel):
-    global_offset_x: Union[float, int]
-    global_offset_y: Union[float, int]
-    plan_width: Union[float, int]
-    plan_height: Union[float, int]
+    global_offset_x: IntOrFloat = 0
+    global_offset_y: IntOrFloat = 0
+    plan_width: IntOrFloat = 10
+    plan_height: IntOrFloat = 10
 
 
 class PlanstateComponentOderings(BaseModel):
@@ -187,11 +190,9 @@ class PlanstateComponentOderings(BaseModel):
 
 
 class PlanstateComponents(BaseModel):
-    nodes: Union[Dict[str, Node], Dict[Identifier, Node]] = {}
-    lines: Union[List[Line], Dict[Identifier, Line]] = []
-    labels: Union[
-        Dict[str, Label], Dict[Identifier, Union[Label, IndependentLabel]]
-    ] = {}
+    nodes: Dict[Identifier, Node] = {}
+    lines: Dict[Identifier, Line] = {}
+    independent_labels: Dict[Identifier, IndependentLabel] = {}
 
 
 class CreatePlanstate(
@@ -220,11 +221,12 @@ class PlanstateInDB(Planstate, PlanstateID):
     pass
 
 
-class PlanstatePublicGetResponse:
-    css: Optional[str] = None
-    hash: Optional[str] = None
-    nodes: Union[Dict[str, Node], Dict[Identifier, Node]] = {}
-    lines: Union[List[Line], Dict[Identifier, Line]] = []
+class PlanstatePublicGetResponse(
+    PlanstateDimensions,
+    PlanstateComponents,
+    PlanstateStats,
+):
+    pass
 
 
 class PlanstatePublicGetResponseV2:
