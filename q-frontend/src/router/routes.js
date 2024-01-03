@@ -13,7 +13,7 @@ const routes = [
     path: '/details/:shortlink',
     component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PlanDetailPage.vue') }
+      { path: '', component: () => import('src/pages/PlanDetailPage.vue') }
     ]
   },
   {
