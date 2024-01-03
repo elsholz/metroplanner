@@ -204,8 +204,8 @@ export default {
         planDescription: this.planDescription,
         colorTheme: this.colorTheme,
         forkFrom: this.forked ? {
-          planstateID: this.$route.params.planstateid,
-          planID: this.$route.params.planid,
+          planstateId: this.$route.params.planstateid,
+          planId: this.$route.params.planid,
           shortlink: this.$route.params.shortlink
         } : undefined
       }).then((response) => {

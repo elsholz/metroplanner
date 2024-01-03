@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { useAuth0 } from '@auth0/auth0-vue'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useUserStore } from './user_store'
@@ -11,6 +10,8 @@ export const usePlanEditorStore = defineStore('editorStore', {
     const planState = ref(undefined)
     const selectedNodeIDs = ref([])
     const nodes = ref({})
+    const planId = ref('')
+    const planstateId = ref('')
     const labels = ref({})
     const selectedLineIDs = ref(undefined)
     const selectedLabelIDs = ref(undefined)
@@ -36,6 +37,8 @@ export const usePlanEditorStore = defineStore('editorStore', {
       globalOffsetX,
       globalOffsetY,
       nodes,
+      planId,
+      planstateId,
       lines,
       labels,
       coordinateScalar,
@@ -87,18 +90,20 @@ export const usePlanEditorStore = defineStore('editorStore', {
           this.globalOffsetX = this.planState.globalOffsetX
           this.globalOffsetY = this.planState.globalOffsetY
           this.nodes = this.planState.nodes
+          this.planId = planid
+          this.planstateId = planstateid
 
-          if (Array.isArray(this.planState.lines)) {
-            const obj = {}
-            for (const line of this.planState.lines) {
-              obj[line.symbol] = line
-              delete line.symbol
-            }
-            this.lines = obj
-          } else {
-            this.lines = this.planState.lines
-          }
-          delete this.planState.lines
+          // if (Array.isArray(this.planState.lines)) {
+          //   const obj = {}
+          //   for (const line of this.planState.lines) {
+          //     obj[line.name] = line
+          //     delete line.name
+          //   }
+          //   this.lines = obj
+          // } else {
+          this.lines = this.planState.lines
+          // }
+          // delete this.planState.lines
 
           for (const k of Object.keys(this.nodes)) {
             const [x, y] = this.nodes[k].location
@@ -144,8 +149,8 @@ export const usePlanEditorStore = defineStore('editorStore', {
     },
 
     savePlanState: async function (publish) {
-      const { getAccessTokenSilently } = useAuth0()
-      const token = await getAccessTokenSilently()
+      const userStore = useUserStore()
+      const token = await userStore.auth.getAccessTokenSilently()
 
       if (this.planState !== undefined) {
         console.log(
@@ -153,8 +158,11 @@ export const usePlanEditorStore = defineStore('editorStore', {
           this.planState
         )
         await axios
-          .post('/api/_planstates', this.planstate, {
-            headers: { Authorization: `Bearer ${token}` }
+          .post(`/api/_plans/${this.planId}/_planstates`, this.planState, {
+            headers: { Authorization: `Bearer ${token}` },
+            params: {
+              'make-current': publish || false
+            }
           })
           .then((response) => {
             console.log('Planstate created successfully')

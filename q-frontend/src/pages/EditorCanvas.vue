@@ -1,26 +1,23 @@
 <template>
   <q-page>
-
-    <div :style="
-      'width:' +
+    <div :style="'width:' +
       (planWidth * coordinateScalar + 100 + (contextMenuOpen ? 522.25 : 0)) +
       'px; height:' +
       (planHeight * coordinateScalar + 100) +
       'px;'
-    ">
+      ">
       <div
-        :style="
-          'width:' +
+        :style="'width:' +
           (planWidth * coordinateScalar - 4) +
           'px; height:' +
           (planHeight * coordinateScalar - 4) +
           'px; background-color: #002; border: 2px solid white; position: absolute; left: ' + (50 - 2) + 'px; top: ' + (50 - 2) + 'px;'">
-
         <template v-for="line in this.lines" :key="line">
           <template v-for="connection in line.connections" :key="connection">
             <template v-if="connection.nodes.length > 1">
               <template v-for="n in (connection.nodes.length - 1)" :key="n">
-                <LineSegmentComponent :color="line.color" :from="connection.nodes[n-1]" :to="connection.nodes[n]" :lineWidth="line.width || 0.5"></LineSegmentComponent>
+                <LineSegmentComponent :color="line.color" :from="connection.nodes[n - 1]" :to="connection.nodes[n]"
+                  :lineWidth="line.width || 0.5" :borderWidth="line.borderWidth" :borderStyle="line.borderStyle" :borderColor="line.borderColor"></LineSegmentComponent>
               </template>
             </template>
           </template>

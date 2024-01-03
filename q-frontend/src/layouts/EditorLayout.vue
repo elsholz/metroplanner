@@ -6,20 +6,22 @@
           <q-btn dark icon="keyboard_arrow_left" color="negative" no-caps to="./">
             zurück
           </q-btn>
-          <q-toolbar-title><span class="text-weight-thin">Plan bearbeiten: </span>{{ planDetails.planName }}</q-toolbar-title>
+          <q-toolbar-title><span class="text-weight-thin">Plan bearbeiten: </span>{{ planDetails.planName
+          }}</q-toolbar-title>
 
           <div>
-            <q-btn no-caps color="green" class="q-mr-sm" @click="save">
+            <q-btn no-caps color="green" class="q-mr-sm" @click="save" :disable="disable_save_button">
               speichern
             </q-btn>
-            <q-btn no-caps color="indigo" @click="saveAndPublish">
-              speichern & veröffentlichen
+            <q-btn no-caps color="indigo" @click="saveAndPublish" :disable="disable_publish_button">
+              {{ (saved && !published) ? "veröffentlichen" : "speichern & veröffentlichen" }}
             </q-btn>
           </div>
         </q-toolbar>
       </q-header>
 
-      <q-drawer v-model="leftDrawerOpen" side="left" bordered dark :width="65">
+      <q-drawer v-model="leftDrawerOpen" side="left" bordered dark :width="65" :behavior="'desktop'" no-swipe-backdrop
+        :breakpoint="0">
         <div class="row q-my-md justify-center">Modus</div>
         <hr dark />
         <div class="row q-my-sm justify-center">
@@ -79,7 +81,8 @@
         </EditorCanvas>
       </q-page-container>
 
-      <q-drawer v-model="contextMenuOpen" side="right" bordered dark :width="500">
+      <q-drawer v-model="contextMenuOpen" side="right" bordered dark :width="500" no-swipe-open no-swipe-close
+        no-swipe-backdrop :breakpoint="0">
         <keep-alive>
           <component :is="this.contextMenu"></component>
         </keep-alive>
@@ -111,9 +114,12 @@ export default {
   setup () {
     const planEditorStore = usePlanEditorStore()
     const { contextMenuOpen, planDetails, editorMode } = storeToRefs(planEditorStore)
-    const leftDrawerOpen = ref(true)
-    const leftDrawerMini = ref(false)
+    const leftDrawerOpen = true
+    const leftDrawerMini = false
     const saving = ref(false)
+    const saved = ref(false)
+    const published = ref(false)
+    const changed = ref(false)
     const loaded = ref(false)
     const planstate = ref(undefined)
 
@@ -129,6 +135,9 @@ export default {
       // lines,
       // nodes,
       saving,
+      saved,
+      published,
+      changed,
       loaded,
       planstate
     }
@@ -141,6 +150,12 @@ export default {
         labels: 'ContextMenuLabels',
         settings: 'ContextMenuSettings'
       }[this.editorMode]
+    },
+    disable_save_button: function () {
+      return false // return this.saved || !this.changed || this.saving
+    },
+    disable_publish_button: function () {
+      return false // return this.published || !this.changed || this.saving
     }
   },
   methods: {
@@ -149,6 +164,10 @@ export default {
       publish = publish ?? false
 
       this.saving = false
+
+      await this.planEditorStore.savePlanState(publish)
+
+      this.changed = false
     },
     saveAndPublish: async function () {
       await this.save(true)
@@ -181,8 +200,6 @@ export default {
 
     console.log('Planstate loaded:', this.planEditorStore.planState)
     this.planstate = this.planEditorStore.planState
-    // this.lines = this.planEditorStore.planState.lines
-    // this.nodes = this.planEditorStore.planState.nodes
   },
 
   components: {

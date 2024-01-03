@@ -1,31 +1,34 @@
 <template>
   <q-page padding dark>
-    <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.labels"
+    <div id="canvas" v-if="planState && planState.nodes && planState.lines && planState.independentLabels"
       :style="'padding-left: 10px; padding-top: 10px; padding-bottom: 10px; background-color: ' + (colorTheme?.themeData || { backgroundColor: '#001' }).backgroundColor + '; '">
       <div
         :style="`transform: scale(${planState.scaleFactor || 0.8}); height: ${planState.planHeight * coordinateScalar}px; width: ${planState.planWidth * coordinateScalar}px; border: 1px solid white;`">
         <div id="lines">
-          <div v-for="(line, key) in planState.lines" v-bind:key="key" style="z-index: 10;">
+          <div v-for="(line, lineKey) in planState.lines" v-bind:key="lineKey" style="z-index: 10;">
             <div v-for="(segment, segmentKey) in line.segments" v-bind:key="segmentKey"
-              :style="getLineSegmentStyle(segmentKey, segment)" :class="'line_segment line' + key">
+              :style="getLineSegmentStyle(segmentKey, segment)" :class="'line_segment line' + lineKey">
             </div>
           </div>
         </div>
 
         <div id="nodes">
-          <div v-for="(node, nodeKey) in planState.nodes" v-bind:key="nodeKey" :id="nodeKey"
-            :style="getNodeStyle(nodeKey, node)" class="marker">
+          <div v-for="(node, nodeKey) in planState.nodes" v-bind:key="nodeKey" :id="nodeKey + '-container'">
+            <div :style="getNodeStyle(nodeKey, node)" class="marker" :id="nodeKey + '-marker'">
+            </div>
+            <div :id="nodeKey + '-label'" v-if="node.label">
+              <div :style="getLabelStyle(nodeKey, node)">
+                <div :class="'label ' + node.label.class">
+                  {{ node.label.text }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div id="labels">
-          <div v-for="(lbl, lblKey) in planState.labels" :key="lblKey">
-            <div v-if="lbl.anchor.node" :style="getLabelStyle(lbl.anchor.node, planState.nodes[lbl.anchor.node])">
-              <div :class="'label ' + lbl.class">
-                {{ lbl.text }}
-              </div>
-            </div>
-            <div v-else :class="'label ' + lbl.class" :style="getIndependentLabelStyle(lbl)">
+          <div v-for="(lbl, lblKey) in planState.independentLabels" :key="lblKey">
+            <div :class="'label ' + lbl.class" :style="getIndependentLabelStyle(lbl)">
               {{ lbl.text }}
             </div>
           </div>
@@ -72,7 +75,8 @@ export default {
       this.planState = response.data
       this.addCSS()
 
-      for (const line of this.planState.lines) {
+      for (const [lineKey, line] of Object.entries(this.planState.lines)) {
+        console.log('Adding line ', lineKey)
         line.segments = []
         for (const connections of line.connections) {
           for (let i = 0; i < connections.nodes.length - 1; i++) {
@@ -121,37 +125,41 @@ export default {
         height: ${segment.height};
       `
     },
-    getLabelStyle (nodeKey, node, labelKey, label) {
-      const conP = this.getConnectionPoint(this.planState.labels[node.label].anchor)
+    getLabelStyle (nodeKey, node) {
+      // const conP = this.getConnectionPoint(this.planState.labels[node.label].anchor)
+      node.label.anchor = node.label.anchor || {}
+      node.label.anchor.node = node.label.anchor.node || nodeKey
+      const conP = this.getConnectionPoint(node.label.anchor)
       const locX = conP[0]
       const locY = conP[1]
       return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
     },
     getIndependentLabelStyle (lbl) {
-      if (['left', 'right', 'left_ascending', 'right_ascending', 'left_descending', 'left_ascending'].includes(lbl.class)) {
-        const conP = this.getConnectionPoint(lbl.anchor)
-        const locX = conP[0]
-        const locY = conP[1]
-        return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
-      } else if (['span'].includes(lbl.class)) {
-        if (lbl.anchor.coords) {
-          return `
+      // if (['left', 'right', 'left_ascending', 'right_ascending', 'left_descending', 'left_ascending'].includes(lbl.class)) {
+      //   const conP = this.getConnectionPoint(lbl.anchor)
+      //   const locX = conP[0]
+      //   const locY = conP[1]
+      //   return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
+      // } else if (['span'].includes(lbl.class)) {
+      // if (lbl.anchor.coords) {
+      console.log('independent Label:', lbl)
+      return `
           top: ${this.getY(lbl.anchor.coords[1])}px;
           left: ${this.getX(lbl.anchor.coords[0])}px;
-          width: ${this.coordinateScalar * lbl.anchor.width}px;
-          height: ${this.coordinateScalar * lbl.anchor.height}px;
-          font-size: ${this.coordinateScalar * lbl.anchor.height}px;
+          width: ${this.coordinateScalar * lbl.width}px;
+          height: ${this.coordinateScalar * lbl.height}px;
+          font-size: ${this.coordinateScalar * lbl.height}px;
           text-align: center;
           vertical-align: middle;
           color: white;
           position: absolute;
         `
-        } else {
-          console.log('missing node for ', lbl)
-        }
-      } else {
-        throw Error
-      }
+      // } else {
+      //   console.log('missing node for ', lbl)
+      // }
+      // } else {
+      //   throw Error
+      // }
     },
     addCSS: function () {
       if (this.hasBeenMounted && this.planState.lines) {
@@ -238,8 +246,9 @@ export default {
 
           return [locX, locY]
         }
+        console.log('warning, didnt find node for anchor', anchor, anchor.node)
       } else {
-        return [(anchor.node || anchor)[0], (anchor.node || anchor)[1]]
+        return [(anchor.coords)[0], (anchor.coords)[1]]
       }
     },
     getTopShift (direction, width) {

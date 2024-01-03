@@ -1,5 +1,5 @@
 import pydantic
-from datetime import datetime
+# from datetime import datetime
 import pydantic_extra_types.color
 from typing import List, Dict, Set, Tuple, Union, Optional, Annotated, get_args
 from abc import ABC
@@ -34,13 +34,13 @@ NonNegativeInt = Annotated[int, pydantic.Field(ge=0)]
 IntOrFloat = Union[int, float]
 PositiveIntOrFloat = Annotated[Union[int, float], pydantic.Field(gt=0)]
 NonNegativeIntOrFloat = Annotated[Union[int, float], pydantic.Field(ge=0)]
-ShortText = pydantic.constr(max_length=100)
-LongText = pydantic.constr(max_length=500)
+ShortText = Annotated[str, pydantic.StringConstraints(max_length=50)]
+LongText= Annotated[str, pydantic.StringConstraints(max_length=500)]
 LocalizedShortText = Dict[str, ShortText]
 LocalizedLongText = Dict[str, LongText]
 MaybeLocalizedShortText = Union[LocalizedShortText, ShortText]
 MaybeLocalizedLongText = Union[LocalizedLongText, LongText]
-Identifier = pydantic.constr(min_length=36, max_length=36)
+Identifier = Annotated[str, pydantic.StringConstraints(max_length=36, min_length=36)]
 ColorCSS = pydantic_extra_types.color.Color
 ColorReference = pydantic.constr(
     pattern=(
@@ -52,8 +52,9 @@ ColorReference = pydantic.constr(
 Color = Union[ColorReference, ColorCSS]
 
 
-Point = Tuple[IntOrFloat, IntOrFloat]
+# Point = Tuple[IntOrFloat, IntOrFloat]
 
+Point = pydantic.conlist(IntOrFloat, min_length=2, max_length=2)
 
 def MaybeMissing(t):
     return Union[MissingValueBaseClass, t]
@@ -169,7 +170,7 @@ Planstate
 
 
 class PlanstateStats(BaseModel):
-    created_at: datetime
+    created_at: str #datetime
     number_of_labels: NonNegativeInt
     number_of_nodes: NonNegativeInt
     number_of_lines: NonNegativeInt
@@ -269,8 +270,8 @@ class PlanPrivateView(PlanProfile):
 
 
 class PlanTimestamps(BaseModel):
-    last_modified_at: datetime
-    created_at: datetime
+    last_modified_at: str # datetime
+    created_at: str # datetime
 
 
 class PlanStats(BaseModel):
@@ -284,8 +285,8 @@ class PlanStats(BaseModel):
 class Plan(PlanProfile):
     forked_from: Optional[ObjectId]
     owned_by: ObjectId
-    created_at: datetime
-    last_modified_at: datetime
+    created_at: str # datetime
+    last_modified_at: str # datetime
     like_count: NonNegativeInt
     # likes_received: List[str]
 
@@ -304,7 +305,7 @@ class PlanInDB(Plan):
     _id: ObjectId
     current_state: ObjectId
     history: List[ObjectId]
-    deleted: Optional[datetime]
+    deleted: Optional[str] = None #datetime]
 
 
 class PlanPublicGetResponse(Plan):

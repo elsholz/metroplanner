@@ -1,6 +1,6 @@
 <template>
   <div
-    :style="`background-color: ${color}; height: ${height}; width: ${width}; top: ${top}; left: ${left}; transform: ${transform};`"
+    :style="`background-color: ${color}; height: ${height}; width: ${width}; top: ${top}; left: ${left}; transform: ${transform}; border-radius: ${(borderRadius || lineWidth) / 2 * coordinateScalar}px; border-style: ${borderStyle || 'solid'}; border-width: ${(borderWidth * coordinateScalar) || 2}px; border-color: ${borderColor || color}; box-shadow: 0px 0px 3px 1px ${color};`"
     class="line_segment">
   </div>
 </template>
@@ -49,7 +49,11 @@ export default {
     from: Object,
     to: Object,
     lineWidth: Number,
-    color: String
+    color: String,
+    borderStyle: String,
+    borderRadius: Number,
+    borderColor: String,
+    borderWidth: Number
   },
   created: function () {
     this.fromNode = this.nodes[this.from.node] ?? this.from
@@ -123,8 +127,8 @@ export default {
     getConnectionPoint: function (anchor) {
       // console.log('Anchor:', anchor, anchor.node.locationX)
       if (anchor.node.locX !== undefined) {
-      // if (anchor.node in this.nodes) {
-      // const nodeId = anchor.node
+        // if (anchor.node in this.nodes) {
+        // const nodeId = anchor.node
         const conPX = anchor.xShift || 0
         const conPY = anchor.yShift || 0
 
@@ -145,7 +149,7 @@ export default {
         }
 
         return [locX, locY]
-      // }
+        // }
       } else {
         return [toRaw(anchor.node).node[0], toRaw(anchor.node).node[1]]
       }

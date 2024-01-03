@@ -1,21 +1,11 @@
 <template>
-  <div :class="'elabel e' + this.labelClass" v-if="labelVisible" :style="`
-                        border-radius: 0;
-                        top: ${topLabel};
-                        left: ${leftLabel};
-                ${(selected && editorMode !== 'viewer' && editorMode !== 'settings') ? 'font-weight: bold; color: #31ccec' : ''}
-              `">
+  <div :class="'elabel e' + this.labelClass" v-if="labelVisible"
+    :style="` border-radius: 0; top: ${topLabel}; left: ${leftLabel}; ${(selected && editorMode !== 'viewer' && editorMode !== 'settings') ? 'font-weight: bold; color: #31ccec' : ''}`">
     {{ nodeName }}
   </div>
-  <div class="text-white emarker" :style="`
-                        top: ${topNode};
-                        left: ${leftNode};
-                        transform: rotate(${-rotation}deg);
-                        width: ${widthPixels};
-                        height: ${heightPixels};
-                        ${(selected && editorMode !== 'viewer' && editorMode !== 'settings') ? 'background-color: #31ccec;' : ''}
-                ${(editorMode === 'nodes') ? 'cursor: ' + cursor + ';' : ''}
-                      `" v-if="nodeVisible" @mousedown.left.prevent="handleMouseDown">
+  <div class="text-white emarker"
+    :style="`top: ${topNode}; left: ${leftNode}; transform: rotate(${-rotation}deg); width: ${widthPixels}; height: ${heightPixels}; ${(selected && editorMode !== 'viewer' && editorMode !== 'settings') ? 'background-color: #31ccec;' : ''} ${(editorMode === 'nodes') ? 'cursor: ' + cursor + ';' : ''}`"
+    v-if="nodeVisible" @mousedown.left.prevent="handleMouseDown">
   </div>
 </template>
 
