@@ -142,7 +142,6 @@ export default {
       //   return `top: ${this.getY(locY)}px; left: ${this.getX(locX)}px; position: absolute; color: white;`
       // } else if (['span'].includes(lbl.class)) {
       // if (lbl.anchor.coords) {
-      console.log('independent Label:', lbl)
       return `
           top: ${this.getY(lbl.anchor.coords[1])}px;
           left: ${this.getX(lbl.anchor.coords[0])}px;
@@ -165,7 +164,6 @@ export default {
       if (this.hasBeenMounted && this.planState.lines) {
         let mapstyle = document.getElementById('style')
         if (mapstyle === null) {
-          console.log('Creating new mapstyle elment')
           mapstyle = document.createElement('style')
         }
         mapstyle.id = 'mapstyle'
@@ -184,9 +182,7 @@ export default {
           mapstyle.innerText += text
         }
 
-        console.log('adding label types', this.labelTypes)
         for (const [lbl, style] of Object.entries(this.labelTypes)) {
-          console.log(lbl, style)
           const stl = style.style
 
           mapstyle.innerText += `
