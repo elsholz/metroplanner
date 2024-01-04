@@ -192,7 +192,7 @@ def patch_plan(
                 },
             )
 
-            return set_data
+            return new_data
         else:
             raise responses.unauthorized_401()
     else:
