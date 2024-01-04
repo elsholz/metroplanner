@@ -1,21 +1,21 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }]
+    component: () => import('src/layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('src/pages/IndexPage.vue') }]
   },
   {
     path: '/p/:shortlink',
     component: () => import('src/layouts/ViewerLayout.vue'),
-    children: [{ path: '', component: () => import('pages/PlanViewer.vue') }]
+    children: [{ path: '', component: () => import('src/pages/PlanViewer.vue') }]
   },
-  {
-    path: '/details/:shortlink',
-    component: () => import('src/layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('src/pages/PlanDetailPage.vue') }
-    ]
-  },
+  // {
+  //   path: '/details/:shortlink',
+  //   component: () => import('src/layouts/MainLayout.vue'),
+  //   children: [
+  //     { path: '', component: () => import('src/pages/PlanDetailPage.vue') }
+  //   ]
+  // },
   {
     path: '/edit/:planid',
     component: () => import('src/layouts/MainLayout.vue'),
@@ -33,49 +33,49 @@ const routes = [
   },
   {
     path: '/edit/:planid/:planstateid',
-    component: () => import('src/layouts/EditorLayout.vue'),
+    component: () => import('src/src/layouts/EditorLayout.vue'),
     children: [
       { path: '', component: () => import('src/pages/EditorCanvas.vue') }
     ]
   },
   {
     path: '/user/:userid',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/UserProfilePage.vue') }
+      { path: '', component: () => import('src/pages/UserProfilePage.vue') }
     ]
   },
   {
     path: '/profile',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/MyProfilePage.vue') }
+      { path: '', component: () => import('src/pages/MyProfilePage.vue') }
     ]
   },
   {
     path: '/privacy',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/PrivacyPage.vue') }]
+    component: () => import('src/layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('src/pages/PrivacyPage.vue') }]
   },
   {
     path: '/liability',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/LiabilityPage.vue') }
+      { path: '', component: () => import('src/pages/LiabilityPage.vue') }
     ]
   },
   {
     path: '/project',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/ProjectOverviewPage.vue') }
+      { path: '', component: () => import('src/pages/ProjectOverviewPage.vue') }
     ]
   },
   {
     path: '/impressum',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('src/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/ImpressumPage.vue') }
+      { path: '', component: () => import('src/pages/ImpressumPage.vue') }
     ]
   },
 
