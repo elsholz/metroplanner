@@ -33,7 +33,7 @@ const routes = [
   },
   {
     path: '/edit/:planid/:planstateid',
-    component: () => import('src/src/layouts/EditorLayout.vue'),
+    component: () => import('src/layouts/EditorLayout.vue'),
     children: [
       { path: '', component: () => import('src/pages/EditorCanvas.vue') }
     ]
