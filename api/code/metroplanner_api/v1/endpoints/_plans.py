@@ -151,6 +151,10 @@ def patch_plan(
     if plan_details:
         if plan_details["ownedBy"] == sub:
             set_data = plan_data.get_existing_fields()
+            print('Data to set:', set_data)
+
+            if not set_data: 
+                raise responses.bad_request_400()
 
             if "currentState" in set_data:
                 new_id = BsonObjectId(plan_data["currentState"])
@@ -180,6 +184,8 @@ def patch_plan(
                     "$set": set_data,
                 },
             )
+
+            return set_data
         else:
             raise responses.unauthorized_401()
     else:
