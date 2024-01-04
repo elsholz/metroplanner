@@ -151,13 +151,17 @@ def patch_plan(
     if plan_details:
         if plan_details["ownedBy"] == sub:
             set_data = plan_data.get_existing_fields()
-            print('Data to set:', set_data)
+            print("Data to set:", set_data)
 
-            if not set_data: 
+            if not set_data:
                 raise responses.bad_request_400()
 
-            if "currentState" in set_data:
-                new_id = BsonObjectId(plan_data["currentState"])
+            new_data = {
+                "lastModifiedAt": datetime.now().isoformat(),
+            }
+
+            if new_id := set_data.get("current_state", None):
+                new_id = BsonObjectId(new_id)
                 get_planstate_result = db.planstates.find_one(
                     {"_id": new_id}, {"_id": 1}
                 )
@@ -166,22 +170,25 @@ def patch_plan(
                         "Found corresponding planstate!",
                         get_planstate_result,
                     )
+                    new_data["currentState"] = new_id
                 else:
                     print(
                         "Did not find corresponding planstate!",
                         get_planstate_result,
                     )
                     raise responses.bad_request_400()
-                set_data["currentState"] = new_id
 
-            set_data["lastModifiedAt"] = datetime.now().isoformat()
+            if name := set_data.get("plan_name"):
+                new_data["planName"] = name
+            if desc := set_data.get("plan_description"):
+                new_data["planDescription"] = desc
 
             db.plans.update_one(
                 {
                     "_id": BsonObjectId(plan_id),
                 },
                 {
-                    "$set": set_data,
+                    "$set": new_data,
                 },
             )
 
