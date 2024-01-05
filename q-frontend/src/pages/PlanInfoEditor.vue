@@ -1,11 +1,11 @@
 <template>
   <q-page class="doc-container flex justify-center bg-primary q-pb-xl text-white" dark>
-    <div class="row justify-left" style="width: 100%">
-      <q-btn dark icon="keyboard_arrow_left" class="q-ma-md" color="negative" no-caps to="/profile">
-        zurück
-      </q-btn>
-    </div>
     <div v-if="this.planDetailsLoaded && !this.saving" class="row justify-center" style="width: 100%">
+      <div class="row justify-left" style="width: 100%">
+        <q-btn dark icon="keyboard_arrow_left" class="q-ma-md" color="negative" no-caps to="/profile">
+          zurück
+        </q-btn>
+      </div>
       <div class="column col-12 q-px-sm">
         <div class="row q-mb-md">
           <div class="column items-center justify-center col-12 text-white">
@@ -41,7 +41,7 @@
         </div>
         <div class="row items-center justify-center text-body1" v-if="planInfoChanged">
           <div class="column col-xs-6 col-sm-4 text-white items-center text-center">
-            <q-btn dark color="green" v-if="planInfoChanged" animate @click="savePlanInfo">
+            <q-btn dark no-caps color="positive" v-if="planInfoChanged" animate @click="savePlanInfo">
               <div class="text-white text-body1">Änderungen speichern</div>
             </q-btn>
           </div>
@@ -122,20 +122,32 @@
             <div class="q-my-md" style="border: 2px solid #333; border-radius: 10px" v-if="views">
               <q-tabs v-model="tab" dense class="text-white" active-color="secondary" indicator-color="secondary"
                 align="justify" narrow-indicator>
-                <q-tab name="days" label="Aufrufe pro Tag" />
-                <q-tab name="hours" dark label="Aufrufe pro Stunde" />
+                <q-tab name="hours" dark label="Stunde" />
+                <q-tab name="days" label="Tag" />
+                <q-tab name="months" label="Monat" />
+                <q-tab name="years" label="Jahr" />
               </q-tabs>
 
               <q-separator />
 
               <q-tab-panels v-model="tab" animated class="bg-primary">
+                <q-tab-panel dark name="years">
+                  <div class="text-h6">Aufrufe pro Jahr</div>
+                  <ChartComponent :views="this.views.yearly" :labels="true"></ChartComponent>
+                </q-tab-panel>
+
+                <q-tab-panel dark name="months">
+                  <div class="text-h6">Aufrufe pro Monat</div> <!-- 12 or 36 -->
+                  <ChartComponent :views="this.views.monthly" :labels="true"></ChartComponent>
+                </q-tab-panel>
+
                 <q-tab-panel dark name="days">
-                  <div class="text-h6">Aufrufe pro Tag</div>
+                  <div class="text-h6">Aufrufe pro Tag</div> <!-- 32 -->
                   <ChartComponent :views="this.views.daily" :labels="true"></ChartComponent>
                 </q-tab-panel>
 
                 <q-tab-panel name="hours">
-                  <div class="text-h6">Aufrufe pro Stunde</div>
+                  <div class="text-h6">Aufrufe pro Stunde</div> <!-- 24 -->
                   <ChartComponent :views="this.views.hourly" :labels="false"></ChartComponent>
                 </q-tab-panel>
               </q-tab-panels>
@@ -184,6 +196,7 @@ import ChartComponent from 'src/components/ChartComponent.vue'
 import PlanstateListItem from 'src/components/PlanstateListItem.vue'
 import { usePlanEditorStore } from 'src/stores/editor_store.js'
 import { ref } from 'vue'
+// import { storeToRefs } from 'pinia'
 
 const planEditorStore = usePlanEditorStore()
 
@@ -214,8 +227,15 @@ export default {
   },
   methods: {
     changePlanInfo: function () {
-      console.log('PlanInfo Changed!')
       this.planInfoChanged = true
+    },
+    savePlanInfo: async function (event) {
+      console.log(this.planName, this.planDescription)
+      console.log('button press to save plan info', event)
+      this.planEditorStore.savePlanInfo(this.planId, {
+        planDescription: this.planDescription,
+        planName: this.planName
+      })
     }
   },
   created: async function () {
@@ -270,10 +290,10 @@ export default {
     }
       : undefined
 
-    for (const [timestamp, count] of Object.entries(viewsDaily)) {
+    for (const [timestamp, count] of Object.entries(viewsDaily).slice(-31)) {
       this.views.daily.push([parseInt(timestamp), count])
     }
-    for (const [timestamp, count] of Object.entries(viewsHourly)) {
+    for (const [timestamp, count] of Object.entries(viewsHourly).slice(-24)) {
       this.views.hourly.push([parseInt(timestamp), count])
     }
     console.log('Views:', this.views)

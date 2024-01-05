@@ -20,57 +20,110 @@
         </q-toolbar>
       </q-header>
 
-      <q-drawer v-model="leftDrawerOpen" side="left" bordered dark :width="65" :behavior="'desktop'" no-swipe-backdrop
-        :breakpoint="0">
-        <div class="row q-my-md justify-center">Modus</div>
-        <hr dark />
-        <div class="row q-my-sm justify-center">
-          <q-btn flat class="q-py-md" @click="setEditorMode('viewer')"
-            :color="editorMode === 'viewer' ? 'secondary' : ''">
-            <q-icon name="visibility" size="sm"></q-icon>
-            <q-tooltip anchor="center right" self="center left" class="text-body2">
-              Viewer
-            </q-tooltip>
-          </q-btn>
-        </div>
-        <div class="row q-my-sm justify-center">
-          <q-btn flat class="q-py-md" @click="setEditorMode('settings')"
-            :color="editorMode === 'settings' ? 'secondary' : ''">
-            <q-icon name="settings" size="sm"></q-icon>
-            <q-tooltip anchor="center right" self="center left" class="text-body2">
-              Einstellungen
-            </q-tooltip>
-          </q-btn>
-        </div>
+      <q-drawer v-model="leftDrawerOpen" side="left" bordered dark :width="65" class="column justify-between no-wrap"
+        :behavior="'desktop'" no-swipe-backdrop :breakpoint="0" style="overflow: hidden;">
+        <div>
 
-        <hr dark />
-        <div class="row q-my-md justify-center">
-          <q-btn class="q-py-md" @click="setEditorMode('lines')"
-            :color="editorMode === 'lines' ? 'secondary' : 'teal-10'">
-            <q-icon name="clear_all" size="sm"></q-icon>
-            <q-tooltip anchor="center right" self="center left" class="text-body2">
-              Linien
-            </q-tooltip>
-          </q-btn>
-        </div>
+          <div class="row q-my-md justify-center">Modus</div>
+          <hr dark />
+          <div class="row q-my-sm justify-center">
+            <q-btn flat class="q-py-md" @click="setEditorMode('viewer')"
+              :color="editorMode === 'viewer' ? 'secondary' : ''">
+              <q-icon name="visibility" size="sm"></q-icon>
+              <q-tooltip anchor="center right" self="center left" class="text-body2">
+                Viewer
+              </q-tooltip>
+            </q-btn>
+          </div>
+          <div class="row q-my-sm justify-center">
+            <q-btn flat class="q-py-md" @click="setEditorMode('settings')"
+              :color="editorMode === 'settings' ? 'secondary' : ''">
+              <q-icon name="settings" size="sm"></q-icon>
+              <q-tooltip anchor="center right" self="center left" class="text-body2">
+                Einstellungen
+              </q-tooltip>
+            </q-btn>
+          </div>
 
-        <div class="row q-my-md justify-center">
-          <q-btn class="q-py-md" @click="setEditorMode('nodes')"
-            :color="editorMode === 'nodes' ? 'secondary' : 'teal-10'">
-            <q-icon name="commit" size="sm"></q-icon>
-            <q-tooltip anchor="center right" self="center left" class="text-body2">
-              Haltestellen
-            </q-tooltip>
-          </q-btn>
-        </div>
+          <hr dark />
+          <div class="row q-my-md justify-center">
+            <q-btn class="q-py-md" @click="setEditorMode('lines')"
+              :color="editorMode === 'lines' ? 'secondary' : 'teal-10'">
+              <q-icon name="clear_all" size="sm"></q-icon>
+              <q-tooltip anchor="center right" self="center left" class="text-body2">
+                Linien
+              </q-tooltip>
+            </q-btn>
+          </div>
 
-        <div class="row q-my-md justify-center">
-          <q-btn class="q-py-md" @click="setEditorMode('labels')"
-            :color="editorMode === 'labels' ? 'secondary' : 'teal-10'">
-            <q-icon name="text_fields" size="sm"></q-icon>
-            <q-tooltip anchor="center right" self="center left" class="text-body2">
-              Beschriftungen
-            </q-tooltip>
+          <div class="row q-my-md justify-center">
+            <q-btn class="q-py-md" @click="setEditorMode('nodes')"
+              :color="editorMode === 'nodes' ? 'secondary' : 'teal-10'">
+              <q-icon name="commit" size="sm"></q-icon>
+              <q-tooltip anchor="center right" self="center left" class="text-body2">
+                Haltestellen
+              </q-tooltip>
+            </q-btn>
+          </div>
+
+          <div class="row q-my-md justify-center">
+            <q-btn class="q-py-md" @click="setEditorMode('labels')"
+              :color="editorMode === 'labels' ? 'secondary' : 'teal-10'">
+              <q-icon name="text_fields" size="sm"></q-icon>
+              <q-tooltip anchor="center right" self="center left" class="text-body2">
+                Beschriftungen
+              </q-tooltip>
+            </q-btn>
+          </div>
+        </div>
+        <div class="row items-center justify-center q-my-sm">
+          <q-btn round size="md" icon="question_mark" color="accent">
+            <q-menu>
+              <q-card>
+                <q-card-section class="bg-purple-9 text-white">
+                  <div class="text-body1">Tastenkombinationen:</div>
+                </q-card-section>
+
+                <q-markup-table>
+                  <tbody>
+                    <tr>
+                      <td class="text-right">Linksklick:</td>
+                      <td class="text-center">Einzelne Haltestelle auswählen oder Auswahl aufheben</td>
+                    </tr>
+                    <tr>
+                      <td class="text-right">Strg + Linksklick:</td>
+                      <td class="text-center">Haltestelle zur Auswahl hinzufügen oder von Auswahl entfernen</td>
+                    </tr>
+                    <tr>
+                      <td class="text-right">Shift + Linksklick:</td>
+                      <td class="text-center">Auswahl um alle Haltestellen auf kürzestem Pfad von zuletzt<br>ausgewählter
+                        Haltestelle erweitern</td>
+                    </tr>
+                    <tr>
+                      <td class="text-right">Strg + Shift + Linksklick:</td>
+                      <td class="text-center">Alle Haltestellen auf dem kürzesten Pfad von zuletzt
+                        ausgewählter<br>Haltestelle von Auswahl entfernen</td>
+                    </tr>
+                  </tbody>
+                </q-markup-table>
+              </q-card>
+              <q-card class="column col col-grow">
+                <q-card-section class="bg-green-9 text-white">
+                  <div class="text-body1">Hilfe & Dokumentation:</div>
+                </q-card-section>
+                <div class="row justify-center q-my-sm">
+                  <q-btn push  outline color="blue-2" no-caps icon="description">
+                    Schnelleinstieg
+                  </q-btn>
+                  <q-btn push class="q-mx-sm"  outline color="blue-2" no-caps icon="play_arrow">
+                    Video-Tutorial
+                  </q-btn>
+                  <q-btn push outline color="blue-2" no-caps icon="email">
+                    Support
+                  </q-btn>
+                </div>
+              </q-card>
+            </q-menu>
           </q-btn>
         </div>
       </q-drawer>

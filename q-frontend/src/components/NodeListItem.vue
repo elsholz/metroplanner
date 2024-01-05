@@ -1,7 +1,7 @@
 <template>
   <q-item :class="'q-my-sm q-mx-sm' + (this.fitsSearchTerm ? '' : ' hidden')" :style="
-    selected // ? 'border: 3px solid #31CCEC; border-radius: 10px;'
-      ? 'border: 3px solid #070; border-radius: 10px;'
+    selected
+      ? 'border: 1px solid #070; border-radius: 10px; box-shadow: 0 0 3px 0 lime;'
       : 'border: 1px solid gray; border-radius: 10px;'
   ">
     <q-item-section>

@@ -4,7 +4,6 @@
 
 <script>
 export default {
-  // name: 'ComponentName',
   setup () {
     return {}
   }

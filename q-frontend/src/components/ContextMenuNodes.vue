@@ -14,38 +14,55 @@
         <q-tooltip class="text-body1 no-wrap ">Alles löschen </q-tooltip>
       </q-btn>
     </div>
-    <template v-if="this.selectedNodeIDs.length">
-      <div class="text-h6">Auswahl bearbeiten</div>
-      <div class="row items-center no-wrap">
-        <div class="col col-3">
-          <q-btn icon="layers_clear" @click.left="emptySelection" no-caps color="orange">Auswahl leeren</q-btn>
-        </div>
-        <div class="col col-3">
-          <q-btn icon="content_copy" @click.left="duplicateSelection" no-caps>Duplizieren</q-btn>
-        </div>
-        <div class="col col-3">
-          <q-btn icon="polyline" no-caps>Verbinden
-            <q-menu> Test </q-menu>
-          </q-btn>
-        </div>
-        <div class="col col-grow"></div>
-        <div class="col col-2">
-          <q-btn icon="delete" no-caps color="red" round size="md" @click.left="deleteSelection">
-          </q-btn>
-        </div>
+    <!--<div class="text-h6">Auswahl bearbeiten</div>-->
+    <div class="row items-center no-wrap q-pt-md q-px-sm">
+      <div class="col col-2">
+        <q-btn icon="layers_clear" dense @click.left="emptySelection" no-caps flat color="orange">Auswahl leeren</q-btn>
       </div>
-      <!--
+      <div class="col col-2">
+        <q-btn icon="content_copy" dense @click.left="duplicateSelection" flat no-caps>Duplizieren</q-btn>
+      </div>
+      <div class="col col-2">
+        <q-btn icon="polyline" flat dense no-caps>Verbinden
+          <q-menu> Test </q-menu>
+        </q-btn>
+      </div>
+      <div class="col col-2">
+        <q-btn icon="add" dense @click.left="addNodes" flat no-caps>Einfügen</q-btn>
+      </div>
+      <div class="col col-2">
+        <q-btn icon="remove" dense @click.left="addNodes" flat no-caps>sonstiges</q-btn>
+      </div>
+      <div class="col col-grow"></div>
+      <div class="col col-auto q-pa-sm">
+        <q-btn icon="delete" no-caps color="red" round size="md" @click.left="deleteSelection"
+          :disable="!this.selectedNodeIDs.length">
+        </q-btn>
+      </div>
+    </div>
+
+    <div class="row items-center items-justify no-wrap q-mx-md q-pt-sm" style="width: 100%">
+      <div class="col col-shrink q-mx-xs">
+        <div class="text-body1">Filter:</div>
+      </div>
+      <div class="col col-4 q-mx-xs">
+        <q-input debounce v-model="searchTerm" dense clearable color="white" outlined>
+        </q-input>
+      </div>
+      <div class="col col-grow bg-red">t</div>
+      <div clas="col col-2">
+        Button
+      </div>
+    </div>
+    <hr dark />
+    <!--
       <template v-for="x of this.selectedNodeIDs" :key="x">
         <NodeListItem :nodeid="x"> </NodeListItem>
       </template>-->
-    </template>
   </div>
-  <q-scroll-area :style="`
-          height: calc(100% - ${selectedNodeIDs.length ? 170 : 50}px);
-          margin-top: ${selectedNodeIDs.length ? 170:50}px;
-          border-right: 1px solid #ddd;
-        `">
+  <q-scroll-area style="height: calc(100% - 200px); margin-top: 200px; border-right: 1px solid #ddd;">
     <q-list dark class="text-body1 text-white">
+      <!----
       <q-item class="q-mx-sm">
         <q-item-section>
           <div class="row items-center no-wrap">
@@ -59,6 +76,7 @@
           </div>
         </q-item-section>
       </q-item>
+    -->
 
       <!--
     <hr

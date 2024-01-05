@@ -58,10 +58,6 @@ export default {
   created: function () {
     this.fromNode = this.nodes[this.from.node] ?? this.from
     this.toNode = this.nodes[this.to.node] ?? this.to
-
-    // if (this.fromNode.locationX === undefined || this.toNode.locationX === undefined) {
-    //   console.log('FROM Node, TO Node', this.fromNode, this.toNode)
-    // }
   },
   computed: {
     length: function () {
@@ -151,7 +147,8 @@ export default {
         return [locX, locY]
         // }
       } else {
-        return [toRaw(anchor.node).node[0], toRaw(anchor.node).node[1]]
+        // return [toRaw(anchor.node).node[0], toRaw(anchor.node).node[1]]
+        return [toRaw(anchor).coords[0], toRaw(anchor).coords[1]]
       }
     }
   },

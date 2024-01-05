@@ -78,34 +78,6 @@ export const useUserStore = defineStore('userStore', {
           })
         })
     },
-    setCurrentPlanstate: async function (planId, planstateId) {
-      const token = await this.auth.getAccessTokenSilently()
-      const data = {
-        currentPlanstate: planstateId
-      }
-      await axios
-        .patch('/api/_plans/' + planId, data, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        .then(response => {
-          Notify.create(
-            {
-              message: 'Plan wurde aktualisiert.',
-              timeout: 5000,
-              type: 'success'
-            }
-          )
-        })
-        .catch((reason) => {
-          Notify.create(
-            {
-              message: `Fehler! ${reason}`,
-              timeout: 10000,
-              type: 'warning'
-            }
-          )
-        })
-    },
     deletePlan: async function (planId, planName) {
       const token = await this.auth.getAccessTokenSilently()
       await axios

@@ -115,3 +115,49 @@
     box-shadow: 0px 0px 3px 1px #aaf;
     box-sizing: border-box;
 }
+
+@font-face {
+  font-family: oxygen;
+  src: url(./fonts/Oxygen.otf);
+}
+@font-face {
+  font-family: oxygen-mono;
+  src: url(./fonts/OxygenMono-Regular.ttf);
+}
+@font-face {
+  font-family: oxygen-bold;
+  src: url(./fonts/Oxygen-Bold.otf);
+}
+@font-face {
+  font-family: oxygen-italic;
+  src: url(./fonts/Oxygen-BoldItalic.otf);
+}
+@font-face {
+  font-family: oxygen-italic;
+  src: url(./fonts/Oxygen-Italic.otf);
+}
+
+body {
+  font-family: 'oxygen';
+}
+
+.bold, b, strong{
+  font-family: 'oxygen-bold';
+}
+
+.italic, i {
+  font-family: 'oxygen-italic';
+}
+
+i b {
+  font-family: 'oxygen-bold-italic';
+}
+
+.mono {
+  font-family: 'oxygen-mono';
+}
+
+hr {
+  color: #fff7;
+  width: 100%;
+}

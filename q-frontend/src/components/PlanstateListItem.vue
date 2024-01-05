@@ -86,9 +86,9 @@
 import { ref } from 'vue'
 import ForkButton from './ForkButton.vue'
 import { useQuasar } from 'quasar'
-import { useUserStore } from 'src/stores/user_store'
+import { usePlanEditorStore } from 'src/stores/editor_store'
 
-const userStore = useUserStore()
+const planEditorStore = usePlanEditorStore()
 
 export default {
   name: 'PlanstateListItem',
@@ -122,7 +122,9 @@ export default {
       this.confirmMakeCurrent = true
     },
     makeCurrent: async function () {
-      userStore.setCurrentPlanstate(this.planId, this.planstateId)
+      planEditorStore.savePlanInfo(this.planId, {
+        currentState: this.planstateId
+      })
     }
   },
   components: { ForkButton }

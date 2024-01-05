@@ -59,7 +59,7 @@ export default {
           style: {
             colors: ['#fff']
           },
-          offsetY: 10 // play with this value
+          offsetY: 10
         },
         yaxis: [
           {
@@ -95,46 +95,6 @@ export default {
       },
       selection: 'one_year'
     }
-  },
-  methods: {
-    // updateData: function (timeline) {
-    //   this.selection = timeline
-    //   this.$refs.chart.zoomX(
-    //     new Date('28 Jan 2013').getTime(),
-    //     new Date('27 Feb 2013').getTime()
-    //   )
-    // }
-
-    //   switch (timeline) {
-    //     case 'one_month':
-    //       break
-    //     case 'six_months':
-    //       this.$refs.chart.zoomX(
-    //         new Date('27 Sep 2012').getTime(),
-    //         new Date('27 Feb 2013').getTime()
-    //       )
-    //       break
-    //     case 'one_year':
-    //       this.$refs.chart.zoomX(
-    //         new Date('27 Feb 2012').getTime(),
-    //         new Date('27 Feb 2013').getTime()
-    //       )
-    //       break
-    //     case 'ytd':
-    //       this.$refs.chart.zoomX(
-    //         new Date('01 Jan 2013').getTime(),
-    //         new Date('27 Feb 2013').getTime()
-    //       )
-    //       break
-    //     case 'all':
-    //       this.$refs.chart.zoomX(
-    //         new Date('23 Jan 2012').getTime(),
-    //         new Date('27 Feb 2013').getTime()
-    //       )
-    //       break
-    //     default:
-    //   }
-    // }
   }
 }
 </script>

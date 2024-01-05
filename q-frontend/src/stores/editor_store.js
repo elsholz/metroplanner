@@ -2,6 +2,7 @@ import axios from 'axios'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useUserStore } from './user_store'
+import { Notify } from 'quasar'
 
 export const usePlanEditorStore = defineStore('editorStore', {
   state: function () {
@@ -170,6 +171,37 @@ export const usePlanEditorStore = defineStore('editorStore', {
             return response
           })
       } else console.log('Error saving planstate')
+    },
+
+    savePlanInfo: async function (planId, data) {
+      const userStore = useUserStore()
+      const token = await userStore.auth.getAccessTokenSilently()
+      await axios
+        .patch('/api/_plans/' + planId, data, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(response => {
+          this.planDetails.currentState = response.currentState || this.planDetails.currentState
+          this.planDetails.planName = response.planName || this.planDetails.planName
+          this.planDetails.planDescription = response.planDescription || this.planDetails.planDescription
+
+          Notify.create(
+            {
+              message: 'Änderungen wurden gespeichert.',
+              timeout: 5000,
+              type: 'success'
+            }
+          )
+        })
+        .catch((reason) => {
+          Notify.create(
+            {
+              message: `Fehler! ${reason}`,
+              timeout: 10000,
+              type: 'warning'
+            }
+          )
+        })
     },
 
     createNewPlan: async function (data) {
