@@ -343,7 +343,7 @@ class PlanPrivatePostRequest(PlanProfile):
     forkFrom: Optional[Union[ForkFromPrivatePlan, ForkFromShortlink]] = None
 
 
-class PlanPrivatePostResponse(PlanPrivateGetResponse, PlanID):
+class PlanPrivatePostResponse(PlanID):
     pass
 
 

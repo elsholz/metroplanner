@@ -128,7 +128,7 @@ def post_plan(
         }
     )
 
-    return {"planId": str(new_plan_id), 'primary_shortlink': shortlink, 'shortlinks': [shortlink], **new_plan_data}
+    return {"planId": str(new_plan_id)}#, 'primary_shortlink': shortlink, 'shortlinks': [shortlink], **new_plan_data}
 
 
 @router.patch("/_plans/{plan_id}")
