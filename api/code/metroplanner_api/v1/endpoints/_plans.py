@@ -45,7 +45,7 @@ def post_plan(
         print("Plan is to be forked from", fork_from)
         link_is_active = False
         planstate_id = None
-        if isinstance(fork_from, type_definitions.ForkFromShortlink):
+        if isinstance(fork_from, type_definitions.PlanPrivatePostRequest.ForkFromShortlink):
             link_data = db.links.find_one({"_id": fork_from.shortlink})
 
             if link_data:
