@@ -314,13 +314,13 @@ class PlanPublicGetResponse(Plan):
     total_view_count: NonNegativeInt
 
 
-class PlanPrivateGetResponse(PlanProfile, PlanStats):
+class PlanPrivateGetResponse(PlanProfile, PlanStats, PlanTimestamps):
     class ShortlinkWithStats(BaseModel):
         class Stats(BaseModel):
             total_count: NonNegativeInt
             views: Dict[str, NonNegativeInt]
 
-        _id: str
+        shortlink: str
         stats: Stats
 
     history: List[PlanstateHistoryItemWithID]

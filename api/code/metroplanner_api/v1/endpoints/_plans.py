@@ -45,6 +45,8 @@ def post_plan(
         print("Plan is to be forked from", fork_from)
         link_is_active = False
         planstate_id = None
+        planid = None
+
         if isinstance(fork_from, type_definitions.PlanPrivatePostRequest.ForkFromShortlink):
             link_data = db.links.find_one({"_id": fork_from.shortlink})
 
@@ -66,6 +68,8 @@ def post_plan(
             },
         )
 
+        new_plan_data['forkedFrom'] = planid
+
         if plan_details and (link_is_active or sub == plan_details["ownedBy"]):
             planstate_id = planstate_id or plan_details["currentState"]
 
@@ -77,6 +81,8 @@ def post_plan(
                     "_id": 0,
                 },
             )
+
+            planstate['createdAt'] = now
 
             if planstate:
                 insert_planstate_res = db.planstates.insert_one(planstate)
@@ -108,6 +114,7 @@ def post_plan(
                 "colorTheme": theme,
             }
         )
+
     print("Created plan, result:", insert_planstate_res)
     new_plan_data["currentState"] = (
         new_planstateid := insert_planstate_res.inserted_id
@@ -253,7 +260,7 @@ def get_plan(
             plan_details["history"] = states
 
             shortlinks = list(
-                db.links.find({"plan": BsonObjectId(plan_id)}, {"plan": 0})
+                db.links.find({"plan": BsonObjectId(plan_id)}, {"plan": 0, "_id": 1})
             )
 
             shortlinks_with_stats = []
@@ -275,7 +282,9 @@ def get_plan(
                         shortlink["stats"] = shortlink_stats
                     else:
                         shortlink["stats"] = {"totalCount": 0, "views": {}}
+                    shortlink['shortlink'] = shortlink['_id']
                     del shortlink["active"]
+                    del shortlink["_id"]
                     shortlinks_with_stats.append(shortlink)
 
             print("Shortlinks:", shortlinks_with_stats)
