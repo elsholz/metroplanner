@@ -115,19 +115,20 @@ def post_plan(
     new_plan_data["history"] = [new_planstateid]
 
     insert_res = db.plans.insert_one(new_plan_data)
-    print("After insertion, this is the result:", insert_res)
 
     new_plan_id = insert_res.inserted_id
     Σ = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ3456789-"
+    shortlink = "".join([random.choice(Σ) for _ in range(8)])
+
     db.links.insert_one(
         {
-            "_id": "".join([random.choice(Σ) for _ in range(8)]),
+            "_id": shortlink,
             "plan": new_plan_id,
             "active": True,
         }
     )
 
-    return {"planId": str(new_plan_id)}
+    return {"planId": str(new_plan_id), 'primary_shortlink': shortlink, 'shortlinks': [shortlink], **new_plan_data}
 
 
 @router.patch("/_plans/{plan_id}")
