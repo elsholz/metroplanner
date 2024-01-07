@@ -4,7 +4,6 @@
       elevated
       class="bg-dark text-white"
       dark
-      style="box-shadow: none; border-width: 0 0 2px 0; border-style: solid; border-color: #31ccec;"
     >
       <q-toolbar>
         <q-btn
@@ -27,7 +26,7 @@
       :width="400"
       class="text-body1"
       dark
-      style="box-shadow: 0 0 10px 5px gray"
+      style="box-shadow: 0 0 7px 1px white"
     >
       <template v-if="planInfo.planName != undefined">
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px">

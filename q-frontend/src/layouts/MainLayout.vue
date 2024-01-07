@@ -2,13 +2,12 @@
   <q-layout view="hHh lpR fff">
     <q-header
       elevated
-      style="box-shadow: 0 0 5px 3px white"
     >
       <q-toolbar class="">
         <HeaderLogo :absolute-left='true'> </HeaderLogo>
         <LoginContextButton> </LoginContextButton>
       </q-toolbar>
-      <q-toolbar v-if="staging">
+      <q-toolbar v-if="sstaging">
         <q-toolbar-title class="text-center text-h5 q-pa-md" style="background-color: #770; color: #fff;">
           ! Entwicklungs-Umgebung !
         </q-toolbar-title>

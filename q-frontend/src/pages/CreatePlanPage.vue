@@ -124,7 +124,6 @@
       <q-inner-loading
         :showing="true"
         label="Plan wird erstellt..."
-        label-class="text-green text-italic"
         class="bg-dark"
         label-style="font-size: 1.5em"
         color="white"

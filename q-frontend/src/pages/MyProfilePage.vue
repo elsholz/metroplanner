@@ -154,7 +154,7 @@
                   <PlanListItem
                     v-for="plan of plansCreated"
                     :key="plan"
-                    :planShortlink="plan.planShortlink"
+                    :planShortlink="plan.primaryShortlink"
                     :planId="plan.planId"
                     :planName="plan.planName"
                     :planDescription="plan.planDescription"

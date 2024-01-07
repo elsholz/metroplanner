@@ -323,6 +323,7 @@ class PlanPrivateGetResponse(PlanProfile, PlanStats, PlanTimestamps):
 
         shortlink: str
         stats: Stats
+        auto_generated: bool = False
 
     history: List[PlanstateHistoryItemWithID]
     shortlinks: List[ShortlinkWithStats]
