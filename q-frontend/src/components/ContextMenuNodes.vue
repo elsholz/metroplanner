@@ -46,7 +46,7 @@
         <div class="text-body1">Filter:</div>
       </div>
       <div class="col col-4 q-mx-xs">
-        <q-input debounce v-model="searchTerm" dense clearable color="white" outlined>
+        <q-input debounce="250" v-model="searchTerm" dense clearable color="white" outlined>
         </q-input>
       </div>
       <div class="col col-grow bg-red">t</div>

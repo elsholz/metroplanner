@@ -11,9 +11,7 @@ router = APIRouter()
 
 @router.get("", include_in_schema=False)
 @router.get("/")
-def get_user(
-    request: Request, sub: str = Depends(check_auth)
-) -> type_definitions.UserInDB:
+def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
     db = ENV.database
     user_result = db.users.find_one({"_id": sub})
     if user_result:
@@ -40,9 +38,9 @@ def get_user(
             p["planId"] = str(p["_id"])
 
             if not "planShortlink" in p:
-                plan_link = db.links.find_one({"plan": p["_id"]})
-                if plan_link:
-                    p["planShortlink"] = plan_link["_id"]
+                plan_links = db.links.find({"plan": p["_id"]})
+                if plan_links:
+                    p["shortlinks"] = [{'shortlink': p["_id"]} for p in plan_links]
 
             del p["_id"]
 

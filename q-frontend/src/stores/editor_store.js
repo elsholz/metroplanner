@@ -4,7 +4,7 @@ import { ref } from 'vue'
 import { useUserStore } from './user_store'
 import { Notify } from 'quasar'
 
-export const usePlanEditorStore = defineStore('editorStore', {
+export const usePlanEditorStore = defineStore('planEditorStore', {
   state: function () {
     const userStore = useUserStore()
     const planDetails = ref({})
@@ -202,19 +202,6 @@ export const usePlanEditorStore = defineStore('editorStore', {
             }
           )
         })
-    },
-
-    createNewPlan: async function (data) {
-      console.log('Create plan called with data', data)
-      const userStore = useUserStore()
-      const token = await userStore.auth.getAccessTokenSilently()
-      return await axios.post('/api/_plans', data, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      /* .then((response) => {
-          console.log('Plan created successfully: ', response.data.planId)
-          return response
-        }) */
     }
   }
 })

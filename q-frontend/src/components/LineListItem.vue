@@ -14,13 +14,16 @@
             @click="toggleExpanded">
           </q-btn>
         </div>
-        <div class="column col-3 text-left q-ml-sm">
+        <!--<div class="column col-2 text-left q-ml-sm">
           <q-input autogrow dark outlined dense color="white" input-class="text-center text-body1" v-model="lineSymbol">
           </q-input>
-        </div>
+        </div>-->
         <div class="column col-6 text-right q-mx-sm">
           <q-input autogrow dark outlined dense color="white" input-class="text-center text-h6" v-model="lineName">
           </q-input>
+        </div>
+        <div class="col col-grow">
+
         </div>
         <div class="col col-auto text-left text-body1">
           <q-btn icon="settings" dense round size="md">
@@ -120,7 +123,7 @@ export default {
       expanded: ref(false),
       searchTerm,
       lineName: undefined,
-      lineSymbol: undefined,
+      // lineSymbol: undefined,
       lineColor: undefined,
       lineWidth: undefined
     }
@@ -131,7 +134,7 @@ export default {
   created: function () {
     const reactiveLine = toRefs(this.lines[this.lineid])
     this.lineName = reactiveLine.name
-    this.lineSymbol = this.lineid
+    // this.lineSymbol = reactiveLine.symbol // this.lineid
     this.lineColor = reactiveLine.color
     this.lineWidth = reactiveLine.width
 

@@ -28,7 +28,7 @@ export const usePlanViewerStore = defineStore('viewerStore', {
       })
     },
     getPlanState: async function (shortlink) {
-      console.log('Load plan called for shortlink', shortlink)
+      console.log('Load plan state called for shortlink', shortlink)
       if (Object.hasOwn(this.plans, shortlink)) {
         if (Object.hasOwn(this.plans[shortlink], 'state')) {
           return this.plans[shortlink].info

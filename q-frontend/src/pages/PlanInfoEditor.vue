@@ -14,11 +14,11 @@
           </div>
         </div>
         <div class="row items-center justify-center">
-          <div class="column col-xs-12 col-sm-10 col-md-6">
+          <div class="column col-xs-11 col-sm-9 col-md-5">
             <div class="column col-6 text-h6">Planname:</div>
             <div class="column col-6 text-white">
               <div class="q-my-sm">
-                <q-input :oninput="changePlanInfo" dark color="white" outlined v-model="planName" input-class="text-h6"
+                <q-input :oninput="changePlanInfo" dark color="white" outlined v-model="planName" input-class="text-h5"
                   input-style="text-align: center" :rules="[
                     (val) => val.length <= 50 || 'Maximal 50 Zeichen erlaubt',
                   ]" />
@@ -70,14 +70,25 @@
         </div>
 
         <div class="row items-center justify-center text-body1">
-          <div class="column col-12 text-white items-center text-center q-mt-lg q-mb-xl">
+          <div class="column col-12 text-white items-center text-center q-mt-lg q-mb-sm">
+            <div class="q-mb-xs">Erstellt:</div>
+            <div>
+              <q-icon name="today" size="md" class="q-mx-sm q-my-sm" />{{
+                createdAt?.split("T")[0]
+              }}
+              <q-icon name="schedule" size="md" class="q-mx-sm q-my-sm" />{{
+                createdAt?.split("T")[1]?.split('.')[0]
+              }}
+            </div>
+          </div>
+          <div class="column col-12 text-white items-center text-center q-mb-xl">
             <div class="q-mb-xs">Zuletzt bearbeitet:</div>
             <div>
               <q-icon name="today" size="md" class="q-mx-sm q-my-sm" />{{
-                lastModifiedAt?.split(" ")[0]
+                lastModifiedAt?.split("T")[0]
               }}
               <q-icon name="schedule" size="md" class="q-mx-sm q-my-sm" />{{
-                lastModifiedAt?.split(" ")[1]
+                lastModifiedAt?.split("T")[1]?.split('.')[0]
               }}
             </div>
           </div>
@@ -92,10 +103,10 @@
               <hr color="white" width="200px;" />
             </div>
 
-            <div v-for="link in this.shortlinks" :key="link" class="row justify-center">
-              <q-btn flat no-caps :to="'/p/' + link._id">
-                <div class="text-h6" style="font-family: monospace">
-                  <span class="text-weight-thin">{{ this.windowOrigin }}/p/</span><span class="text-bold"
+            <div v-for="link in this.shortlinks" :key="link" class="row justify-center q-mt-md">
+              <q-btn flat no-caps rounded class="bg-grey-9" :to="'/p/' + link.shortlink">
+                <div class="text-body1" style="font-family: monospace;">
+                  <span class="text-weight-thin">{{ this.windowOrigin }}/p/{{ link.shortlink }}</span><span class="text-bold"
                     style="text-decoration: underline">{{
                       link._id
                     }}</span>
@@ -191,12 +202,17 @@
   </q-page>
 </template>
 
+<style>
+hr {
+  width: 20%;
+}
+</style>
+
 <script>
 import ChartComponent from 'src/components/ChartComponent.vue'
 import PlanstateListItem from 'src/components/PlanstateListItem.vue'
-import { usePlanEditorStore } from 'src/stores/editor_store.js'
+import { usePlanEditorStore } from 'src/stores/editor_store'
 import { ref } from 'vue'
-// import { storeToRefs } from 'pinia'
 
 const planEditorStore = usePlanEditorStore()
 
@@ -207,14 +223,18 @@ export default {
       planId: ref(undefined),
       planName: ref(undefined),
       planDescription: ref(undefined),
+
       currentState: ref(undefined),
       currentNumberOfNodes: ref(undefined),
       currentNumberOfLines: ref(undefined),
       currentNumberOfLabels: ref(undefined),
       currentNumberOfEdges: ref(undefined),
+
       totalViewCount: ref(undefined),
       lastModifiedAt: ref(undefined),
+
       shortlinks: ref(undefined),
+
       windowOrigin: window.location.origin,
       planInfoChanged: ref(false),
       saving: ref(false),
@@ -249,6 +269,7 @@ export default {
     this.currentNumberOfLabels = planDetails.currentNumberOfLabels
     this.currentNumberOfEdges = planDetails.currentNumberOfEdges
     this.lastModifiedAt = planDetails.lastModifiedAt
+    this.createdAt = planDetails.createdAt
     this.planName = planDetails.planName
     this.planDescription = planDetails.planDescription
     this.currentState = planDetails.currentState

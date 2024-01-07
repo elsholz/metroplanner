@@ -6,7 +6,7 @@
   >
     <div class="row justify-center" style="width: 100%" v-if="this.loaded && !this.creating">
       <div class="column col-xs-12 col-sm-10 col-md-8 q-px-sm">
-        <div class="row q-my-lg">
+        <div class="row q-my-md">
           <div class="column items-center justify-center col-12 text-white">
             <div class="text-h4 text-center q-mt-lg">Neuen Plan erstellen</div>
             <hr color="white" width="200px;" />
@@ -14,8 +14,8 @@
         </div>
         <div class="row items-center justify-center">
           <div class="column col-6">
-            <div class="column col-6 text-h6">Planname:</div>
-            <div class="column col-6 text-white">
+            <div class="text-h6">Planname:</div>
+            <div class="text-white">
               <div class="q-my-sm">
                 <q-input
                   dark
@@ -34,8 +34,8 @@
         </div>
         <div class="row items-center justify-center">
           <div class="column col-xs-12 col-sm-6">
-            <div class="column col-6 text-h6">Planbeschreibung:</div>
-            <div class="column col-6 text-white">
+            <div class="text-h6">Planbeschreibung:</div>
+            <div class="text-white">
               <div class="q-my-sm">
                 <q-input
                   dark
@@ -56,12 +56,13 @@
 
         <div class="row items-center justify-center">
           <div class="column col-xs-12 col-sm-6">
-            <div class="text-h6 text-center q-mt-lg">Anfänglicher Planinhalt</div>
+            <div class="text-h6 text-center">Anfänglicher Planinhalt</div>
             <hr color="white" width="200px;" />
-            <div class="text-body1 text-center text-italic q-mt-lg" v-if="!this.forked">Leer</div>
+            <div class="text-body1 text-center text-italic" v-if="!this.forked">Leer</div>
             <PlanstateListItem
-              :planId="this.planId || 0"
-              :planstateId="false"
+              :statsOnly="true"
+              :planId="undefined"
+              :planstateId="undefined"
               :numberOfEdges="this.numberOfEdges || 0"
               :numberOfNodes="this.numberOfNodes || 0"
               :numberOfLines="this.numberOfLines || NaN"
@@ -75,7 +76,7 @@
           </div>
         </div>
 
-        <div class="row items-center justify-center q-my-lg q-mt-xl">
+        <div class="row items-center justify-center ">
           <div class="column">
             <q-btn
               color="teal-9"
@@ -147,8 +148,9 @@
 <script>
 import PlanstateListItem from 'src/components/PlanstateListItem.vue'
 import { ref } from 'vue'
-import { usePlanEditorStore } from 'src/stores/editor_store.js'
+import { usePlanEditorStore } from 'src/stores/editor_store'
 import { usePlanViewerStore } from 'src/stores/viewer_store'
+import { useUserStore } from 'src/stores/user_store'
 
 export default {
   name: 'CreatePlanPage',
@@ -167,22 +169,24 @@ export default {
   },
   created: async function () {
     if (this.forked) {
-      let planDetails
+      let planStateDetails
       if (this.$route?.params?.planstateid) {
         const planstateid = this.$route.params.planstateid
         const planid = this.$route.params.planid
         const planEditorStore = usePlanEditorStore()
         await planEditorStore.loadPlanState(planid, planstateid)
-        planDetails = planEditorStore.planStates[planid][planstateid]
+        planStateDetails = planEditorStore.planState
       } else {
         const shortlink = this.$route.params.shortlink
         const planViewerStore = usePlanViewerStore()
-        planDetails = planViewerStore.getPlanState(shortlink)
+        await planViewerStore.getPlanState(shortlink)
+        planStateDetails = planViewerStore.plans[shortlink].state
       }
-      this.currentNumberOfNodes = planDetails?.currentNumberOfNodes
-      this.currentNumberOfLines = planDetails?.currentNumberOfLines
-      this.currentNumberOfLabels = planDetails?.currentNumberOfLabels
-      this.currentNumberOfEdges = planDetails?.currentNumberOfEdges
+      console.log('details about forked plan:', planStateDetails)
+      this.numberOfNodes = planStateDetails?.numberOfNodes
+      this.numberOfLines = planStateDetails?.numberOfLines
+      this.numberOfLabels = planStateDetails?.numberOfLabels
+      this.numberOfEdges = planStateDetails?.numberOfEdges
     }
     this.loaded = true
   },
@@ -198,8 +202,8 @@ export default {
       console.log('Creating plan...')
       this.creating = true
 
-      const planEditorStore = usePlanEditorStore()
-      await planEditorStore.createNewPlan({
+      const userStore = useUserStore()
+      await userStore.createNewPlan({
         planName: this.planName,
         planDescription: this.planDescription,
         colorTheme: this.colorTheme,

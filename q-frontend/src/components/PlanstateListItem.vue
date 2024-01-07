@@ -1,5 +1,5 @@
 <template>
-  <q-btn @click="openConfirmMakeCurrentDialog" flat no-caps>
+  <q-btn @click="openConfirmMakeCurrentDialog" flat no-caps :style="this.statsOnly ? 'cursor: default;' : ''">
     <q-item class="text-body1 q-my-sm" :style="'width: 100%; background-color: #003; border-radius: 10px;' +
       (isCurrentState ?  'border: 2px solid #0a0;' : confirmMakeCurrent ? 'border: 2px solid purple;' : '')
       ">
@@ -99,6 +99,7 @@ export default {
     }
   },
   props: {
+    statsOnly: Boolean,
     planstateId: String,
     planId: String,
     numberOfEdges: Number,
@@ -119,7 +120,9 @@ export default {
   methods: {
     openConfirmMakeCurrentDialog: async function (e, go) {
       e.preventDefault()
-      this.confirmMakeCurrent = true
+      if (!this.statsOnly) {
+        this.confirmMakeCurrent = true
+      }
     },
     makeCurrent: async function () {
       planEditorStore.savePlanInfo(this.planId, {

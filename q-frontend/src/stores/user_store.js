@@ -107,6 +107,13 @@ export const useUserStore = defineStore('userStore', {
             }
           )
         })
+    },
+    createNewPlan: async function (data) {
+      console.log('Create plan called with data', data)
+      const token = await this.auth.getAccessTokenSilently()
+      return await axios.post('/api/_plans', data, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
     }
   }
 })

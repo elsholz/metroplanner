@@ -26,7 +26,6 @@
         <LineListItem :lineid="lineid"> </LineListItem>
       </template>
     </q-list>
-    {{ lines }}
   <!--</q-scroll-area>-->
 </template>
 

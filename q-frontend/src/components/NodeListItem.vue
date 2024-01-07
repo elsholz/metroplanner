@@ -14,14 +14,21 @@
             </q-tooltip>
           </q-btn>
         </div>
-        <div class="col col-3 text-left text-body1">
+        <!--<div class="col col-3 text-left text-body1">
           <q-input autogrow dark outlined dense color="white" input-class="text-center text-body2" v-model="newNodeID">
           </q-input>
-        </div>
-        <div class="col col-6 text-right q-mx-sm">
+        </div>-->
+        <div class="col col-8 q-mx-sm">
           <q-input autogrow dark outlined dense color="white" input-class="text-center text-h6" v-model="nodeName">
           </q-input>
         </div>
+
+        <div class="col col-grow q-mr-sm text-left text-body1">
+          <!-- TODO: Used to move node in list
+            <q-btn icon="arrow_drop_up" class="q-mr-xs" flat dense size="md"></q-btn>
+          <q-btn icon="arrow_drop_down" dense flat size="md"></q-btn>-->
+        </div>
+
         <div class="col col-shrink q-mr-sm text-left text-body1">
           <q-btn icon="settings" dense round size="md">
             <q-menu fit>

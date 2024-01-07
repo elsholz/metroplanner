@@ -78,7 +78,7 @@
         </div>
         <div class="row items-center justify-center q-my-sm">
           <q-btn round size="md" icon="question_mark" color="accent">
-            <q-menu>
+            <q-menu :offset="[0, 5]">
               <q-card>
                 <q-card-section class="bg-purple-9 text-white">
                   <div class="text-body1">Tastenkombinationen:</div>
@@ -151,7 +151,7 @@
 
 <script>
 // import HeaderLogo from 'src/components/HeaderLogo.vue'
-// import PlanEditor from 'src/pages/PlanStateEditor.vue'
+// import PlanEditor from 'src/pages/PlanEditor.vue'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { usePlanEditorStore } from 'src/stores/editor_store'
 import { useUserStore } from 'src/stores/user_store'
