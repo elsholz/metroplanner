@@ -26,7 +26,7 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
                     "planDescription": 1,
                     "_id": 1,
                     "planShortlink": 1,  # TODO: Primary Shorlink
-                    # "primaryShortlink": 1,
+                    "primaryShortlink": 1,
                     "public": 1,
                     "deleted": 1,
                 },
@@ -37,10 +37,14 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
         for p in plans_created:
             p["planId"] = str(p["_id"])
 
-            if not "planShortlink" in p:
+            if "planShortlink" not in p:
                 plan_links = db.links.find({"plan": p["_id"]})
                 if plan_links:
-                    p["shortlinks"] = [{'shortlink': p["_id"]} for p in plan_links]
+                    p["shortlinks"] = [{"shortlink": p["_id"]} for p in plan_links]
+            if "primaryShortlink" not in p:
+                p["primaryShortlink"] = p.get("shortlinks", [{}])[0].get(
+                    "shortlink", None
+                )
 
             del p["_id"]
 

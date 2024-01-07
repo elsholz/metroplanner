@@ -268,7 +268,8 @@ class PlanProfile(BaseModel):
 
 class PlanPrivateView(PlanProfile):
     plan_id: ObjectId
-    plan_shortlink: ShortText
+    primary_shortlink: Optional[str] = None
+    shortlinks : Dict[str, str] = {}
 
 
 class PlanTimestamps(BaseModel):
