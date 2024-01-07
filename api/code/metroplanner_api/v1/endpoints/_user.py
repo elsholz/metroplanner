@@ -87,11 +87,14 @@ def patch_user(
     user_data: type_definitions.UpdateUser, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.UserInDB:
     db = ENV.database
+    set_data = user_data.get_existing_fields()
+    print('Existing fields', set_data)
+
     updated_result = db.users.find_one_and_update(
         {
             "_id": sub,
         },
-        {"$set": user_data.get_existing_fields()},
+        {"$set": set_data},
         return_document=ReturnDocument.AFTER,
     )
     print("Updated result:", updated_result)
