@@ -88,13 +88,24 @@ def patch_user(
 ) -> type_definitions.UserInDB:
     db = ENV.database
     set_data = user_data.get_existing_fields()
-    print('Existing fields', set_data)
+    new_user_data = {}
+
+    if 'profile_picture' in set_data:
+        new_user_data['profilePicture'] = set_data['profile_picture']
+    if 'bio' in set_data:
+        new_user_data['bio'] = set_data['bio']
+    if 'displayName' in set_data:
+        new_user_data['displayName'] = set_data['displayName']
+    if 'public' in set_data:
+        new_user_data['public'] = set_data['public']
+
+    print('Existing fields', new_user_data)
 
     updated_result = db.users.find_one_and_update(
         {
             "_id": sub,
         },
-        {"$set": set_data},
+        {"$set": new_user_data},
         return_document=ReturnDocument.AFTER,
     )
     print("Updated result:", updated_result)
