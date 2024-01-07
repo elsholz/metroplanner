@@ -96,6 +96,6 @@ def patch_user(
     )
     print("Updated result:", updated_result)
     if updated_result:
-        updated_result
+        return updated_result
     else:
         raise responses.internal_server_error_500()
