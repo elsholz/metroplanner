@@ -94,8 +94,8 @@ def patch_user(
         new_user_data['profilePicture'] = set_data['profile_picture']
     if 'bio' in set_data:
         new_user_data['bio'] = set_data['bio']
-    if 'displayName' in set_data:
-        new_user_data['displayName'] = set_data['displayName']
+    if 'display_name' in set_data:
+        new_user_data['displayName'] = set_data['display_name']
     if 'public' in set_data:
         new_user_data['public'] = set_data['public']
 
