@@ -23,7 +23,7 @@
               <pre
                 style="margin: 0; border-radius: 10px"
                 class="bg-blue-grey-10 q-pa-xs q-px-sm"
-              ><code>ich-hab-Plan.de</code></pre>
+              ><code>{{ instanceName }}</code></pre>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
                 color: #c70;
               "
             >
-              <pre style="margin: 0"><code>ich-hab-Plan.de</code></pre>
+              <pre style="margin: 0"><code>{{ instanceName }}</code></pre>
             </div>
           </div>
         </div>
@@ -60,7 +60,8 @@
 export default {
   name: 'HeaderLogo',
   setup () {
-    return {}
+    const instanceName = window.location.toString().replace('http://', '').replace('https://', '').split(':')[0].split('/')[0]
+    return { instanceName }
   },
   props: {
     absoluteLeft: Boolean

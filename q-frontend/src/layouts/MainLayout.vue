@@ -1,17 +1,14 @@
 <template>
   <q-layout view="hHh lpR fff">
-    <q-header
-      elevated
-    >
-      <q-toolbar class="">
+    <q-header elevated>
+      <q-toolbar>
         <HeaderLogo :absolute-left='true'> </HeaderLogo>
         <LoginContextButton> </LoginContextButton>
       </q-toolbar>
-      <q-toolbar v-if="sstaging">
-        <q-toolbar-title class="text-center text-h5 q-pa-md" style="background-color: #770; color: #fff;">
-          ! Entwicklungs-Umgebung !
-        </q-toolbar-title>
-      </q-toolbar>
+      <q-toolbar-title v-if="staging" class="text-center rounded-border text-h6"
+        style="background-color: #ff7c; color: black;">
+        ! Entwicklungs-Umgebung !
+      </q-toolbar-title>
     </q-header>
 
     <q-page-container>

@@ -7,7 +7,7 @@
         </div>
         <div class="row justify-center">
           <div class="text-h4 text-center col-12">
-            <pre><code style="color:#c70; background-color:#000; border-radius: 10px;"> ich-hab-Plan.de </code></pre>
+            <pre><code style="color:#c70; background-color:#000; border-radius: 10px;"> {{ instanceName }} </code></pre>
           </div>
         </div>
         <div class="q-mt-lg row justify-center">
@@ -36,12 +36,7 @@
       <div class="text-h6 q-mx-lg q-mt-xl">Ausgewählte Nahverkehrs-Pläne:</div>
 
       <q-list padding separator class="text-white" style="width: 100%">
-        <PlanListItem
-          v-for="shortlink of plans"
-          :key="shortlink"
-          :planShortlink="shortlink"
-          style="width: 100%"
-        >
+        <PlanListItem v-for="shortlink of plans" :key="shortlink" :planShortlink="shortlink" style="width: 100%">
         </PlanListItem>
       </q-list>
     </div>
@@ -87,12 +82,15 @@ export default defineComponent({
   data () {
     // planDescription = planViewerStore.plans[this.planShortlink].info.planDescription
     // planName = planViewerStore.plans[this.planShortlink].info.planName
+    const instanceName = window.location.toString().replace('http://', '').replace('https://', '').split(':')[0].split('/')[0]
+
     return {
       plans: [
         'walsumbahn',
         'wesel',
         'showcase'
-      ]
+      ],
+      instanceName
     }
   },
   components: { PlanListItem }

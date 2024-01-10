@@ -13,11 +13,11 @@
       <div v-if="plansCreated" class="row justify-center" style="width: 100%">
         <div class="column col-xs-11 col-sm-8 text-white items-center">
           <div class="">
-            <q-btn flat round @click="showProfilePictureDialog = true">
-              <q-avatar size="196px" class="q-mb-sm">
+            <q-btn flat round @click="showProfilePictureDialog=true">
+              <q-avatar size="196px">
                 <img
                   :src="
-                    this.userStore.profilePicture ||
+                    this.profilePicture ||
                     'https://source.boringavatars.com/pixel/72/' +
                       this.userStore.auth.user.sub +
                       '?colors=66f873,5a3dcf,99848a'
@@ -26,12 +26,10 @@
               </q-avatar>
             </q-btn>
           </div>
+          <!--
           <div style="width: 300px">
             <q-menu v-model="showProfilePictureDialog" dark>
               <q-list style="width: 300px">
-                <!---<q-item clickable class="text-info">-->
-                <!--<q-icon name="upload" size="sm" class="q-py-xs q-pr-sm" />
-                <q-item-section>Profilbild hochladen </q-item-section>-->
                 <q-uploader
                   dark
                   style="max-width: 300px"
@@ -41,7 +39,6 @@
                   :filter="checkFileSize"
                   @rejected="onRejected"
                 />
-                <!--</q-item>-->
                 <q-separator />
                 <q-item
                   clickable
@@ -54,10 +51,10 @@
                 </q-item>
               </q-list>
             </q-menu>
-          </div>
+          </div> -->
         </div>
       </div>
-      <div v-if="plansCreated" class="row justify-center" style="width: 100%">
+      <div v-if="plansCreated" class="row justify-center q-mt-lg" style="width: 100%">
         <div class="column col-xs-6 col-sm-4 col-md-3 col-lg-2 text-white">
           <div class="q-my-sm">
             <q-input
@@ -214,6 +211,7 @@
 import CreatePlanButton from 'src/components/CreatePlanButton.vue'
 import PlanListItem from 'src/components/PlanListItem.vue'
 import { useUserStore } from 'src/stores/user_store'
+import { useAuth0 } from '@auth0/auth0-vue'
 import { ref } from 'vue'
 
 const displayName = ref(undefined)
@@ -222,7 +220,6 @@ const plansCreated = ref([])
 // const plansLiked = ref([])
 const profilePicture = ref('')
 // const userId = ref('')
-const user = ref(undefined)
 const profileChanged = ref(false)
 const showProfilePictureDialog = ref(false)
 const saving = ref(false)
@@ -236,6 +233,8 @@ export default {
       // check that file size is below 1 MB
       return files.filter((file) => file.size < 2 ** 20)
     }
+    const { user } = useAuth0()
+    console.log('User::', user)
     return {
       checkFileSize,
       saving,
@@ -279,9 +278,9 @@ export default {
   created: async function () {
     this.authUser = this.userStore.auth.user
     if (this.userStore.auth.isAuthenticated) {
-      this.displayName = this.userStore.displayName
+      this.displayName = this.userStore.displayName || this.user.name
       this.bio = this.userStore.bio || ''
-      this.profilePicture = this.userStore.profilePicture
+      this.profilePicture = this.userStore.profilePicture || this.user.picture
       this.plansCreated = this.userStore.plansCreated
       await this.loadPlans()
     }
@@ -292,10 +291,9 @@ export default {
     userStore: {
       async handler (val) {
         console.log('VALUE Changed! ', val)
-
-        this.displayName = this.userStore.displayName
+        this.displayName = this.userStore.displayName || this.user.name
         this.bio = this.userStore.bio || ''
-        this.profilePicture = this.userStore.profilePicture
+        this.profilePicture = this.userStore.profilePicture || this.user.picture
         this.plansCreated = this.userStore.plansCreated
         await this.loadPlans()
       },
