@@ -210,7 +210,6 @@
 <script>
 import CreatePlanButton from 'src/components/CreatePlanButton.vue'
 import PlanListItem from 'src/components/PlanListItem.vue'
-import { useAuth0 } from '@auth0/auth0-vue'
 import { ref } from 'vue'
 
 const displayName = ref(undefined)
