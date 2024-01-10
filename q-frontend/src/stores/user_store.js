@@ -36,10 +36,10 @@ export const useUserStore = defineStore('userStore', {
           })
           .then((response) => {
             console.log('Response Data: ', response.data)
-            this.displayName = response.data.displayName
+            this.displayName = response.data.displayName || this.auth.user.name
             this.bio = response.data.bio
             this.isPublic = response.data.isPublic
-            this.profilePicture = response.data.profilePicture
+            this.profilePicture = response.data.profilePicture || this.auth.user.picture
             this.plansCreated = response.data.plansCreated
             this.profileLoaded = true
           })

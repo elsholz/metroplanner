@@ -210,7 +210,6 @@
 <script>
 import CreatePlanButton from 'src/components/CreatePlanButton.vue'
 import PlanListItem from 'src/components/PlanListItem.vue'
-import { useUserStore } from 'src/stores/user_store'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { ref } from 'vue'
 
@@ -224,8 +223,6 @@ const profileChanged = ref(false)
 const showProfilePictureDialog = ref(false)
 const saving = ref(false)
 
-const userStore = useUserStore()
-
 export default {
   name: 'MyProfilePage',
   setup () {
@@ -233,12 +230,9 @@ export default {
       // check that file size is below 1 MB
       return files.filter((file) => file.size < 2 ** 20)
     }
-    const { user } = useAuth0()
-    console.log('User::', user)
     return {
       checkFileSize,
       saving,
-      userStore,
       displayName,
       bio,
       // userId,
@@ -247,7 +241,6 @@ export default {
       profileChanged,
       // plansLiked,
       showProfilePictureDialog,
-      user,
       tab: ref('created')
     }
   },
@@ -278,9 +271,9 @@ export default {
   created: async function () {
     this.authUser = this.userStore.auth.user
     if (this.userStore.auth.isAuthenticated) {
-      this.displayName = this.userStore.displayName || this.user.name
+      this.displayName = this.userStore.displayName
       this.bio = this.userStore.bio || ''
-      this.profilePicture = this.userStore.profilePicture || this.user.picture
+      this.profilePicture = this.userStore.profilePicture
       this.plansCreated = this.userStore.plansCreated
       await this.loadPlans()
     }
@@ -291,9 +284,9 @@ export default {
     userStore: {
       async handler (val) {
         console.log('VALUE Changed! ', val)
-        this.displayName = this.userStore.displayName || this.user.name
+        this.displayName = this.userStore.displayName
         this.bio = this.userStore.bio || ''
-        this.profilePicture = this.userStore.profilePicture || this.user.picture
+        this.profilePicture = this.userStore.profilePicture
         this.plansCreated = this.userStore.plansCreated
         await this.loadPlans()
       },
