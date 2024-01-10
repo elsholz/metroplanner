@@ -287,7 +287,7 @@ class PlanStats(BaseModel):
 
 class Plan(PlanProfile):
     forked_from: Optional[ObjectId]
-    owned_by: ObjectId
+    owned_by: str
     created_at: str  # datetime
     last_modified_at: str  # datetime
     like_count: NonNegativeInt
