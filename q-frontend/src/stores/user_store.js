@@ -40,6 +40,9 @@ export const useUserStore = defineStore('userStore', {
             this.bio = response.data.bio
             this.isPublic = response.data.isPublic
             this.profilePicture = response.data.profilePicture || this.auth.user.picture
+            if (this.profilePicture.endsWith('=s96-c')) {
+              this.profilePicture = this.profilePicture.substring(0, this.profilePicture.length - '=s96-c'.length)
+            }
             this.plansCreated = response.data.plansCreated
             this.profileLoaded = true
           })

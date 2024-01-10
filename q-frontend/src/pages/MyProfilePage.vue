@@ -210,6 +210,7 @@
 <script>
 import CreatePlanButton from 'src/components/CreatePlanButton.vue'
 import PlanListItem from 'src/components/PlanListItem.vue'
+import { useUserStore } from 'src/stores/user_store'
 import { ref } from 'vue'
 
 const displayName = ref(undefined)
@@ -222,6 +223,8 @@ const profileChanged = ref(false)
 const showProfilePictureDialog = ref(false)
 const saving = ref(false)
 
+const userStore = useUserStore()
+
 export default {
   name: 'MyProfilePage',
   setup () {
@@ -232,6 +235,7 @@ export default {
     return {
       checkFileSize,
       saving,
+      userStore,
       displayName,
       bio,
       // userId,
