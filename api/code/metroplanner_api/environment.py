@@ -69,7 +69,7 @@ class Environment:
         self.API_AUDIENCE = secret_value[f"AUTH0_AUDIENCE_{env.upper()}"]
         self.ALGORITHMS = ["RS256"]
 
-        payload = f"grant_type=client_credentials&client_id={self.AUTH0_M2M_CLIENT_ID}&client_secret=%7B{self.AUTH0_M2M_CLIENT_SECRET}%7D&audience=https%3A%2F%2F{self.AUTH0_DOMAIN}%2Fapi%2Fv2%2F"
+        payload = f"grant_type=client_credentials&client_id=%7B{self.AUTH0_M2M_CLIENT_ID}%7D&client_secret=%7B{self.AUTH0_M2M_CLIENT_SECRET}%7D&audience=https%3A%2F%2F{self.AUTH0_DOMAIN}%2Fapi%2Fv2%2F"
         headers = {"content-type": "application/x-www-form-urlencoded"}
 
         response = requests.post(
