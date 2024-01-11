@@ -388,7 +388,8 @@ class UpdateUser(UserCommons, ModelMayMissFields):
 class User(UserCommons):
     profile_views: NonNegativeInt = 0
     likes_given: List[ObjectId] = []
-    plans_created: Optional[List[PlanPrivateView]] = None
+    # TODO: plans_created: Optional[List[PlanPrivateView]] = None
+    plans_created: Optional[List] = None
 
 
 class UserInDB(User):
