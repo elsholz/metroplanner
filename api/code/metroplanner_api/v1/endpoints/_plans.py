@@ -47,7 +47,9 @@ def post_plan(
         planstate_id = None
         planid = None
 
-        if isinstance(fork_from, type_definitions.PlanPrivatePostRequest.ForkFromShortlink):
+        if isinstance(
+            fork_from, type_definitions.PlanPrivatePostRequest.ForkFromShortlink
+        ):
             link_data = db.links.find_one({"_id": fork_from.shortlink})
 
             if link_data:
@@ -68,7 +70,7 @@ def post_plan(
             },
         )
 
-        new_plan_data['forkedFrom'] = planid
+        new_plan_data["forkedFrom"] = planid
 
         if plan_details and (link_is_active or sub == plan_details["ownedBy"]):
             planstate_id = planstate_id or plan_details["currentState"]
@@ -82,7 +84,7 @@ def post_plan(
                 },
             )
 
-            planstate['createdAt'] = now
+            planstate["createdAt"] = now
 
             if planstate:
                 insert_planstate_res = db.planstates.insert_one(planstate)
@@ -135,7 +137,9 @@ def post_plan(
         }
     )
 
-    return {"planId": str(new_plan_id)}#, 'primary_shortlink': shortlink, 'shortlinks': [shortlink], **new_plan_data}
+    return {
+        "planId": str(new_plan_id)
+    }  # , 'primary_shortlink': shortlink, 'shortlinks': [shortlink], **new_plan_data}
 
 
 @router.patch("/_plans/{plan_id}")
@@ -186,10 +190,10 @@ def patch_plan(
                     )
                     raise responses.bad_request_400()
 
-            if name := set_data.get("plan_name"):
-                new_data["planName"] = name
-            if desc := set_data.get("plan_description"):
-                new_data["planDescription"] = desc
+            if "plan_name" in set_data:
+                new_data["planName"] = set_data["plan_name"]
+            if "plan_description" in set_data:
+                new_data["planDescription"] = set_data["plan_description"]
 
             db.plans.update_one(
                 {
@@ -282,7 +286,7 @@ def get_plan(
                         shortlink["stats"] = shortlink_stats
                     else:
                         shortlink["stats"] = {"totalCount": 0, "views": {}}
-                    shortlink['shortlink'] = shortlink['_id']
+                    shortlink["shortlink"] = shortlink["_id"]
                     del shortlink["active"]
                     del shortlink["_id"]
                     shortlinks_with_stats.append(shortlink)

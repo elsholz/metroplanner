@@ -181,9 +181,9 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
           headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => {
-          this.planDetails.currentState = response.currentState || this.planDetails.currentState
-          this.planDetails.planName = response.planName || this.planDetails.planName
-          this.planDetails.planDescription = response.planDescription || this.planDetails.planDescription
+          this.planDetails.currentState = response.currentState ?? this.planDetails.currentState
+          this.planDetails.planName = response.planName ?? this.planDetails.planName
+          this.planDetails.planDescription = response.planDescription ?? this.planDetails.planDescription
 
           Notify.create(
             {

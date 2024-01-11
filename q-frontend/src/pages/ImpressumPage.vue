@@ -54,8 +54,7 @@
             icon="mail"
             label="hdk.lks@pm.me"
             href="mailto:hdk.lks@pm.me"
-            class="text-h6"
-            style="font-family: monospace;"
+            class="text-h6 text-mono"
           ></q-btn>
         </div>
       </div>

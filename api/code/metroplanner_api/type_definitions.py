@@ -75,8 +75,11 @@ class ModelMayMissFields(BaseModel):
                 else field_value
             )
             for field_name, field_spec in self.model_fields.items()
-            if MissingValueBaseClass in get_args(field_spec.annotation)
-            and (field_value := self.__getattribute__(field_name)) != Missing
+            if (
+                MissingValueBaseClass in get_args(field_spec.annotation)
+                and (field_value := self.__getattribute__(field_name)) != Missing
+            )
+            or (MissingValueBaseClass not in get_args(field_spec.annotation))
         }
 
 

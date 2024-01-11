@@ -17,7 +17,7 @@
           <div class="row">
             <div class="text-bold q-pt-sm text-h5 q-pl-sm">METROPLANNER</div>
             <div
-              class="text-weight-thin q-pl-lg text-monospace q-pt-sm"
+              class="text-weight-thin q-pl-lg text-mono q-pt-sm"
               style="margin: 0; line-height: 110%; color: #c70"
             >
               <pre
@@ -38,7 +38,7 @@
           <div class="col col-10">
             <div style="margin-bottom: 0">METROPLANNER</div>
             <div
-              class="text-weight-thin text-monospace bg-blue-grey-10 q-mt-xl"
+              class="text-weight-thin text-mono bg-blue-grey-10 q-mt-xl"
               style="
                 border-radius: 5px;
                 margin: 0;

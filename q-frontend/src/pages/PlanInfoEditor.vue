@@ -105,11 +105,8 @@
 
             <div v-for="link in this.shortlinks" :key="link" class="row justify-center q-mt-md">
               <q-btn flat no-caps rounded class="bg-grey-9" :to="'/p/' + link.shortlink">
-                <div class="text-body1" style="font-family: monospace;">
-                  <span class="text-weight-thin">{{ this.windowOrigin }}/p/{{ link.shortlink }}</span><span class="text-bold"
-                    style="text-decoration: underline">{{
-                      link._id
-                    }}</span>
+                <div class="text-body1 text-mono">
+                  {{ this.windowOrigin }}/p/{{ link.shortlink }}
                 </div>
               </q-btn>
             </div>
