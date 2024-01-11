@@ -15,7 +15,6 @@ from os import environ
 import requests
 
 
-
 class BadRequestError(Exception):
     pass
 
@@ -73,15 +72,16 @@ class Environment:
         headers = {"content-type": "application/x-www-form-urlencoded"}
 
         response = requests.post(
-            f"https://{self.AUTH0_DOMAIN}/oauth/token", data=payload, headers=headers,
+            f"https://{self.AUTH0_DOMAIN}/oauth/token",
+            headers=headers,
+            params=payload,
         )
 
-        print('Response:', response)
-        print('status:', response.status_code)
+        print("Response:", response)
+        print("status:", response.status_code)
 
-
-        data =  response.content
-        print('Data:', data)
+        data = response.content
+        print("Data:", data)
 
         self.MGMT_API_ACCESS_TOKEN = json.loads(data.decode("utf-8"))["access_token"]
 
