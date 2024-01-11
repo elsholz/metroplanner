@@ -14,11 +14,11 @@ router = APIRouter()
 def post_planstate(
     plan_id,
     planstate_data: type_definitions.CreatePlanstate,
-    req: Request,
     sub: str = Depends(check_auth),
     make_current: bool = False,
 ) -> type_definitions.PlanstatePrivatePostResponse:
     db = ENV.database
+    user = db.users.find_one({'sub': sub})
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
         {
@@ -27,8 +27,8 @@ def post_planstate(
         },
     )
 
-    if plan_details:
-        if plan_details["ownedBy"] == sub:
+    if user and plan_details:
+        if plan_details["ownedBy"] == user['_id']:
             number_of_edges = 0
             for ln in planstate_data["lines"]:
                 for cons in ln["connections"]:
@@ -86,13 +86,15 @@ def get_planstate(
     plan_id, planstate_id, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanstatePrivateGetResponse:
     db = ENV.database
+    user = db.users.find_one({"sub": sub})
+
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
         {"_id": 0, "ownedBy": 1, "history": 1},
     )
 
-    if plan_details:
-        if plan_details["ownedBy"] == sub:
+    if user and plan_details:
+        if plan_details["ownedBy"] == user["_id"]:
             if BsonObjectId(planstate_id) in plan_details["history"]:
                 planstate = db.planstates.find_one(
                     {"_id": BsonObjectId(planstate_id)},
@@ -117,9 +119,10 @@ def get_planstate(
                 raise responses.gone_410()
         else:
             print(
-                "ownedBy doesn't match sub",
+                "ownedBy doesn't match user id _id",
                 plan_details["ownedBy"],
                 sub,
+                user["_id"],
             )
             raise responses.unauthorized_401()
     else:

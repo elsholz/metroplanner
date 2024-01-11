@@ -146,10 +146,10 @@ def post_plan(
 def patch_plan(
     plan_id: type_definitions.ObjectId,
     plan_data: type_definitions.PlanPrivatePatchRequest,
-    req: Request,
     sub: str = Depends(check_auth),
 ) -> type_definitions.PlanPrivatePatchResponse:
     db = ENV.database
+    user = db.users.find_one({"sub": sub})
     plan_details = db.plans.find_one(
         {
             "_id": BsonObjectId(plan_id),
@@ -160,8 +160,8 @@ def patch_plan(
         },
     )
 
-    if plan_details:
-        if plan_details["ownedBy"] == sub:
+    if user and plan_details:
+        if plan_details["ownedBy"] == user["_id"]:
             set_data = plan_data.get_existing_fields()
             print("Data to set:", set_data)
 
@@ -213,9 +213,10 @@ def patch_plan(
 
 @router.get("/_plans/{plan_id}")
 def get_plan(
-    plan_id: type_definitions.ObjectId, req: Request, sub: str = Depends(check_auth)
+    plan_id: type_definitions.ObjectId, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanPrivateGetResponse:
     db = ENV.database
+    user = db.users.find_one({"sub": sub})
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
         {
@@ -224,8 +225,8 @@ def get_plan(
     )
 
     print("Found plan Details: ", plan_details)
-    if plan_details:
-        if plan_details["ownedBy"] == sub:
+    if user and plan_details:
+        if plan_details["ownedBy"] == user["_id"]:
             if plan_details.get("deleted", None) is not None:
                 raise responses.gone_410()
             if forked_from := plan_details["forkedFrom"]:
@@ -304,10 +305,9 @@ def get_plan(
 
 
 @router.delete("/_plans/{plan_id}", status_code=204)
-def delete_plan(
-    plan_id: type_definitions.ObjectId, req: Request, sub: str = Depends(check_auth)
-):
+def delete_plan(plan_id: type_definitions.ObjectId, sub: str = Depends(check_auth)):
     db = ENV.database
+    user = db.users.find_one({"sub": sub})
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
         {
@@ -318,8 +318,8 @@ def delete_plan(
     )
 
     print("Found plan Details: ", plan_details)
-    if plan_details:
-        if plan_details["ownedBy"] == sub:
+    if user and plan_details:
+        if plan_details["ownedBy"] == user["_id"]:
             if plan_details.get("deleted", None) is not None:
                 raise responses.gone_410()
             db.plans.update_one(

@@ -12,6 +12,8 @@ from urllib.request import urlopen
 from jose import jwt
 from fastapi import Request, HTTPException
 from os import environ
+import requests
+
 
 
 class BadRequestError(Exception):
@@ -60,8 +62,28 @@ class Environment:
         print("Secrets received, DB Name:", self.DB_NAME)
 
         self.AUTH0_DOMAIN = secret_value[f"AUTH0_DOMAIN_{env.upper()}"]
+        self.AUTH0_M2M_CLIENT_SECRET = secret_value[
+            f"AUTH0_M2M_CLIENT_SECRET_{env.upper()}"
+        ]
+        self.AUTH0_M2M_CLIENT_ID = secret_value[f"AUTH0_M2M_CLIENT_ID_{env.upper()}"]
         self.API_AUDIENCE = secret_value[f"AUTH0_AUDIENCE_{env.upper()}"]
         self.ALGORITHMS = ["RS256"]
+
+        payload = f"grant_type=client_credentials&client_id={self.AUTH0_M2M_CLIENT_ID}&client_secret=%7B{self.AUTH0_M2M_CLIENT_SECRET}%7D&audience=https%3A%2F%2F{self.AUTH0_DOMAIN}%2Fapi%2Fv2%2F"
+        headers = {"content-type": "application/x-www-form-urlencoded"}
+
+        response = requests.post(
+            f"https://{self.AUTH0_DOMAIN}/oauth/token", data=payload, headers=headers,
+        )
+
+        print('Response:', response)
+        print('status:', response.status_code)
+
+
+        data =  response.content
+        print('Data:', data)
+
+        self.MGMT_API_ACCESS_TOKEN = json.loads(data.decode("utf-8"))["access_token"]
 
         print("Connecting to MongoDB")
 
@@ -135,8 +157,7 @@ def check_auth(request: Request):
 
             if ENV.API_AUDIENCE in payload.get("aud", []):
                 sub = payload["sub"]
-                # auth0|... google-oauth|...
-                return sub.split("|")[-1]
+                return sub
         raise Exception()
     except Exception as e:
         print("Error in check_auth:", e)

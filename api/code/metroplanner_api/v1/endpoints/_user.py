@@ -13,14 +13,14 @@ router = APIRouter()
 @router.get("/")
 def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
     db = ENV.database
-    user_result = db.users.find_one({"_id": sub})
+    user_result = db.users.find_one({"sub": sub})
     if user_result:
         print("Found User Profile:", user_result)
 
         plans_created = list(
             p
             for p in db.plans.find(
-                {"ownedBy": sub},
+                {"ownedBy": user_result['_id']},
                 {
                     "planName": 1,
                     "planDescription": 1,
@@ -65,7 +65,7 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
         print("User profile not found, creating profile.")
         user_creation_result = db.users.insert_one(
             user_data := {
-                "_id": sub,
+                "sub": sub,
                 "displayName": "",
                 "public": False,
                 "profileViews": 0,
@@ -103,7 +103,7 @@ def patch_user(
 
     updated_result = db.users.find_one_and_update(
         {
-            "_id": sub,
+            "sub": sub,
         },
         {"$set": new_user_data},
         return_document=ReturnDocument.AFTER,
