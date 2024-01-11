@@ -77,10 +77,16 @@ class Environment:
         }
         # headers = {"content-type": "application/x-www-form-urlencoded"}
 
+#           --header 'content-type: application/x-www-form-urlencoded' \
+#   --data grant_type=client_credentials \
+#   --data 'client_id={yourClientId}' \
+#   --data 'client_secret={yourClientSecret}' \
+#   --data 'audience=https://{yourDomain}/api/v2/'
+
         response = requests.post(
             f"https://{self.AUTH0_DOMAIN}/oauth/token",
             # headers=headers,
-            json=payload,
+            data=payload,
         )
 
         print("Response:", response)
