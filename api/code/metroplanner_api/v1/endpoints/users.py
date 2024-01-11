@@ -66,8 +66,6 @@ def get_user(user_id) -> type_definitions.User:
         )
 
         for p in plans_created:
-            p["planId"] = str(p["_id"])
-
             if "planShortlink" not in p:
                 plan_links = db.links.find({"plan": p["_id"]})
                 if plan_links:
@@ -77,7 +75,9 @@ def get_user(user_id) -> type_definitions.User:
                     "shortlink", None
                 )
 
+            del p['shortlinks']
             del p["_id"]
+            del p['deleted']
 
         user_data['plansCreated'] = plans_created
 
