@@ -52,15 +52,6 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
             p
             for p in db.plans.find(
                 {"owned_by": user_id},
-                {
-                    "plan_name": 1,
-                    "plan_description": 1,
-                    "_id": 1,
-                    "plan_shortlink": 1,  # TODO: Primary Shorlink
-                    "primary_shortlink": 1,
-                    "public": 1,
-                    "deleted": 1,
-                },
             )
             if not p.get("deleted", False)
         )
@@ -75,9 +66,9 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
                     "shortlink", None
                 )
 
-            del p["shortlinks"]
-            del p["_id"]
-            del p["deleted"]
+            # del p["shortlinks"]
+            # del p["_id"]
+            # del p["deleted"]
 
         user_data["plans_created"] = plans_created
 

@@ -288,18 +288,13 @@ class PlanStats(BaseModel):
     current_number_of_edges: NonNegativeInt
 
 
-class Plan(PlanProfile):
+class Plan(PlanProfile, PlanStats):
     forked_from: Optional[ObjectId]
     owned_by: str
     created_at: str  # datetime
     last_modified_at: str  # datetime
     like_count: NonNegativeInt
     # likes_received: List[str]
-
-    current_number_of_labels: NonNegativeInt
-    current_number_of_nodes: NonNegativeInt
-    current_number_of_lines: NonNegativeInt
-    current_number_of_edges: NonNegativeInt
     # current_color_theme: ObjectId
 
 
@@ -405,7 +400,7 @@ class UserPrivateGetResponse(UserInDB):
 
 
 class UserPublicGetResponse(User):
-    plans_created: List = []
+    plans_created: List[PlanPublicGetResponse] = []
 
 
 """
