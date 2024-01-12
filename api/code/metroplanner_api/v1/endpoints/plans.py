@@ -16,6 +16,7 @@ def get_plans(shortlink, request: Request) -> type_definitions.PlanPublicGetResp
     db = ENV.database
     link_result = db.links.find_one({"_id": shortlink})
     print("Link result:", link_result)
+
     if link_result:
         if link_result["active"]:
             print("Link is active")
@@ -43,14 +44,14 @@ def get_plans(shortlink, request: Request) -> type_definitions.PlanPublicGetResp
                                 }
                             },
                             {
-                                "totalCount": 1,
+                                "total_count": 1,
                                 "_id": 0,
                             },
                         )
                         or {}
                     )
                     print("Stats found:", stats_result)
-                    plan_result["totalViewCount"] = stats_result.get("totalCount", 0)
+                    plan_result["total_view_count"] = stats_result.get("total_count", 0)
                     for k, v in plan_result.items():
                         if isinstance(v, ObjectId):
                             plan_result[k] = str(v)
@@ -58,25 +59,25 @@ def get_plans(shortlink, request: Request) -> type_definitions.PlanPublicGetResp
                     plan_result.pop("history", None)
                     plan_result.pop("_id", None)
                     plan_result: dict
-                    plan_result['ownedBy'] = str(plan_result['ownedBy'])
+                    plan_result['owned_by'] = str(plan_result['owned_by'])
                     return {
                         k: v
                         for k, v in plan_result.items()
                         if k
                         in [
-                            "planName",
-                            "forkedFrom",
-                            "ownedBy",
-                            "createdAt",
-                            "lastModifiedAt",
-                            "likeCount",
-                            "currentColorTheme",
-                            "currentNumberOfEdges",
-                            "currentNumberOfLabels",
-                            "currentNumberOfLines",
-                            "currentNumberOfNodes",
-                            "totalViewCount",
-                            "planDescription",
+                            "plan_name",
+                            "forked_from",
+                            "owned_by",
+                            "created_at",
+                            "last_modified_at",
+                            "like_count",
+                            "current_colorTheme",
+                            "current_number_of_nodes",
+                            "current_number_of_lines",
+                            "current_number_of_labels",
+                            "current_number_of_edges",
+                            "total_view_count",
+                            "plan_description",
                         ]
                     }
             else:

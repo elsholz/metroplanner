@@ -20,13 +20,13 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserPrivateGetR
         plans_created = list(
             p
             for p in db.plans.find(
-                {"ownedBy": user_result['_id']},
+                {"owned_by": user_result['_id']},
                 {
-                    "planName": 1,
-                    "planDescription": 1,
+                    "plan_name": 1,
+                    "plan_description": 1,
                     "_id": 1,
-                    "planShortlink": 1,  # TODO: Primary Shorlink
-                    "primaryShortlink": 1,
+                    "plan_shortlink": 1,  # TODO: Primary Shorlink
+                    "primary_shortlink": 1,
                     "public": 1,
                     "deleted": 1,
                 },
@@ -37,12 +37,12 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserPrivateGetR
         for p in plans_created:
             p["planId"] = str(p["_id"])
 
-            if "planShortlink" not in p:
+            if "plan_shortlink" not in p:
                 plan_links = db.links.find({"plan": p["_id"]})
                 if plan_links:
                     p["shortlinks"] = [{"shortlink": p["_id"]} for p in plan_links]
-            if "primaryShortlink" not in p:
-                p["primaryShortlink"] = p.get("shortlinks", [{}])[0].get(
+            if "primary_shortlink" not in p:
+                p["primary_shortlink"] = p.get("shortlinks", [{}])[0].get(
                     "shortlink", None
                 )
 
@@ -50,15 +50,15 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserPrivateGetR
 
         likes = []
 
-        for liked_planid in user_result["likesGiven"]:
+        for liked_planid in user_result["likes_given"]:
             print("Get shortlink for plan with id", liked_planid)
             liked_plan_shortlink = db.links.find_one({"plan": liked_planid}, {"_id": 1})
             print("Liked plan Shortlink:", liked_plan_shortlink)
             likes.append(liked_plan_shortlink["_id"])
-        user_result["likesGiven"] = likes
+        user_result["likes_given"] = likes
 
         print("plans as list: ", plans_created)
-        user_result["plansCreated"] = plans_created
+        user_result["plans_created"] = plans_created
 
         return user_result
     else:
@@ -66,13 +66,13 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserPrivateGetR
         user_creation_result = db.users.insert_one(
             user_data := {
                 "sub": sub,
-                "displayName": "",
+                "display_name": "",
                 "public": True,
-                "profileViews": 0,
-                "likesGiven": [],
-                "profilePicture": None,
+                "profile_views": 0,
+                "likes_given": [],
+                "profile_picture": None,
                 "bio": "",
-                "plansCreated" : [],
+                "plans_created" : [],
             }
         )
 
@@ -87,24 +87,14 @@ def patch_user(
 ) -> type_definitions.UserPrivatePatchResponse:
     db = ENV.database
     set_data = user_data.get_existing_fields()
-    new_user_data = {}
 
-    if 'profile_picture' in set_data:
-        new_user_data['profilePicture'] = set_data['profile_picture']
-    if 'bio' in set_data:
-        new_user_data['bio'] = set_data['bio']
-    if 'display_name' in set_data:
-        new_user_data['displayName'] = set_data['display_name']
-    if 'public' in set_data:
-        new_user_data['public'] = set_data['public']
-
-    print('Existing fields', new_user_data)
+    print('Existing fields', set_data)
 
     updated_result = db.users.find_one_and_update(
         {
             "sub": sub,
         },
-        {"$set": new_user_data},
+        {"$set": set_data},
         return_document=ReturnDocument.AFTER,
     )
     print("Updated result:", updated_result)

@@ -22,15 +22,13 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
     user_result = db.users.find_one({"_id": user_id})
 
     if user_result:
-        sub = user_result['sub']
+        sub = user_result["sub"]
 
-        print('sub:', sub)
+        print("sub:", sub)
 
         auth0_res = requests.get(
-            f'https://{ENV.AUTH0_DOMAIN}/api/v2/users/{sub}',
-            headers={
-                "Authorization": f"Bearer {ENV.MGMT_API_ACCESS_TOKEN}"
-            }
+            f"https://{ENV.AUTH0_DOMAIN}/api/v2/users/{sub}",
+            headers={"Authorization": f"Bearer {ENV.MGMT_API_ACCESS_TOKEN}"},
         )
 
         auth0_user = {}
@@ -39,25 +37,27 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
 
         user_data = {
             "bio": user_result["bio"],
-            "displayName": user_result.get("displayName", None) or auth0_user.get('nickname', None),
-            "profilePicture": user_result.get("profilePicture", None) or auth0_user.get('picture', None), 
+            "display_name": user_result.get("display_name", None)
+            or auth0_user.get("nickname", None),
+            "profile_picture": user_result.get("profile_picture", None)
+            or auth0_user.get("picture", None),
             # "public": (public := user_result["public"]), TODO
         }
-            # if public: TODO: decide, whether private profiles should be possible.
-            # TODO collect plans created
-            # TODO collect plans liked
-            # print("User Profile is public")
+        # if public: TODO: decide, whether private profiles should be possible.
+        # TODO collect plans created
+        # TODO collect plans liked
+        # print("User Profile is public")
 
         plans_created = list(
             p
             for p in db.plans.find(
-                {"ownedBy": user_id},
+                {"owned_by": user_id},
                 {
-                    "planName": 1,
-                    "planDescription": 1,
+                    "plan_name": 1,
+                    "plan_description": 1,
                     "_id": 1,
-                    "planShortlink": 1,  # TODO: Primary Shorlink
-                    "primaryShortlink": 1,
+                    "plan_shortlink": 1,  # TODO: Primary Shorlink
+                    "primary_shortlink": 1,
                     "public": 1,
                     "deleted": 1,
                 },
@@ -66,20 +66,20 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
         )
 
         for p in plans_created:
-            if "planShortlink" not in p:
+            if "plan_shortlink" not in p:
                 plan_links = db.links.find({"plan": p["_id"]})
                 if plan_links:
                     p["shortlinks"] = [{"shortlink": p["_id"]} for p in plan_links]
-            if "primaryShortlink" not in p:
-                p["primaryShortlink"] = p.get("shortlinks", [{}])[0].get(
+            if "primary_shortlink" not in p:
+                p["primary_shortlink"] = p.get("shortlinks", [{}])[0].get(
                     "shortlink", None
                 )
 
-            del p['shortlinks']
+            del p["shortlinks"]
             del p["_id"]
-            del p['deleted']
+            del p["deleted"]
 
-        user_data['plansCreated'] = plans_created
+        user_data["plans_created"] = plans_created
 
         return user_data
 

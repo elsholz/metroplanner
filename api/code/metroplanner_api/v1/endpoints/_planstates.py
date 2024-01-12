@@ -23,45 +23,50 @@ def post_planstate(
         {"_id": BsonObjectId(plan_id)},
         {
             "_id": 0,
-            "ownedBy": 1,
+            "owned_by": 1,
         },
     )
 
     if user_data and plan_details:
-        if plan_details["ownedBy"] == user_data['_id']:
+        if plan_details["owned_by"] == user_data['_id']:
             number_of_edges = 0
-            for ln in planstate_data["lines"]:
-                for cons in ln["connections"]:
-                    number_of_edges += len(cons["nodes"])
+            set_planstate_data = {}
 
-            planstate_data["numberOfEdges"] = number_of_edges
-            planstate_data["numberOfLines"] = len(planstate_data["lines"])
-            planstate_data["numberOfNodes"] = len(planstate_data["nodes"])
-            planstate_data["numberOfLabels"] = len(planstate_data["labels"])
+            for ln_id, ln in planstate_data.lines.items():
+                for cons in ln.connections:
+                    number_of_edges += (len(cons.nodes) or 1) - 1
 
-            planstate_data["createdAt"] = (now := datetime.now().isoformat())
+            set_planstate_data["number_of_edges"] = number_of_edges
+            set_planstate_data["number_of_lines"] = len(planstate_data.lines)
+            set_planstate_data["number_of_nodes"] = len(planstate_data.nodes)
+            set_planstate_data["number_of_labels"] = len(planstate_data.labels)
 
-            created_result = db.planstates.insert_one(planstate_data)
+            set_planstate_data["created_at"] = (now := datetime.now().isoformat())
+
+            created_result = db.planstates.insert_one({set_planstate_data} | {
+                'lines': planstate_data.lines,
+                'nodes': planstate_data.nodes,
+                'independent_labels': planstate_data.independent_labels,
+            })
             print("Created planstate:", created_result)
 
             set_plan_data = {
-                "lastModifiedAt": now,
+                "last_modified_at": now,
             }
 
             if make_current:
-                if planstate_data.make_current:
-                    set_plan_data["currentState"] = created_result.inserted_id
-                    set_plan_data["currentNumberOfEdges"] = planstate_data[
-                        "numberOfEdges"
+                    set_plan_data["current_state"] = created_result.inserted_id
+                    set_plan_data["current_number_of_edges"] = planstate_data[
+                        "number_of_edges"
                     ]
-                    set_plan_data["currentNumberOfLines"] = planstate_data[
-                        "numberOfLines"
+                    set_plan_data["current_number_of_lines"] = planstate_data[
+                        "number_of_lines"
                     ]
-                    set_plan_data["currentNumberOfNodes"] = planstate_data[
-                        "numberOfNodes"
+                    set_plan_data["current_number_of_nodes"] = planstate_data[
+                        "number_of_nodes"
                     ]
-                    set_plan_data["currentNumberOfLabels"] = planstate_data[
-                        "numberOfLabels"
+                    set_plan_data["current_number_of_labels"] = planstate_data[
+                        "number_of_labels"
                     ]
 
             db.plans.update_one(
@@ -90,11 +95,11 @@ def get_planstate(
 
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
-        {"_id": 0, "ownedBy": 1, "history": 1},
+        {"_id": 0, "owned_by": 1, "history": 1},
     )
 
     if user_data and plan_details:
-        if plan_details["ownedBy"] == user_data["_id"]:
+        if plan_details["owned_by"] == user_data["_id"]:
             if BsonObjectId(planstate_id) in plan_details["history"]:
                 planstate = db.planstates.find_one(
                     {"_id": BsonObjectId(planstate_id)},

@@ -26,19 +26,19 @@ def post_plan(
     if user_data:
         user_id = user_data["_id"]
         new_plan_data = {
-            "planName": plan_data.plan_name,
-            "planDescription": plan_data.plan_description,
-            "forkedFrom": None,
+            "plan_name": plan_data.plan_name,
+            "plan_description": plan_data.plan_description,
+            "forked_from": None,
             "deleted": None,
-            "createdAt": (now := datetime.now().isoformat()),
-            "lastModifiedAt": now,
-            "likeCount": 0,
-            "ownedBy": user_id,
-            "colorTheme": (theme := "colorful-dl"),
-            "currentNumberOfEdges": 0,
-            "currentNumberOfLines": 0,
-            "currentNumberOfNodes": 0,
-            "currentNumberOfLabels": 0,
+            "created_at": (now := datetime.now().isoformat()),
+            "last_modified_at": now,
+            "like_count": 0,
+            "owned_by": user_id,
+            "color_theme": (theme := "colorful-dl"),
+            "current_number_of_edges": 0,
+            "current_number_of_lines": 0,
+            "current_number_of_nodes": 0,
+            "current_number_of_labels": 0,
         }
 
         print("initial data for new plan:", new_plan_data)
@@ -72,10 +72,10 @@ def post_plan(
                 },
             )
 
-            new_plan_data["forkedFrom"] = planid
+            new_plan_data["forked_from"] = planid
 
-            if plan_details and (link_is_active or user_id == plan_details["ownedBy"]):
-                planstate_id = planstate_id or plan_details["currentState"]
+            if plan_details and (link_is_active or user_id == plan_details["owned_by"]):
+                planstate_id = planstate_id or plan_details["current_state"]
 
                 planstate = db.planstates.find_one(
                     {
@@ -86,15 +86,15 @@ def post_plan(
                     },
                 )
 
-                planstate["createdAt"] = now
+                planstate["created_at"] = now
 
                 if planstate:
                     insert_planstate_res = db.planstates.insert_one(planstate)
-                    new_plan_data["currentNumberOfEdges"] = planstate["numberOfEdges"]
-                    new_plan_data["currentNumberOfLines"] = planstate["numberOfLines"]
-                    new_plan_data["currentNumberOfNodes"] = planstate["numberOfNodes"]
-                    new_plan_data["currentNumberOfLabels"] = planstate["numberOfLabels"]
-                    new_plan_data["colorTheme"] = plan_details["colorTheme"]
+                    new_plan_data["current_number_of_edges"] = planstate["number_of_edges"]
+                    new_plan_data["current_number_of_lines"] = planstate["number_of_lines"]
+                    new_plan_data["current_number_of_nodes"] = planstate["number_of_nodes"]
+                    new_plan_data["current_number_of_labels"] = planstate["number_of_labels"]
+                    new_plan_data["color_theme"] = plan_details["color_theme"]
                 else:
                     raise responses.gone_410()
             else:
@@ -103,24 +103,24 @@ def post_plan(
             print("Creating plan from scratch")
             insert_planstate_res = db.planstates.insert_one(
                 {
-                    "createdAt": now,
-                    "numberOfEdges": 0,
-                    "numberOfLines": 0,
-                    "numberOfNodes": 0,
-                    "numberOfLabels": 0,
+                    "created_at": now,
+                    "number_of_edges": 0,
+                    "number_of_lines": 0,
+                    "number_of_nodes": 0,
+                    "number_of_labels": 0,
                     "nodes": {},
                     "lines": {},
-                    "independentLabels": {},
-                    "globalOffsetX": 0,
-                    "globalOffsetY": 0,
-                    "planHeight": 10,
-                    "planWidth": 10,
-                    "colorTheme": theme,
+                    "independent_labels": {},
+                    "global_offset_x": 0,
+                    "global_offset_y": 0,
+                    "plan_height": 10,
+                    "plan_width": 10,
+                    "color_theme": theme,
                 }
             )
 
         print("Created plan, result:", insert_planstate_res)
-        new_plan_data["currentState"] = (
+        new_plan_data["current_state"] = (
             new_planstateid := insert_planstate_res.inserted_id
         )
         new_plan_data["history"] = [new_planstateid]
@@ -161,12 +161,12 @@ def patch_plan(
         },
         {
             "_id": 0,
-            "ownedBy": 1,
+            "owned_by": 1,
         },
     )
 
     if user_data and plan_details:
-        if plan_details["ownedBy"] == user_data["_id"]:
+        if plan_details["owned_by"] == user_data["_id"]:
             set_data = plan_data.get_existing_fields()
             print("Data to set:", set_data)
 
@@ -174,7 +174,7 @@ def patch_plan(
                 raise responses.bad_request_400()
 
             new_data = {
-                "lastModifiedAt": datetime.now().isoformat(),
+                "last_modified_at": datetime.now().isoformat(),
             }
 
             if new_id := set_data.get("current_state", None):
@@ -187,7 +187,7 @@ def patch_plan(
                         "Found corresponding planstate!",
                         get_planstate_result,
                     )
-                    new_data["currentState"] = new_id
+                    new_data["current_state"] = new_id
                 else:
                     print(
                         "Did not find corresponding planstate!",
@@ -196,9 +196,9 @@ def patch_plan(
                     raise responses.bad_request_400()
 
             if "plan_name" in set_data:
-                new_data["planName"] = set_data["plan_name"]
+                new_data["plan_name"] = set_data["plan_name"]
             if "plan_description" in set_data:
-                new_data["planDescription"] = set_data["plan_description"]
+                new_data["plan_description"] = set_data["plan_description"]
 
             db.plans.update_one(
                 {
@@ -231,18 +231,18 @@ def get_plan(
 
     print("Found plan Details: ", plan_details)
     if user_data and plan_details:
-        if plan_details["ownedBy"] == user_data["_id"]:
+        if plan_details["owned_by"] == user_data["_id"]:
             if plan_details.get("deleted", None) is not None:
                 raise responses.gone_410()
-            if forked_from := plan_details["forkedFrom"]:
-                plan_details["forkedFrom"] = str(forked_from)
+            if forked_from := plan_details["forked_from"]:
+                plan_details["forked_from"] = str(forked_from)
             if isinstance(
-                current_colortheme := plan_details["colorTheme"],
+                current_colortheme := plan_details["color_theme"],
                 BsonObjectId,
             ):
-                plan_details["colorTheme"] = str(current_colortheme)
+                plan_details["color_theme"] = str(current_colortheme)
 
-            plan_details["currentState"] = str(plan_details["currentState"])
+            plan_details["current_state"] = str(plan_details["current_state"])
 
             states = []
             for planstateid in plan_details["history"]:
@@ -250,11 +250,11 @@ def get_plan(
                     {"_id": planstateid},
                     {
                         "_id": 0,
-                        "createdAt": 1,
-                        "numberOfEdges": 1,
-                        "numberOfLines": 1,
-                        "numberOfNodes": 1,
-                        "numberOfLabels": 1,
+                        "created_at": 1,
+                        "number_of_edges": 1,
+                        "number_of_lines": 1,
+                        "number_of_nodes": 1,
+                        "number_of_labels": 1,
                     },
                 )
                 if not planstate_details:
@@ -262,7 +262,7 @@ def get_plan(
                         f"Warning: Planstate details for planstateid {planstateid} not found."
                     )
                     continue
-                planstate_details["planstateId"] = str(planstateid)
+                planstate_details["planstate_id"] = str(planstateid)
                 print("Found planstate details:", planstate_details)
                 states.append(planstate_details)
 
@@ -301,7 +301,7 @@ def get_plan(
 
             plan_details["shortlinks"] = shortlinks_with_stats
             print("Plan Details:", plan_details)
-            plan_details["ownedBy"] = str(plan_details["ownedBy"])
+            plan_details["owned_by"] = str(plan_details["owned_by"])
 
             return plan_details
         else:
@@ -318,14 +318,14 @@ def delete_plan(plan_id: type_definitions.ObjectId, sub: str = Depends(check_aut
         {"_id": BsonObjectId(plan_id)},
         {
             "_id": 0,
-            "ownedBy": 1,
+            "owned_by": 1,
             "deleted": 1,
         },
     )
 
     print("Found plan Details: ", plan_details)
     if user_data and plan_details:
-        if plan_details["ownedBy"] == user_data["_id"]:
+        if plan_details["owned_by"] == user_data["_id"]:
             if plan_details.get("deleted", None) is not None:
                 raise responses.gone_410()
             db.plans.update_one(

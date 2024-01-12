@@ -23,7 +23,7 @@ def get_planstates(shortlink) -> type_definitions.PlanstatePublicGetResponse:
             plan_id = link_result["plan"]
             print("Plan ID is:", plan_id)
             plan_result = db.plans.find_one(
-                {"_id": plan_id}, {"currentState": 1, "deleted": 1}
+                {"_id": plan_id}, {"current_state": 1, "deleted": 1}
             )
             print("Plan result:", plan_result)
             if plan_result:
@@ -36,7 +36,7 @@ def get_planstates(shortlink) -> type_definitions.PlanstatePublicGetResponse:
                 else:
                     print("Plan found and not deleted, getting latest state")
                     latest_state = db.planstates.find_one(
-                        {"_id": plan_result["currentState"]}, {"_id": 0}
+                        {"_id": plan_result["current_state"]}, {"_id": 0}
                     )
                     print("Found latest state:", latest_state)
                     # latest_state["colorTheme"] = str(latest_state["colorTheme"])
@@ -54,7 +54,7 @@ def get_planstates(shortlink) -> type_definitions.PlanstatePublicGetResponse:
                             },
                             {
                                 "$inc": {
-                                    "totalCount": 1,
+                                    "total_count": 1,
                                     f"views.{time_to_hour}": 1,
                                 }
                             },
