@@ -4,10 +4,16 @@ import { ref } from 'vue'
 
 export const usePlanViewerStore = defineStore('viewerStore', {
   state: () => ({
-    plans: ref({})
+    plans: ref({}),
+    owners: ref({})
   }),
 
   actions: {
+    loadUserInfo: async function (userId, shortlink) {
+      await axios.get('/api/users/' + userId).then((response) => {
+        this.owners[shortlink] = response.data
+      })
+    },
     getPlanInfo: async function (shortlink) {
       console.log('Load plan called for shortlink', shortlink)
       if (Object.hasOwn(this.plans, shortlink)) {

@@ -1,34 +1,16 @@
 <template>
   <q-layout view="lHh lpR lFf">
-    <q-header
-      elevated
-      class="bg-dark text-white"
-      dark
-    >
+    <q-header elevated class="bg-dark text-white" dark>
       <q-toolbar>
-        <q-btn
-          dense
-          flat
-          icon="menu"
-          @click="toggleLeftDrawer"
-          class="q-mr-sm"
-        />
+        <q-btn dense flat icon="menu" @click="toggleLeftDrawer" class="q-mr-sm" />
         <HeaderLogo :absoluteLeft="false"> </HeaderLogo>
         <!---<LoginContextButton> </LoginContextButton>-->
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      side="left"
-      behavior="mobile"
-      bordered
-      :width="400"
-      class="text-body1"
-      dark
-      style="box-shadow: 0 0 7px 1px white"
-    >
-      <template v-if="planInfo.planName != undefined">
+    <q-drawer v-model="leftDrawerOpen" side="left" behavior="mobile" bordered :width="400" class="text-body1" dark
+      style="box-shadow: 0 0 7px 1px white">
+      <template v-if="planInfo.planName !== undefined">
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px">
           <q-list padding>
             <q-item>
@@ -110,24 +92,16 @@
                     <q-icon name="visibility" size="sm" class="q-mx-md">
                     </q-icon>
                     {{ planInfo.totalViewCount || 0 }}
-                    <q-tooltip
-                      class="bg-indigo text-body1"
-                      anchor="top middle"
-                      self="bottom middle"
-                      style="white-space: nowrap"
-                    >
+                    <q-tooltip class="bg-indigo text-body1" anchor="top middle" self="bottom middle"
+                      style="white-space: nowrap">
                       Anzahl Aufrufe
                     </q-tooltip>
                   </div>
                   <div class="col-xs-6">
                     <q-icon name="favorite" size="sm" class="q-mx-md"> </q-icon>
                     {{ planInfo.likeCount || 0 }}
-                    <q-tooltip
-                      class="bg-green text-body1"
-                      anchor="top middle"
-                      self="bottom middle"
-                      style="white-space: nowrap"
-                    >
+                    <q-tooltip class="bg-green text-body1" anchor="top middle" self="bottom middle"
+                      style="white-space: nowrap">
                       Anzahl Likes
                     </q-tooltip>
                   </div>
@@ -148,17 +122,10 @@
                     ></q-btn>
                   </div>-->
                   <div class="col-6">
-                    <q-btn
-                      icon="favorite"
-                      color="purple"
-                      @click="toggleFavorite"
-                      >Favorisieren</q-btn
-                    >
+                    <q-btn icon="favorite" color="purple" @click="toggleFavorite">Favorisieren</q-btn>
                   </div>
                   <div class="col-6">
-                    <q-btn icon="share" color="green" @click="copyLink"
-                      >Link kopieren</q-btn
-                    >
+                    <q-btn icon="share" color="green" @click="copyLink">Link kopieren</q-btn>
                   </div>
                 </div>
               </q-item-section>
@@ -205,38 +172,29 @@
           </q-list>
         </q-scroll-area>
 
-        <q-img
-          class="absolute-top"
-          style="height: 150px; border-bottom: 2px solid gray"
-        >
+        <q-img class="absolute-top" style="height: 150px; border-bottom: 2px solid gray">
           <div class="absolute-bottom">
             <div class="row q-pt-md">
-              <div class="col-xs-6">
+              <div class="col-6">
                 Plan erstellt von:
                 <div class="text-weight-bold text-h6">
-                  {{ planInfo.planOwner?.displayName || "unbekannt" }}
+                  {{ planOwner?.displayName || "unbekannt" }}
                 </div>
               </div>
-              <div class="col-xs-grow"></div>
-              <div class="col-shrink">
-                <q-btn
-                  flat
-                  round
-                  :to="'/users/' + planInfo.planOwner?._id"
-                  :disable="planInfo.planOwner == undefined"
-                >
-                  <q-avatar size="72px" class="q-mb-sm">
-                    <img
-                      :src="
-                        planInfo.planOwner?.profilePicture ||
-                        'https://source.boringavatars.com/pixel/72/' +
-                          planInfo.planOwner?._id +
-                          '?colors=66f873,5a3dcf,99848a'
-                      "
-                    />
+              <div class="col-grow"></div>
+              <div class="col-shrink q-pb-md">
+                <q-btn flat round :to="'/users/' + planInfo.ownedBy">
+                  <q-avatar size="72px">
+                    <img :src="planOwner?.profilePicture ||
+                      'https://source.boringavatars.com/pixel/72/' +
+                      planInfo.planOwner?._id +
+                      '?colors=66f873,5a3dcf,99848a'
+                      " />
                   </q-avatar>
                 </q-btn>
               </div>
+              <q-inner-loading :showing="this.planOwner === undefined" label-class="text-white" label-style="font-size: 1em" height=""
+                color="white" size="2em" />
             </div>
 
             <div class="row">
@@ -259,16 +217,8 @@
         </q-img>
       </template>
       <template v-else>
-        <q-inner-loading
-          :showing="true"
-          label="Plandaten werden geladen..."
-          label-class="text-white"
-          class="bg-primary"
-          style="border: 3px solid #fff5; border-radius: 10px"
-          label-style="font-size: 1em"
-          color="white"
-          size="1em"
-        />
+        <q-inner-loading :showing="true" label="Plandaten werden geladen..." label-class="text-white" class="bg-primary"
+          style="border: 3px solid #fff5; border-radius: 10px" label-style="font-size: 1em" color="white" size="1em" />
       </template>
     </q-drawer>
 
@@ -294,6 +244,7 @@ export default {
     const leftDrawerOpen = ref(false)
     const planInfo = ref({})
     const shortlink = ref('')
+    const planOwner = ref(undefined)
 
     return {
       leftDrawerOpen,
@@ -304,19 +255,23 @@ export default {
         console.log(leftDrawerOpen.value)
       },
       planInfo,
-      shortlink
+      shortlink,
+      planOwner
     }
   },
   created: async function () {
     this.shortlink = this.$route.params.shortlink
 
     await planViewerStore.getPlanInfo(this.shortlink)
-
     this.planInfo = planViewerStore.plans[this.shortlink].info
+
+    await planViewerStore.loadUserInfo(this.planInfo.ownedBy, this.shortlink)
+    console.log('Owners:', planViewerStore.owners)
+    this.planOwner = planViewerStore.owners[this.shortlink]
   },
-  mounted () {},
+  mounted () { },
   methods: {
-    toggleFavorite: async function () {},
+    toggleFavorite: async function () { },
     copyLink: function () {
       navigator.clipboard.writeText(window.location)
     }

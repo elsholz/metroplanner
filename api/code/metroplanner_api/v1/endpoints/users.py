@@ -103,6 +103,11 @@ def get_user(user_id) -> type_definitions.UserPublicDetailedGetResponse:
         if auth0_res.status_code == 200:
             auth0_user = loads(auth0_res.content.decode())
 
+        if not auth0_user:
+            raise responses.gone_410()
+
+        print(auth0_user)
+
         user_data = {
             "bio": user_result["bio"],
             "display_name": user_result.get("display_name", None)

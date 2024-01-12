@@ -189,7 +189,7 @@
       </div>
     </div>
     <div v-else-if="this.saving">
-      <q-inner-loading :showing="true" label="Daten werden gespeichert…" label-class="text-green" class="bg-dark"
+      <q-inner-loading :showing="true" label="Daten werden gespeichert…" class="bg-dark"
         label-style="font-size: 1.5em" color="white" size="7em" />
     </div>
     <div v-else>
@@ -247,12 +247,19 @@ export default {
       this.planInfoChanged = true
     },
     savePlanInfo: async function (event) {
+      this.saving = true
       console.log(this.planName, this.planDescription)
       console.log('button press to save plan info', event)
-      this.planEditorStore.savePlanInfo(this.planId, {
+      await this.planEditorStore.savePlanInfo(this.planId, {
         planDescription: this.planDescription,
         planName: this.planName
       })
+      await this.planEditorStore.loadPlanDetails(this.planId)
+
+      this.planName = this.planEditorStore.planDetails.planName
+      this.planDescription = this.planEditorStore.planDetails.planDescription
+      this.saving = false
+      this.planInfoChanged = false
     }
   },
   created: async function () {

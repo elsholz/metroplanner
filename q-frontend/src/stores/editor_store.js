@@ -153,6 +153,8 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
       const userStore = useUserStore()
       const token = await userStore.auth.getAccessTokenSilently()
 
+      console.log('savePlanState called. This is planState:', this.planState)
+
       if (this.planState !== undefined) {
         console.log(
           'Editor save planstate called for current planstate: ',
@@ -189,7 +191,7 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
             {
               message: 'Änderungen wurden gespeichert.',
               timeout: 5000,
-              type: 'success'
+              type: 'info'
             }
           )
         })

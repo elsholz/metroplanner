@@ -380,7 +380,7 @@ class User(UserCommons):
 
 
 class UserInDB(User):
-    _id: str  # User ID from OAuth
+    _id: str
 
 
 class UserPrivatePatchRequest(UserCommons, ModelMayMissFields):
@@ -401,6 +401,7 @@ class UserPrivateGetResponse(UserInDB):
 
 class UserPublicDetailedGetResponse(User):
     plans_created: List[PlanPublicGetResponse] = []
+
 
 class UserPublicGetResponse(UserCommons):
     pass
