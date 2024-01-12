@@ -103,7 +103,7 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
         if auth0_res.status_code == 200:
             auth0_user = loads(auth0_res.content.decode())
 
-        print('Auth0 user:', auth0_user)
+        is_google = any(i['provider'] == 'google-oauth2' for i in auth0_user['identities'])
 
         if not auth0_user:
             raise responses.gone_410()
@@ -111,7 +111,7 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
         user_data = {
             "bio": user_result["bio"],
             "display_name": user_result.get("display_name", None)
-            or auth0_user.get("nickname", None),
+            or (auth0_user.get('name', None) if is_google else None) or auth0_user.get("nickname", None),
             "profile_picture": user_result.get("profile_picture", None)
             or auth0_user.get("picture", None),
             "public": user_result.get("public", True),
