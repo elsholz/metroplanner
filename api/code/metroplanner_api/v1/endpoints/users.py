@@ -11,8 +11,8 @@ import requests
 router = APIRouter()
 
 
-@router.get("/{user_id}")
-def get_user(user_id) -> type_definitions.UserPublicGetResponse:
+@router.get("/{user_id}/plans")
+def get_user(user_id) -> type_definitions.UserPublicDetailedGetResponse:
     db = ENV.database
     try:
         user_id = ObjectId(user_id)
@@ -79,8 +79,8 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
         raise responses.gone_410()
 
 
-@router.get("/{user_id}/plans")
-def get_user(user_id) -> type_definitions.UserPublicDetailedGetResponse:
+@router.get("/{user_id}")
+def get_user(user_id) -> type_definitions.UserPublicGetResponse:
     db = ENV.database
     try:
         user_id = ObjectId(user_id)
@@ -103,7 +103,6 @@ def get_user(user_id) -> type_definitions.UserPublicDetailedGetResponse:
         if auth0_res.status_code == 200:
             auth0_user = loads(auth0_res.content.decode())
 
-        print('Test123')
         print('Auth0 user:', auth0_user)
 
         if not auth0_user:
