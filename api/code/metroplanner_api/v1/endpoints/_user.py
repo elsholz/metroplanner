@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("", include_in_schema=False)
 @router.get("/")
-def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
+def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserPrivateGetResponse:
     db = ENV.database
     user_result = db.users.find_one({"sub": sub})
     if user_result:
@@ -67,15 +67,14 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
             user_data := {
                 "sub": sub,
                 "displayName": "",
-                "public": False,
+                "public": True,
                 "profileViews": 0,
                 "likesGiven": [],
                 "profilePicture": None,
                 "bio": "",
+                "plansCreated" : [],
             }
         )
-
-        user_data["plansCreated"] = []
 
         print("User Creation result", user_creation_result)
         return user_data
@@ -84,8 +83,8 @@ def get_user(sub: str = Depends(check_auth)) -> type_definitions.UserInDB:
 @router.patch("", include_in_schema=False)
 @router.patch("/")
 def patch_user(
-    user_data: type_definitions.UpdateUser, req: Request, sub: str = Depends(check_auth)
-) -> type_definitions.UserInDB:
+    user_data: type_definitions.UserPrivatePatchRequest, req: Request, sub: str = Depends(check_auth)
+) -> type_definitions.UserPrivatePatchResponse:
     db = ENV.database
     set_data = user_data.get_existing_fields()
     new_user_data = {}

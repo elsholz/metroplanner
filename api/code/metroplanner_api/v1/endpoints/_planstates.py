@@ -18,7 +18,7 @@ def post_planstate(
     make_current: bool = False,
 ) -> type_definitions.PlanstatePrivatePostResponse:
     db = ENV.database
-    user = db.users.find_one({'sub': sub})
+    user_data = db.users.find_one({'sub': sub})
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
         {
@@ -27,8 +27,8 @@ def post_planstate(
         },
     )
 
-    if user and plan_details:
-        if plan_details["ownedBy"] == user['_id']:
+    if user_data and plan_details:
+        if plan_details["ownedBy"] == user_data['_id']:
             number_of_edges = 0
             for ln in planstate_data["lines"]:
                 for cons in ln["connections"]:
@@ -74,7 +74,7 @@ def post_planstate(
                 },
             )
 
-            return {"planstateId": str(created_result.inserted_id), **planstate_data}
+            return {"planstateId": str(created_result.inserted_id)} #, **planstate_data}
         else:
             raise responses.unauthorized_401()
     else:
@@ -86,15 +86,15 @@ def get_planstate(
     plan_id, planstate_id, req: Request, sub: str = Depends(check_auth)
 ) -> type_definitions.PlanstatePrivateGetResponse:
     db = ENV.database
-    user = db.users.find_one({"sub": sub})
+    user_data = db.users.find_one({"sub": sub})
 
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
         {"_id": 0, "ownedBy": 1, "history": 1},
     )
 
-    if user and plan_details:
-        if plan_details["ownedBy"] == user["_id"]:
+    if user_data and plan_details:
+        if plan_details["ownedBy"] == user_data["_id"]:
             if BsonObjectId(planstate_id) in plan_details["history"]:
                 planstate = db.planstates.find_one(
                     {"_id": BsonObjectId(planstate_id)},
@@ -122,7 +122,7 @@ def get_planstate(
                 "ownedBy doesn't match user id _id",
                 plan_details["ownedBy"],
                 sub,
-                user["_id"],
+                user_data["_id"],
             )
             raise responses.unauthorized_401()
     else:

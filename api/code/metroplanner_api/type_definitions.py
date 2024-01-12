@@ -255,7 +255,7 @@ class PlanstatePrivateGetResponse(
     color_theme: Optional[Union[str, ObjectId]] = None
 
 
-class PlanstatePrivatePostResponse(PlanstatePrivateGetResponse, PlanstateID):
+class PlanstatePrivatePostResponse(PlanstateID):
     pass
 
 
@@ -378,22 +378,34 @@ class UserCommons(BaseModel):
     public: bool = True
 
 
-class UpdateUser(UserCommons, ModelMayMissFields):
-    bio: MaybeMissing(LongText) = Missing
-    display_name: MaybeMissing(ShortText) = Missing
-    profile_picture: MaybeMissing(Optional[str]) = Missing
-    public: MaybeMissing(bool) = Missing
-
-
 class User(UserCommons):
     profile_views: NonNegativeInt = 0
     likes_given: List[ObjectId] = []
-    # TODO: plans_created: Optional[List[PlanPrivateView]] = None
-    plans_created: Optional[List] = None
+    plans_created: List[PlanPrivateView]
 
 
 class UserInDB(User):
     _id: str  # User ID from OAuth
+
+
+class UserPrivatePatchRequest(UserCommons, ModelMayMissFields):
+    bio: MaybeMissing(LongText) = Missing
+    display_name: MaybeMissing(ShortText) = Missing
+    profile_picture: MaybeMissing(Optional[str]) = Missing
+    public: MaybeMissing(bool) = Missing
+    plans_created: List = []  # TODO: Change to PlanPrivateView
+
+
+class UserPrivatePatchResponse(UserCommons):
+    pass
+
+
+class UserPrivateGetResponse(UserInDB):
+    pass
+
+
+class UserPublicGetResponse(User):
+    plans_created: List = []
 
 
 """

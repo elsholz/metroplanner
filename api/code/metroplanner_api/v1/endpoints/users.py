@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.get("/{user_id}")
-def get_user(user_id) -> type_definitions.User:
+def get_user(user_id) -> type_definitions.UserPublicGetResponse:
     db = ENV.database
     try:
         user_id = ObjectId(user_id)

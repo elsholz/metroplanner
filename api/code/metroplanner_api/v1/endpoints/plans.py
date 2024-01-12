@@ -58,6 +58,7 @@ def get_plans(shortlink, request: Request) -> type_definitions.PlanPublicGetResp
                     plan_result.pop("history", None)
                     plan_result.pop("_id", None)
                     plan_result: dict
+                    plan_result['ownedBy'] = str(plan_result['ownedBy'])
                     return {
                         k: v
                         for k, v in plan_result.items()
