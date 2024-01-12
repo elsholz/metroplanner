@@ -106,7 +106,7 @@ def get_user(user_id) -> type_definitions.UserPublicDetailedGetResponse:
         if not auth0_user:
             raise responses.gone_410()
 
-        print(auth0_user)
+        print('Auth0 user:', auth0_user)
 
         user_data = {
             "bio": user_result["bio"],
