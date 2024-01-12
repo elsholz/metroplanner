@@ -399,8 +399,11 @@ class UserPrivateGetResponse(UserInDB):
     pass
 
 
-class UserPublicGetResponse(User):
+class UserPublicDetailedGetResponse(User):
     plans_created: List[PlanPublicGetResponse] = []
+
+class UserPublicGetResponse(UserCommons):
+    pass
 
 
 """

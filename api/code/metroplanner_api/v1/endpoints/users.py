@@ -66,11 +66,51 @@ def get_user(user_id) -> type_definitions.UserPublicGetResponse:
                     "shortlink", None
                 )
 
+            # TODO: Add stats
             # del p["shortlinks"]
             # del p["_id"]
             # del p["deleted"]
 
         user_data["plans_created"] = plans_created
+
+        return user_data
+
+    else:
+        raise responses.gone_410()
+
+
+@router.get("/{user_id}/plans")
+def get_user(user_id) -> type_definitions.UserPublicDetailedGetResponse:
+    db = ENV.database
+    try:
+        user_id = ObjectId(user_id)
+    except Exception:
+        raise responses.bad_request_400()
+
+    user_result = db.users.find_one({"_id": user_id})
+
+    if user_result:
+        sub = user_result["sub"]
+
+        print("sub:", sub)
+
+        auth0_res = requests.get(
+            f"https://{ENV.AUTH0_DOMAIN}/api/v2/users/{sub}",
+            headers={"Authorization": f"Bearer {ENV.MGMT_API_ACCESS_TOKEN}"},
+        )
+
+        auth0_user = {}
+        if auth0_res.status_code == 200:
+            auth0_user = loads(auth0_res.content.decode())
+
+        user_data = {
+            "bio": user_result["bio"],
+            "display_name": user_result.get("display_name", None)
+            or auth0_user.get("nickname", None),
+            "profile_picture": user_result.get("profile_picture", None)
+            or auth0_user.get("picture", None),
+            "public": user_result.get("public", True),
+        }
 
         return user_data
 
