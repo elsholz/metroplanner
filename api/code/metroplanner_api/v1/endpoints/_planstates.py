@@ -38,7 +38,9 @@ def post_planstate(
             set_planstate_data["number_of_edges"] = number_of_edges
             set_planstate_data["number_of_lines"] = len(planstate_data.lines)
             set_planstate_data["number_of_nodes"] = len(planstate_data.nodes)
-            set_planstate_data["number_of_labels"] = len(planstate_data.labels)
+            set_planstate_data["number_of_labels"] = len(
+                planstate_data.independent_labels
+            ) + len([True for n in planstate_data.nodes.values() if n.label.text])
 
             set_planstate_data["created_at"] = (now := datetime.now().isoformat())
 
