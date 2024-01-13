@@ -45,7 +45,7 @@ def post_planstate(
             set_planstate_data["created_at"] = (now := datetime.now().isoformat())
 
             created_result = db.planstates.insert_one(
-                {set_planstate_data}
+                set_planstate_data
                 | {
                     "lines": planstate_data.lines,
                     "nodes": planstate_data.nodes,
