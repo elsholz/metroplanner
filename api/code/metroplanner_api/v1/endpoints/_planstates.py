@@ -59,18 +59,18 @@ def post_planstate(
                 "last_modified_at": now,
             }
 
-            if plan_details.make_current:
+            if planstate_data.make_current:
                 set_plan_data["current_state"] = created_result.inserted_id
-                set_plan_data["current_number_of_edges"] = planstate_data[
+                set_plan_data["current_number_of_edges"] = set_planstate_data[
                     "number_of_edges"
                 ]
-                set_plan_data["current_number_of_lines"] = planstate_data[
+                set_plan_data["current_number_of_lines"] = set_planstate_data[
                     "number_of_lines"
                 ]
-                set_plan_data["current_number_of_nodes"] = planstate_data[
+                set_plan_data["current_number_of_nodes"] = set_planstate_data[
                     "number_of_nodes"
                 ]
-                set_plan_data["current_number_of_labels"] = planstate_data[
+                set_plan_data["current_number_of_labels"] = set_planstate_data[
                     "number_of_labels"
                 ]
 
