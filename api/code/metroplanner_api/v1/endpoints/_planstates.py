@@ -43,13 +43,14 @@ def post_planstate(
             ) + len([True for n in planstate_data.nodes.values() if n.label.text])
 
             set_planstate_data["created_at"] = (now := datetime.now().isoformat())
+            planstate_dumped_data = planstate_data.model_dump()
 
             created_result = db.planstates.insert_one(
                 set_planstate_data
                 | {
-                    "lines": planstate_data.lines,
-                    "nodes": planstate_data.nodes,
-                    "independent_labels": planstate_data.independent_labels,
+                    "lines": planstate_dumped_data["lines"],
+                    "nodes": planstate_dumped_data["nodes"],
+                    "independent_labels": planstate_dumped_data["independent_labels"],
                 }
             )
             print("Created planstate:", created_result)
