@@ -42,18 +42,19 @@ LocalizedLongText = Dict[str, LongText]
 MaybeLocalizedShortText = Union[LocalizedShortText, ShortText]
 MaybeLocalizedLongText = Union[LocalizedLongText, LongText]
 Identifier = Annotated[str, pydantic.StringConstraints(max_length=36, min_length=36)]
-ColorCSS = pydantic_extra_types.color.Color
-ColorReference = pydantic.constr(
-    pattern=(
-        r"(^(fore|back)ground$)"
-        r"|(^landscape::(((deep|shallow)?water)|border)$)"
-        r"|(^lines::\d{1,3}$)"
-    )
-)
+# ColorCSS = pydantic_extra_types.color.Color
+ColorCSS = Annotated[str, pydantic_extra_types.color.Color]
+ColorReference = Annotated[
+    str,
+    pydantic.StringConstraints(
+        pattern=(
+            r"(^(fore|back)ground$)"
+            r"|(^landscape::(((deep|shallow)?water)|border)$)"
+            r"|(^lines::\d{1,3}$)"
+        )
+    ),
+]
 Color = Union[ColorReference, ColorCSS]
-
-
-# Point = Tuple[IntOrFloat, IntOrFloat]
 
 Point = pydantic.conlist(IntOrFloat, min_length=2, max_length=2)
 
@@ -205,7 +206,7 @@ class CreatePlanstate(
     PlanstateDimensions,
     PlanstateComponents,
     # PlanstateComponentOderings
-    ModelMayMissFields,  
+    ModelMayMissFields,
 ):
     color_theme: MaybeMissing(Optional[Union[str, ObjectId]]) = Missing
     make_current: bool = False
