@@ -41,8 +41,8 @@ LocalizedShortText = Dict[str, ShortText]
 LocalizedLongText = Dict[str, LongText]
 MaybeLocalizedShortText = Union[LocalizedShortText, ShortText]
 MaybeLocalizedLongText = Union[LocalizedLongText, LongText]
+Point = pydantic.conlist(IntOrFloat, min_length=2, max_length=2)
 Identifier = Annotated[str, pydantic.StringConstraints(max_length=36, min_length=36)]
-# ColorCSS = pydantic_extra_types.color.Color
 ColorCSS = Annotated[str, pydantic_extra_types.color.Color]
 ColorReference = Annotated[
     str,
@@ -54,9 +54,32 @@ ColorReference = Annotated[
         )
     ),
 ]
-Color = Union[ColorReference, ColorCSS]
 
-Point = pydantic.conlist(IntOrFloat, min_length=2, max_length=2)
+
+def check_color(v: str) -> str:
+    ColorCSS = Annotated[str, pydantic_extra_types.color.Color]
+    ColorReference = Annotated[
+        str,
+        pydantic.StringConstraints(
+            pattern=(
+                r"(^(fore|back)ground$)"
+                r"|(^landscape::(((deep|shallow)?water)|border)$)"
+                r"|(^lines::\d{1,3}$)"
+            )
+        ),
+    ]
+
+    class ModelCheck(BaseModel):
+        color: Union[ColorCSS, ColorReference]
+
+    try:
+        m = ModelCheck(color=v)
+        return v
+    except Exception as e:
+        raise pydantic.ValidationError()
+
+
+Color = Annotated[str, pydantic.AfterValidator(check_color)]
 
 
 def MaybeMissing(t):
