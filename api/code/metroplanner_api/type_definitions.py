@@ -202,9 +202,13 @@ class PlanstateComponents(BaseModel):
 
 
 class CreatePlanstate(
-    PlanstateDimensions, PlanstateComponents, PlanstateComponentOderings
+    PlanstateDimensions,
+    PlanstateComponents,
+    # PlanstateComponentOderings
+    ModelMayMissFields,  
 ):
-    color_theme: Optional[Union[str, ObjectId]] = None
+    color_theme: MaybeMissing(Optional[Union[str, ObjectId]]) = Missing
+    make_current: bool = False
 
 
 class PlanstateHistoryItem(PlanstateStats):

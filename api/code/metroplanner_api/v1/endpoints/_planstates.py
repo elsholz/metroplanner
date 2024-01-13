@@ -15,10 +15,9 @@ def post_planstate(
     plan_id,
     planstate_data: type_definitions.CreatePlanstate,
     sub: str = Depends(check_auth),
-    make_current: bool = False,
 ) -> type_definitions.PlanstatePrivatePostResponse:
     db = ENV.database
-    user_data = db.users.find_one({'sub': sub})
+    user_data = db.users.find_one({"sub": sub})
     plan_details = db.plans.find_one(
         {"_id": BsonObjectId(plan_id)},
         {
@@ -28,7 +27,7 @@ def post_planstate(
     )
 
     if user_data and plan_details:
-        if plan_details["owned_by"] == user_data['_id']:
+        if plan_details["owned_by"] == user_data["_id"]:
             number_of_edges = 0
             set_planstate_data = {}
 
@@ -43,31 +42,34 @@ def post_planstate(
 
             set_planstate_data["created_at"] = (now := datetime.now().isoformat())
 
-            created_result = db.planstates.insert_one({set_planstate_data} | {
-                'lines': planstate_data.lines,
-                'nodes': planstate_data.nodes,
-                'independent_labels': planstate_data.independent_labels,
-            })
+            created_result = db.planstates.insert_one(
+                {set_planstate_data}
+                | {
+                    "lines": planstate_data.lines,
+                    "nodes": planstate_data.nodes,
+                    "independent_labels": planstate_data.independent_labels,
+                }
+            )
             print("Created planstate:", created_result)
 
             set_plan_data = {
                 "last_modified_at": now,
             }
 
-            if make_current:
-                    set_plan_data["current_state"] = created_result.inserted_id
-                    set_plan_data["current_number_of_edges"] = planstate_data[
-                        "number_of_edges"
-                    ]
-                    set_plan_data["current_number_of_lines"] = planstate_data[
-                        "number_of_lines"
-                    ]
-                    set_plan_data["current_number_of_nodes"] = planstate_data[
-                        "number_of_nodes"
-                    ]
-                    set_plan_data["current_number_of_labels"] = planstate_data[
-                        "number_of_labels"
-                    ]
+            if plan_details.make_current:
+                set_plan_data["current_state"] = created_result.inserted_id
+                set_plan_data["current_number_of_edges"] = planstate_data[
+                    "number_of_edges"
+                ]
+                set_plan_data["current_number_of_lines"] = planstate_data[
+                    "number_of_lines"
+                ]
+                set_plan_data["current_number_of_nodes"] = planstate_data[
+                    "number_of_nodes"
+                ]
+                set_plan_data["current_number_of_labels"] = planstate_data[
+                    "number_of_labels"
+                ]
 
             db.plans.update_one(
                 {"_id": BsonObjectId(plan_id)},
@@ -79,7 +81,9 @@ def post_planstate(
                 },
             )
 
-            return {"planstateId": str(created_result.inserted_id)} #, **planstate_data}
+            return {
+                "planstateId": str(created_result.inserted_id)
+            }  # , **planstate_data}
         else:
             raise responses.unauthorized_401()
     else:
