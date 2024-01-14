@@ -48,6 +48,10 @@ def post_planstate(
             created_result = db.planstates.insert_one(
                 set_planstate_data
                 | {
+                    "planHeight": planstate_data.plan_height,
+                    "planWidth": planstate_data.plan_width,
+                    "globalOffsetX": planstate_data.global_offset_x,
+                    "globalOffsetY": planstate_data.global_offset_y,
                     "lines": planstate_dumped_data["lines"],
                     "nodes": planstate_dumped_data["nodes"],
                     "independent_labels": planstate_dumped_data["independent_labels"],
