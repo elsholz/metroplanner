@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useUserStore } from './user_store'
 import { Notify } from 'quasar'
 
@@ -10,10 +10,8 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
     const planDetails = ref({})
     const planState = ref(undefined)
     const selectedNodeIDs = ref([])
-    const nodes = ref({})
     const planId = ref('')
     const planstateId = ref('')
-    const labels = ref({})
     const selectedLineIDs = ref(undefined)
     const selectedLabelIDs = ref(undefined)
     const planWidth = ref(0)
@@ -23,10 +21,36 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
     const coordinateScalar = ref(15)
     const searchTerm = ref('')
     const contextMenuOpen = ref(false)
-    const lines = ref([])
     const editorMode = ref('viewer')
+    const saved = ref(true)
+    const published = ref(true)
+    const nodes = ref({})
+    const lines = ref({})
+    const independentLabels = ref({})
+    const initialLoadFinished = ref(false)
+
+    function onChange (event) {
+      console.log('Changed!', event, initialLoadFinished)
+      if (initialLoadFinished.value) {
+        saved.value = false
+        published.value = false
+      }
+    }
+
+    watch([
+      nodes,
+      lines,
+      independentLabels,
+      planHeight,
+      planWidth,
+      globalOffsetX,
+      globalOffsetY
+    ], onChange, { deep: true })
 
     return {
+      saved,
+      published,
+      initialLoadFinished,
       planState,
       planDetails,
       userStore,
@@ -41,7 +65,7 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
       planId,
       planstateId,
       lines,
-      labels,
+      independentLabels,
       coordinateScalar,
       searchTerm,
       contextMenuOpen,
@@ -120,20 +144,20 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
             this.nodes[k].selected = false
             this.nodes[k].initialLocation = [x, y]
 
-            if (!(typeof this.nodes[k].label === 'object')) {
-              const labelKey = this.nodes[k].label
-              try {
-                delete this.planState.labels[labelKey]?.anchor?.node
-                if (
-                  Object.keys(this.planState.labels[labelKey].anchor).length ===
-                  0
-                ) {
-                  delete this.planState.labels[labelKey]?.anchor
-                }
-              } catch {}
-              this.nodes[k].label = this.planState.labels[labelKey]
-              delete this.planState.labels[labelKey]
-            }
+            // if (!(typeof this.nodes[k].label === 'object')) {
+            //   const labelKey = this.nodes[k].label
+            //   try {
+            //     delete this.planState.labels[labelKey]?.anchor?.node
+            //     if (
+            //       Object.keys(this.planState.labels[labelKey].anchor).length ===
+            //       0
+            //     ) {
+            //       delete this.planState.labels[labelKey]?.anchor
+            //     }
+            //   } catch {}
+            //   this.nodes[k].label = this.planState.labels[labelKey]
+            //   delete this.planState.labels[labelKey]
+            // }
             if (this.nodes[k].label === undefined) {
               this.nodes[k].label = {
                 class: 'left',
@@ -143,9 +167,10 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
             this.nodes[k].label.shiftX = this.nodes[k].label.anchor?.shiftX ?? this.nodes[k].label.anchor?.xShift ?? 0
             this.nodes[k].label.shiftY = this.nodes[k].label.anchor?.shiftY ?? this.nodes[k].label.anchor?.yShift ?? 0
           }
-          this.labels = this.planState.labels
+          this.independentLabels = this.planState.independentLabels
           this.selectedNodeIDs = []
           delete this.planState.nodes
+          delete this.planState.independentLabels
         })
     },
 
@@ -153,26 +178,89 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
       const userStore = useUserStore()
       const token = await userStore.auth.getAccessTokenSilently()
 
-      console.log('savePlanState called. This is planState:', this.planState)
+      const lines = {}
+      for (const [lineid, line] of Object.entries(this.lines)) {
+        console.log(lineid, line)
+        const newLine = {}
 
-      if (this.planState !== undefined) {
-        console.log(
-          'Editor save planstate called for current planstate: ',
-          this.planState
-        )
-        await axios
-          .post(`/api/_plans/${this.planId}/_planstates`, this.planState, {
-            headers: { Authorization: `Bearer ${token}` },
-            params: {
-              'make-current': publish || false
-            }
-          })
-          .then((response) => {
-            console.log('Planstate created successfully')
-            console.log(response)
-            return response
-          })
-      } else console.log('Error saving planstate')
+        newLine.name = line.name
+        newLine.color = line.color
+        newLine.width = line.width
+        newLine.border_width = line.border_width
+        newLine.border_style = line.border_style
+        newLine.border_color = line.border_color
+        newLine.connections = line.connections
+
+        lines[lineid] = newLine
+      }
+
+      const nodes = {}
+      for (const [nodeid, node] of Object.entries(this.nodes)) {
+        console.log(nodeid, node)
+        const newNode = {}
+        newNode.location = [node.locX, node.locY]
+
+        newNode.marker = {}
+        newNode.marker.width = node.marker.width
+        newNode.marker.height = node.marker.height
+        newNode.marker.sizeFactor = node.marker.diagonalStretch ? Math.sqrt(2) : 1
+        newNode.marker.rotation = node.marker.rotation
+
+        newNode.label = {}
+        newNode.label.class = node.label.class
+        newNode.label.text = node.label.text
+        newNode.label.styling = node.label.styling
+        newNode.label.anchor = {}
+        newNode.label.anchor.xShift = node.label.shiftX
+        newNode.label.anchor.yShift = node.label.shiftY
+
+        nodes[nodeid] = newNode
+      }
+
+      const independentLabels = {}
+      for (const [labelid, label] of Object.entries(this.independentLabels)) {
+        console.log(labelid, label)
+
+        const newLabel = {}
+
+        newLabel.anchor = label.anchor
+        newLabel.text = label.text
+        newLabel.width = label.width
+        newLabel.height = label.height
+        newLabel.styling = label.styling
+
+        independentLabels[labelid] = newLabel
+      }
+
+      const data = {
+        lines,
+        nodes,
+        independentLabels,
+
+        planWidth: this.planWidth,
+        planHeight: this.planHeight,
+        globalOffsetX: this.globalOffsetX,
+        globalOffsetY: this.globalOffsetY,
+        makeCurrent: publish
+        // labelsOrdering: [],
+        // linesOrdering: [],
+        // nodesOrdering: []
+        // colorTheme: "colorful-dl"
+      }
+
+      console.log('savePlanState called. This data will be saved:', data)
+
+      await axios
+        .post(`/api/_plans/${this.planId}/_planstates`, data, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        .then((response) => {
+          console.log('Planstate created successfully')
+          console.log(response)
+          return response
+        }).catch((response) => {
+          console.log('Error posting planstate:', response)
+        })
     },
 
     savePlanInfo: async function (planId, data) {
@@ -204,6 +292,26 @@ export const usePlanEditorStore = defineStore('planEditorStore', {
             }
           )
         })
+    },
+
+    deleteNodes: function (nodes) {
+      const newLines = {}
+      for (const [lineid, line] of Object.entries(this.lines)) {
+        const newConnections = []
+        for (const anchors of Object.values(line.connections)) {
+          newConnections.push({ nodes: anchors.nodes.filter((a) => !nodes.includes(a.node)) })
+        }
+        line.connections = newConnections
+        newLines[lineid] = line
+      }
+      this.lines = newLines
+      const newNodes = {}
+      for (const [nodeid, node] of Object.entries(this.nodes)) {
+        if (!nodes.includes(nodeid)) {
+          newNodes[nodeid] = node
+        }
+      }
+      this.nodes = newNodes
     }
   }
 })

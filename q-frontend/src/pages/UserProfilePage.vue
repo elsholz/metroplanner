@@ -1,11 +1,11 @@
 <template>
   <q-page class="doc-container flex justify-center bg-primary q-pb-xl" dark>
     <div v-if="plansCreated" class="row justify-center" style="width: 100%">
-      <div class="column items-center justify-center col-xs-10 text-white">
+      <div class="column items-center justify-center col-12 text-white">
         <div class="text-h4 text-center q-mt-lg">
           Dein Profil
-          <hr color="white" width="200px;" />
         </div>
+          <hr color="white" width="200px;" />
       </div>
     </div>
 
@@ -227,10 +227,6 @@ export default {
   created: async function () {
     this.displayName = 'Hendrik'
     this.plansCreated = [
-      {
-        planId: '633d6a59ea161f24d16f05b0',
-        planShortlink: 'wesel'
-      },
       {
         planId: '64031adae96fbf2d07a6a849',
         planShortlink: 'walsumbahn'

@@ -117,8 +117,8 @@
 }
 
 @font-face {
-  font-family: oxygen;
-  src: url(./fonts/Oxygen-Regular.ttf);
+  font-family: Oxygen-Sans;
+  src: url(./fonts/Oxygen-Sans-Book.otf);
 }
 
 @font-face {
@@ -127,44 +127,39 @@
 }
 
 @font-face {
-  font-family: oxygen-bold;
-  src: url(./fonts/Oxygen-Bold.ttf);
+  font-family: Oxygen-Sans-Bold-Oblique;
+  src: url(./fonts/Oxygen-Sans-Bold-Oblique.otf);
 }
 
 @font-face {
-  font-family: hack;
-  src: url(./fonts/Hack/Hack-Regular.ttf);
+  font-family: Oxygen-Sans-Oblique;
+  src: url(./fonts/Oxygen-Sans-Bold-Oblique.otf);
 }
 
-//@font-face {
-//  font-family: oxygen-italic;
-//  src: url(./fonts/Oxygen-BoldItalic.otf);
-// }
-// @font-face {
-//   font-family: oxygen-italic;
-//   src: url(./fonts/Oxygen-Italic.otf);
-// }
+@font-face {
+  font-family: Hack;
+  src: url(./fonts/Hack-Regular.ttf);
+}
+
 
 body {
-  font-family: 'oxygen';
+  font-family: 'Oxygen-Sans', sans-serif;
 }
 
-.bold,
-b,
-strong {
-  font-family: 'oxygen-bold';
+.text-bold {
+  font-family: 'Oxygen-Sans', sans-serif;
 }
 
-// .italic, i {
-//   font-family: 'oxygen-italic';
-// }
-//
-// i b {
-//   font-family: 'oxygen-bold-italic';
-// }
+.text-bold .text-italic {
+  font-family: 'Oxygen-Sans-Bold-Oblique', sans-serif;
+}
+
+.text-italic {
+  font-family: 'Oxygen-Sans-Oblique', sans-serif;
+}
 
 .text-mono {
-  font-family: 'hack';
+  font-family: 'Hack', monospace;
 }
 
 hr {

@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHr LpR fFf">
-    <template v-if="this.loaded">
+    <template v-if="this.initialLoadFinished">
       <q-header elevated class="bg-primary text-white">
         <q-toolbar>
           <q-btn dark icon="keyboard_arrow_left" color="negative" no-caps to="./">
@@ -10,11 +10,11 @@
           }}</q-toolbar-title>
 
           <div>
-            <q-btn no-caps color="green" class="q-mr-sm" @click="save" :disable="disable_save_button">
+            <q-btn no-caps color="green" class="q-mr-sm" @click="saveWithoutPublishing" :disable="disable_save_button">
               speichern
             </q-btn>
             <q-btn no-caps color="indigo" @click="saveAndPublish" :disable="disable_publish_button">
-              {{ (saved && !published) ? "veröffentlichen" : "speichern & veröffentlichen" }}
+              {{ (saved) ? "veröffentlichen" : "speichern & veröffentlichen" }}
             </q-btn>
           </div>
         </q-toolbar>
@@ -23,9 +23,8 @@
       <q-drawer v-model="leftDrawerOpen" side="left" bordered dark :width="65" class="column justify-between no-wrap"
         :behavior="'desktop'" no-swipe-backdrop :breakpoint="0" style="overflow: hidden;">
         <div>
-
           <div class="row q-my-md justify-center">Modus</div>
-          <hr dark />
+          <hr dark style="width: 100%" />
           <div class="row q-my-sm justify-center">
             <q-btn flat class="q-py-md" @click="setEditorMode('viewer')"
               :color="editorMode === 'viewer' ? 'secondary' : ''">
@@ -45,7 +44,7 @@
             </q-btn>
           </div>
 
-          <hr dark />
+          <hr dark style="width: 100%" />
           <div class="row q-my-md justify-center">
             <q-btn class="q-py-md" @click="setEditorMode('lines')"
               :color="editorMode === 'lines' ? 'secondary' : 'teal-10'">
@@ -166,14 +165,10 @@ import { storeToRefs } from 'pinia'
 export default {
   setup () {
     const planEditorStore = usePlanEditorStore()
-    const { contextMenuOpen, planDetails, editorMode } = storeToRefs(planEditorStore)
+    const { contextMenuOpen, planDetails, editorMode, saved, published, initialLoadFinished } = storeToRefs(planEditorStore)
     const leftDrawerOpen = true
     const leftDrawerMini = false
     const saving = ref(false)
-    const saved = ref(false)
-    const published = ref(false)
-    const changed = ref(false)
-    const loaded = ref(false)
     const planstate = ref(undefined)
 
     return {
@@ -190,8 +185,7 @@ export default {
       saving,
       saved,
       published,
-      changed,
-      loaded,
+      initialLoadFinished,
       planstate
     }
   },
@@ -205,25 +199,28 @@ export default {
       }[this.editorMode]
     },
     disable_save_button: function () {
-      return false // return this.saved || !this.changed || this.saving
+      return this.saved || this.saving
     },
     disable_publish_button: function () {
-      return false // return this.published || !this.changed || this.saving
+      return this.published || this.saving
     }
   },
   methods: {
     save: async function (publish) {
-      this.saving = true
-      publish = publish ?? false
-
-      this.saving = false
-
       await this.planEditorStore.savePlanState(publish)
-
-      this.changed = false
     },
     saveAndPublish: async function () {
+      this.saving = true
       await this.save(true)
+      this.saving = false
+      this.saved = true
+      this.published = true
+    },
+    saveWithoutPublishing: async function () {
+      this.saving = true
+      await this.save(false)
+      this.saving = false
+      this.saved = true
     },
     toggleLeftDrawer () {
       this.leftDrawerMini = !this.leftDrawerMini
@@ -249,7 +246,7 @@ export default {
     await this.planEditorStore.loadPlanDetails(this.planId)
     await this.planEditorStore.loadPlanState(this.planId, this.planstateId)
 
-    this.loaded = true
+    this.initialLoadFinished = true
 
     console.log('Planstate loaded:', this.planEditorStore.planState)
     this.planstate = this.planEditorStore.planState

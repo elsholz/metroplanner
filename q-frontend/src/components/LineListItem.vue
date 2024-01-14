@@ -43,41 +43,54 @@
         </div>
       </div>
       <template v-if="expanded">
-        <div class="row items-center q-my-sm">
-          <div class="col col-2 q-mx-md text-center">Koordinaten:</div>
-          <div class="col col-1 text-right q-mx-sm">X:</div>
-          <div class="col col-3">
-            <q-input v-model.number="locX" dense type="number" outlined color="white">
+        <div class="row items-center q-my-sm q-mt-md">
+          <div class="col col-3 text-center">Linienfarbe:</div>
+          <div class="col col-4">
+            <q-input v-model="lineColor" dense outlined color="white">
             </q-input>
           </div>
-          <div class="col col-1 text-right q-mx-sm">Y:</div>
-          <div class="col col-3">
-            <q-input v-model.number="locY" dense type="number" outlined color="white">
+          <div class="col col-3 text-center">Linienbreite:</div>
+          <div class="col col-2">
+            <q-input v-model.number="lineWidth" dense type="number" step='0.1' outlined color="white">
             </q-input>
           </div>
         </div>
 
-          <div class="text-caption text-uppercase text-weight-light">
-          Style:
-          </div>
+        <hr dark>
 
-          <div class="row items-center q-mb-sm">
-            <div class="col col-2 text-center">Farbe:</div>
-            <div class="col col-2">
-              <q-input v-model="lineColor" dense outlined color="white">
-              </q-input>
-            </div>
-            <div class="col col-2 text-center">Breite:</div>
-            <div class="col col-2">
-              <q-input v-model.number="lineWidth" dense type="number" step='0.1' outlined color="white">
-              </q-input>
-            </div>
+        <div class="row items-center q-my-sm">
+          <div class="col col-2 text-center">Kante:</div>
+          <div class="col col-2">
+            <q-input v-model.number="locY" dense outlined color="white">
+            </q-input>
           </div>
-          <div class="text-caption text-uppercase text-weight-light">
+          <div class="col col-2 text-center">Breite:</div>
+          <div class="col col-2">
+            <q-input v-model.number="locX" dense type="number" outlined color="white">
+            </q-input>
+          </div>
+          <div class="col col-2 text-center">Farbe:</div>
+          <div class="col col-2">
+            <q-input v-model.number="locY" dense outlined color="white">
+            </q-input>
+          </div>
+        </div>
+
+        <hr dark>
+        <div class="row items-center q-my-sm text-body2">
+          <div class="col col-12 text-left text-body1">Verbindungen:</div>
+        </div>
+
+        <div class="text-caption text-uppercase text-weight-light">
+          Style:
+        </div>
+
+        <div class="text-caption text-uppercase text-weight-light">
           Beschriftung:
-          </div>
-          <div class="row items-center">
-            <!--
+        </div>
+
+        <div class="row items-center">
+          <!--
             <div class="col col-4">
               <div class="row q-my-sm">
                 <div class="col col-4 q-my-sm">
@@ -100,7 +113,7 @@
                 </div>
               </div>
             </div>-->
-          </div>
+        </div>
       </template>
     </q-item-section>
   </q-item>

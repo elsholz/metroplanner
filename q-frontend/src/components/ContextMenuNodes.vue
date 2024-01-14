@@ -17,28 +17,52 @@
     <!--<div class="text-h6">Auswahl bearbeiten</div>-->
     <div class="row items-center no-wrap q-pt-md q-px-sm">
       <div class="col col-2">
-        <q-btn icon="layers_clear" dense @click.left="emptySelection" no-caps flat color="orange">Auswahl leeren</q-btn>
+        <q-btn icon="layers_clear" dense @click.left="emptySelection" no-caps flat color="orange">
+          Auswahl leeren
+        </q-btn>
       </div>
       <div class="col col-2">
-        <q-btn icon="content_copy" dense @click.left="duplicateSelection" flat no-caps>Duplizieren</q-btn>
+        <q-btn icon="content_copy" dense @click.left="duplicateSelection" flat no-caps>
+          Duplizieren
+        </q-btn>
       </div>
       <div class="col col-2">
-        <q-btn icon="polyline" flat dense no-caps>Verbinden
+        <q-btn icon="polyline" flat dense no-caps>
+          Verbinden
           <q-menu> Test </q-menu>
         </q-btn>
       </div>
       <div class="col col-2">
-        <q-btn icon="add" dense @click.left="addNodes" flat no-caps>Einfügen</q-btn>
+        <q-btn icon="add" dense @click.left="addNodes" flat no-caps>
+          Einfügen
+        </q-btn>
       </div>
       <div class="col col-2">
-        <q-btn icon="remove" dense @click.left="addNodes" flat no-caps>sonstiges</q-btn>
+        <q-btn icon="remove" dense @click.left="addNodes" flat no-caps>
+          sonstiges
+        </q-btn>
       </div>
       <div class="col col-grow"></div>
       <div class="col col-auto q-pa-sm">
-        <q-btn icon="delete" no-caps color="red" round size="md" @click.left="deleteSelection"
+        <q-btn icon="delete" no-caps color="red" round size="md" @click.left="openConfirmSelectionDeletionDialog"
           :disable="!this.selectedNodeIDs.length">
         </q-btn>
       </div>
+      <q-dialog v-model="confirmDeletion">
+        <q-card class="bg-negative text-white">
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="red" text-color="white" />
+            <span class="q-ml-md text-body1">Löschen von</span>
+            <span class="q-mx-sm text-bold text-h6 text-bold">{{ this.selectedNodeIDs.length }}</span>
+            <span class="q-mr-sm text-body1">Haltestellen bestätigen?</span>
+          </q-card-section>
+
+          <q-card-actions align="center">
+            <q-btn no-caps outline label="Abbrechen" color="gray" v-close-popup />
+            <q-btn no-caps flat label="Haltestellen löschen" color="grey-13" @click="deleteSelection" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
 
     <div class="row items-center items-justify no-wrap q-mx-md q-pt-sm" style="width: 100%">
@@ -100,18 +124,21 @@ import { usePlanEditorStore } from 'src/stores/editor_store'
 import { storeToRefs } from 'pinia'
 // import { toRefs } from 'vue'
 import NodeListItem from './NodeListItem.vue'
+import { ref } from 'vue'
 
 const planEditorStore = usePlanEditorStore()
 
-const { nodes, selectedNodeIDs, searchTerm, planState } = storeToRefs(planEditorStore)
+const { nodes, selectedNodeIDs, searchTerm, planState, lines } = storeToRefs(planEditorStore)
 
 export default {
   setup () {
     return {
       nodes,
       selectedNodeIDs,
+      lines,
       searchTerm,
-      planState
+      planState,
+      confirmDeletion: ref(false)
     }
   },
   computed: {
@@ -126,17 +153,13 @@ export default {
     }
   },
   methods: {
+    openConfirmSelectionDeletionDialog: async function (e, go) {
+      e.preventDefault()
+      this.confirmDeletion = true
+    },
     deleteSelection () {
-      if (
-        window.confirm(
-          `Sicher, dass die ${this.selectedNodeIDs.length} ausgewählten Haltestellen gelöscht werden sollen?`
-        )
-      ) {
-        for (const nodeid of this.selectedNodeIDs) {
-          delete this.nodes[nodeid]
-        }
-        this.selectedNodeIDs = []
-      }
+      planEditorStore.deleteNodes(this.selectedNodeIDs)
+      this.selectedNodeIDs = []
     },
     emptySelection: function () {
       this.selectedNodeIDs = []

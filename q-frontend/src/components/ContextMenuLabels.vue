@@ -3,7 +3,7 @@
     Kontext-Menü: Beschriftungen
   </div>
   Alle Labels:
-  {{ labels }}
+  {{ independentLabels }}
 </template>
 
 <script>
@@ -12,11 +12,11 @@ import { storeToRefs } from 'pinia'
 
 const planEditorStore = usePlanEditorStore()
 
-const { labels } = storeToRefs(planEditorStore)
+const { independentLabels } = storeToRefs(planEditorStore)
 
 export default {
   setup () {
-    return { labels }
+    return { independentLabels }
   }
 }
 </script>

@@ -8,10 +8,10 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" behavior="mobile" bordered :width="400" class="text-body1" dark
+    <q-drawer v-model="leftDrawerOpen" side="left" behavior="mobile" bordered :width="Math.min($q.screen.width-25, 400)" class="text-body1" dark
       style="box-shadow: 0 0 7px 1px white">
       <template v-if="planInfo.planName !== undefined">
-        <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px">
+        <q-scroll-area style="height: calc(100% - 170px); margin-top: 170px">
           <q-list padding>
             <q-item>
               <q-item-section>
@@ -121,11 +121,11 @@
                       outline
                     ></q-btn>
                   </div>-->
-                  <div class="col-6">
-                    <q-btn icon="favorite" color="purple" @click="toggleFavorite">Favorisieren</q-btn>
+                  <div class="column col-6 items-center">
+                    <q-btn icon="favorite" color="purple" dense @click="toggleFavorite">Favorisieren</q-btn>
                   </div>
-                  <div class="col-6">
-                    <q-btn icon="share" color="green" @click="copyLink">Link kopieren</q-btn>
+                  <div class="column col-6 items-center">
+                    <q-btn icon="share" color="green" dense @click="copyLink">Link kopieren</q-btn>
                   </div>
                 </div>
               </q-item-section>
@@ -172,7 +172,7 @@
           </q-list>
         </q-scroll-area>
 
-        <q-img class="absolute-top" style="height: 150px; border-bottom: 2px solid gray">
+        <q-img class="absolute-top" style="height: 170px; border-bottom: 2px solid gray">
           <div class="absolute-bottom">
             <div class="row q-pt-md">
               <div class="col-6">

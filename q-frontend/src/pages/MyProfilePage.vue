@@ -2,27 +2,24 @@
   <q-page class="doc-container flex justify-center bg-primary q-pb-xl" dark>
     <template v-if="userStore.profileLoaded">
       <div v-if="plansCreated" class="row justify-center" style="width: 100%">
-        <div class="column items-center justify-center col-xs-10 text-white">
+        <div class="column items-center justify-center col-12 text-white">
           <div class="text-h4 text-center q-mt-lg">
             Dein Profil
-            <hr color="white" width="200px;" />
           </div>
+          <hr color="white" class="q-mb-lg"/>
         </div>
       </div>
 
       <div v-if="plansCreated" class="row justify-center" style="width: 100%">
         <div class="column col-xs-11 col-sm-8 text-white items-center">
           <div class="">
-            <q-btn flat round @click="showProfilePictureDialog=true">
+            <q-btn flat round @click="showProfilePictureDialog = true">
               <q-avatar size="196px">
-                <img
-                  :src="
-                    this.profilePicture ||
-                    'https://source.boringavatars.com/pixel/72/' +
-                      this.userStore.auth.user.sub +
-                      '?colors=66f873,5a3dcf,99848a'
-                  "
-                />
+                <img :src="this.profilePicture ||
+                  'https://source.boringavatars.com/pixel/72/' +
+                  this.userStore.auth.user.sub +
+                  '?colors=66f873,5a3dcf,99848a'
+                  " />
               </q-avatar>
             </q-btn>
           </div>
@@ -57,54 +54,25 @@
       <div v-if="plansCreated" class="row justify-center q-mt-lg" style="width: 100%">
         <div class="column col-xs-6 col-sm-4 col-md-3 col-lg-2 text-white">
           <div class="q-my-sm">
-            <q-input
-              :oninput="changeProfile"
-              dark
-              color="white"
-              rounded
-              outlined
-              v-model="displayName"
-              label="Anzeigename"
-              input-class="text-h6"
-              input-style="text-align: center"
-              :rules="[
+            <q-input :oninput="changeProfile" dark color="white" rounded outlined v-model="displayName"
+              label="Anzeigename" input-class="text-h6" input-style="text-align: center" :rules="[
                 (val) => val.length <= 50 || 'Maximal 50 Zeichen erlaubt',
-              ]"
-            />
+              ]" />
           </div>
         </div>
       </div>
 
-      <div
-        v-if="plansCreated"
-        class="row justify-center q-mb-lg"
-        style="width: 100%"
-      >
+      <div v-if="plansCreated" class="row justify-center q-mb-lg" style="width: 100%">
         <div class="column col-xs-11 col-sm-8 col-md-6 text-white">
           <div>
-            <q-input
-              :oninput="changeProfile"
-              color="white"
-              dark
-              v-model="bio"
-              filled
-              autogrow
-              label="Profilbeschreibung"
-              input-class="text-body1"
-              :rules="[
+            <q-input :oninput="changeProfile" color="white" dark v-model="bio" filled autogrow label="Profilbeschreibung"
+              input-class="text-body1" :rules="[
                 (val) => val.length <= 200 || 'Maximal 200 Zeichen erlaubt',
-              ]"
-            />
+              ]" />
           </div>
         </div>
       </div>
-      <q-btn
-        dark
-        color="green"
-        v-if="profileChanged"
-        animate
-        @click="saveProfile"
-      >
+      <q-btn dark color="green" v-if="profileChanged" animate @click="saveProfile">
         <div class="text-white text-body1">Profil speichern</div>
       </q-btn>
 
@@ -112,26 +80,14 @@
         <div class="column col-xs-10 text-white">
           <div class="text-h6 q-my-sm">Deine Pläne:</div>
           <q-card dark>
-            <q-tabs
-              dark
-              v-model="tab"
-              dense
-              indicator-color="info"
-              align="justify"
-              style="background-color: #003"
-            >
+            <q-tabs dark v-model="tab" dense indicator-color="info" align="justify" style="background-color: #003">
               <q-tab name="created" label="Erstellt" />
               <q-tab name="liked" label="Favorisiert" />
             </q-tabs>
 
             <q-separator />
 
-            <q-tab-panels
-              v-model="tab"
-              animated
-              dark
-              class="bg-primary"
-            >
+            <q-tab-panels v-model="tab" animated dark class="bg-primary">
               <q-tab-panel name="created">
                 <div class="row">
                   <div class="column col-grow q-my-xs">
@@ -141,22 +97,10 @@
                     <CreatePlanButton></CreatePlanButton>
                   </div>
                 </div>
-                <q-list
-                  padding
-                  separator
-                  class="text-white"
-                  style="width: 100%"
-                  v-if="plansCreated?.length"
-                >
-                  <PlanListItem
-                    v-for="plan of plansCreated"
-                    :key="plan"
-                    :planShortlink="plan.primaryShortlink"
-                    :planId="plan.planId"
-                    :planName="plan.planName"
-                    :planDescription="plan.planDescription"
-                    style="width: 100%"
-                  >
+                <q-list padding separator class="text-white" style="width: 100%" v-if="plansCreated?.length">
+                  <PlanListItem v-for="plan of plansCreated" :key="plan" :planShortlink="plan.primaryShortlink"
+                    :planId="plan.planId" :planName="plan.planName" :planDescription="plan.planDescription"
+                    style="width: 100%">
                   </PlanListItem>
                 </q-list>
                 <div v-else>Es wurden noch keine Pläne von dir erstellt.</div>
@@ -165,18 +109,9 @@
               <q-tab-panel name="liked">
                 <div class="text-h6">Favorisierte Pläne</div>
                 <div v-if="plansLiked?.length">
-                  <q-list
-                    padding
-                    separator
-                    class="text-white"
-                    style="width: 100%"
-                  >
-                    <PlanListItem
-                      v-for="shortlink of plansLiked"
-                      :key="shortlink"
-                      :planShortlink="shortlink"
-                      style="width: 100%"
-                    >
+                  <q-list padding separator class="text-white" style="width: 100%">
+                    <PlanListItem v-for="shortlink of plansLiked" :key="shortlink" :planShortlink="shortlink"
+                      style="width: 100%">
                     </PlanListItem>
                   </q-list>
                 </div>
@@ -194,15 +129,8 @@
       </div>
     </template>
     <div v-else>
-      <q-inner-loading
-        :showing="true"
-        :label="planName || 'Dein Profil wird geladen'"
-        label-class="text-white"
-        class="bg-dark"
-        label-style="font-size: 1.5em"
-        color="white"
-        size="7em"
-      />
+      <q-inner-loading :showing="true" :label="planName || 'Dein Profil wird geladen'" label-class="text-white"
+        class="bg-dark" label-style="font-size: 1.5em" color="white" size="7em" />
     </div>
   </q-page>
 </template>

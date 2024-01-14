@@ -1,7 +1,7 @@
 <template>
   <q-item :class="'q-my-sm q-mx-sm' + (this.fitsSearchTerm ? '' : ' hidden')" :style="
     selected
-      ? 'border: 1px solid #070; border-radius: 10px; box-shadow: 0 0 3px 0 lime;'
+      ? 'border: 1px solid #070; border-radius: 10px; box-shadow: 0 0 5px 2px #7f7;'
       : 'border: 1px solid gray; border-radius: 10px;'
   ">
     <q-item-section>
@@ -299,10 +299,10 @@ export default {
       this.labelClass = cls
     },
     deleteElement: function () {
-      delete this.nodes[this.nodeid]
       this.selectedNodeIDs = this.selectedNodeIDs.filter(
         (e) => e !== this.nodeid
       )
+      planEditorStore.deleteNodes([this.nodeid])
     },
     duplicateElement: function () {
       this.nodes[this.nodeid + '_2'] = JSON.parse(

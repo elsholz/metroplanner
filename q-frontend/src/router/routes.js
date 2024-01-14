@@ -39,7 +39,7 @@ const routes = [
     ]
   },
   {
-    path: '/user/:userid',
+    path: '/users/:userid', // not using /u, as user ids are ObjectIDs
     component: () => import('src/layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('src/pages/UserProfilePage.vue') }
