@@ -76,7 +76,7 @@ def check_color(v: str) -> str:
         m = ModelCheck(color=v)
         return v
     except Exception as e:
-        raise pydantic.ValidationError()
+        raise ValueError()
 
 
 Color = Annotated[str, pydantic.AfterValidator(check_color)]
