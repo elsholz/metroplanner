@@ -136,7 +136,8 @@ class Styling(BaseModel):
 
 class Label(BaseModel):
     label_class: Annotated[
-        pydantic.constr(
+        str, 
+        pydantic.StringConstraints(
             pattern=(
                 "centered"
                 "|left_ascending"
