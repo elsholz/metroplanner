@@ -306,7 +306,7 @@ def get_plan(
                         month_aggregate = 0
 
                         for hour in range(24 * 360):
-                            time_to_get = now - timedelta(hours=-hour)
+                            time_to_get = now - timedelta(hours=hour)
                             time_to_hour = time_to_get.isoformat().split(":")[0]
 
                             ts = int(time_to_get.timestamp())
