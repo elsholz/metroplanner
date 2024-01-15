@@ -311,10 +311,15 @@ def get_plan(
 
                             ts = int(time_to_get.timestamp())
 
-
-                            ts_hour = int(datetime(*time_to_get.timetuple[:4]).timestamp())
-                            ts_day = int(datetime(*time_to_get.timetuple[:3]).timestamp())
-                            ts_month = int(datetime(*time_to_get.timetuple[:3]).timestamp())
+                            ts_hour = int(
+                                datetime(*time_to_get.timetuple()[:4]).timestamp()
+                            )
+                            ts_day = int(
+                                datetime(*time_to_get.timetuple()[:3]).timestamp()
+                            )
+                            ts_month = int(
+                                datetime(*time_to_get.timetuple()[:3]).timestamp()
+                            )
 
                             v = views.get(time_to_hour, 0)
                             day_aggregate += v
