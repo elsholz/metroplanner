@@ -346,9 +346,9 @@ class PlanPrivateGetResponse(PlanProfile, PlanStats, PlanTimestamps):
     class ShortlinkWithStats(BaseModel):
         class Stats(BaseModel):
             total_count: NonNegativeInt
-            per_hour: Dict[int, NonNegativeInt]
-            per_day: Dict[int, NonNegativeInt]
-            per_month: Dict[int, NonNegativeInt]
+            per_hour: List[Tuple[int, NonNegativeInt]]
+            per_day: List[Tuple[int, NonNegativeInt]]
+            per_month: List[Tuple[int, NonNegativeInt]]
 
         shortlink: str
         stats: Stats
