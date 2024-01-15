@@ -309,31 +309,31 @@ def get_plan(
                             time_to_get = now - timedelta(hours=hour)
                             time_to_hour = time_to_get.isoformat().split(":")[0]
 
-                            ts = int(time_to_get.timestamp())
+                            ts = int(time_to_get.timestamp()) * 1000
 
-                            ts_hour = int(
-                                datetime(*time_to_get.timetuple()[:4]).timestamp()
-                            )
-                            ts_day = int(
-                                datetime(*time_to_get.timetuple()[:3]).timestamp()
-                            )
-                            ts_month = int(
-                                datetime(*time_to_get.timetuple()[:3]).timestamp()
-                            )
+                            # ts_hour = int(
+                            #     datetime(*time_to_get.timetuple()[:4]).timestamp()
+                            # )
+                            # ts_day = int(
+                            #     datetime(*time_to_get.timetuple()[:3]).timestamp()
+                            # )
+                            # ts_month = int(
+                            #     datetime(*time_to_get.timetuple()[:3]).timestamp()
+                            # )
 
                             v = views.get(time_to_hour, 0)
                             day_aggregate += v
                             month_aggregate += v
 
                             if hour < 25:
-                                per_hour.append((ts_hour, v))
+                                per_hour.append((ts, v))
 
                             if hour < 25 * 30 and not hour % 24:
-                                per_day.append((ts_day, day_aggregate))
+                                per_day.append((ts, day_aggregate))
                                 day_aggregate = 0
 
                             if not hour % (24 * 30):
-                                per_month.append((ts_month, month_aggregate))
+                                per_month.append((ts, month_aggregate))
                                 month_aggregate = 0
 
                         shortlink_stats["per_hour"] = list(reversed(per_hour))
