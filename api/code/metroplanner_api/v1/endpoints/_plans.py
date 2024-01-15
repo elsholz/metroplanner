@@ -308,7 +308,7 @@ def get_plan(
 
                             day_aggregate = 0
                             month_aggregate = 0
-                            ts = time_to_get.timestamp()
+                            ts = int(time_to_get.timestamp())
 
                             v = views.get(time_to_hour, 0)
                             day_aggregate += v
