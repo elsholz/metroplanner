@@ -326,9 +326,9 @@ def get_plan(
                                 per_month.append((ts, month_aggregate))
                                 month_aggregate = 0
 
-                        shortlink_stats["per_hour"] = per_hour
-                        shortlink_stats["per_day"] = per_day
-                        shortlink_stats["per_month"] = per_month
+                        shortlink_stats["per_hour"] = list(reversed(per_hour))
+                        shortlink_stats["per_day"] = list(reversed(per_day))
+                        shortlink_stats["per_month"] = list(reversed(per_month))
 
                         del shortlink_stats["views"]
 
