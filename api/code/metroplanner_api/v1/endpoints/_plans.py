@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson.objectid import ObjectId as BsonObjectId
 import random
 
@@ -90,10 +90,18 @@ def post_plan(
 
                 if planstate:
                     insert_planstate_res = db.planstates.insert_one(planstate)
-                    new_plan_data["current_number_of_edges"] = planstate["number_of_edges"]
-                    new_plan_data["current_number_of_lines"] = planstate["number_of_lines"]
-                    new_plan_data["current_number_of_nodes"] = planstate["number_of_nodes"]
-                    new_plan_data["current_number_of_labels"] = planstate["number_of_labels"]
+                    new_plan_data["current_number_of_edges"] = planstate[
+                        "number_of_edges"
+                    ]
+                    new_plan_data["current_number_of_lines"] = planstate[
+                        "number_of_lines"
+                    ]
+                    new_plan_data["current_number_of_nodes"] = planstate[
+                        "number_of_nodes"
+                    ]
+                    new_plan_data["current_number_of_labels"] = planstate[
+                        "number_of_labels"
+                    ]
                     new_plan_data["color_theme"] = plan_details["color_theme"]
                 else:
                     raise responses.gone_410()
@@ -289,7 +297,42 @@ def get_plan(
                     )
                     if shortlink_stats:
                         print("found shortlink stats:", shortlink_stats)
+
+                        views = shortlink_stats["views"]
+                        per_hour, per_day, per_month = [], [], []
+                        now = datetime.now()
+
+                        for hour in range(24 * 360 + 2):
+                            time_to_get = now - timedelta(hours=-hour)
+                            time_to_hour = time_to_get.isoformat().split(":")[0]
+
+                            day_aggregate = 0
+                            month_aggregate = 0
+                            ts = time_to_get.timestamp()
+
+                            v = views.get(time_to_hour, 0)
+                            day_aggregate += v
+                            month_aggregate += v
+
+                            if hour < 25:
+                                per_hour.append((ts, v))
+
+                            if hour < 25 * 30 and not hour % 24:
+                                per_day.append((ts, day_aggregate))
+                                day_aggregate = 0
+
+                            if not hour % (24 * 30):
+                                per_month.append((ts, month_aggregate))
+                                month_aggregate = 0
+
+                        shortlink_stats["per_hour"] = per_hour
+                        shortlink_stats["per_day"] = per_day
+                        shortlink_stats["per_month"] = per_month
+
+                        del shortlink_stats["views"]
+
                         shortlink["stats"] = shortlink_stats
+
                     else:
                         shortlink["stats"] = {"totalCount": 0, "views": {}}
                     shortlink["shortlink"] = shortlink["_id"]
