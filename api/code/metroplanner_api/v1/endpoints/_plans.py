@@ -299,10 +299,11 @@ def get_plan(
                         print("found shortlink stats:", shortlink_stats)
 
                         views = shortlink_stats["views"]
+                        print('Views:', views)
                         per_hour, per_day, per_month = [], [], []
                         now = datetime.now()
 
-                        for hour in range(24 * 360 + 2):
+                        for hour in range(24 * 360):
                             time_to_get = now - timedelta(hours=-hour)
                             time_to_hour = time_to_get.isoformat().split(":")[0]
 
