@@ -309,7 +309,7 @@ def get_plan(
                             time_to_get = now - timedelta(hours=hour)
                             time_to_hour = time_to_get.isoformat().split(":")[0]
 
-                            ts = int(time_to_get.timestamp()) * 1000
+                            ts = int(time_to_get.timestamp() * 1000)
 
                             # ts_hour = int(
                             #     datetime(*time_to_get.timetuple()[:4]).timestamp()
